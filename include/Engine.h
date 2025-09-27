@@ -6,6 +6,7 @@
 #define GLENGINE_ENGINE_H
 #include <string>
 #include <vector>
+#include <chrono>
 #include "Vectors.h"
 #include "Widget.h"
 
@@ -17,6 +18,14 @@ namespace glengine {
 
         void Render();
 
+        void Update();
+        
+        /// <summary>
+        /// Gets the number of seconds since the last Update() call.
+        /// This will almost always be a very small number
+        /// </summary>
+        double DeltaTime();
+
         [[nodiscard]] int2 getWindowSize() const {
             return windowSize;
         }
@@ -24,8 +33,12 @@ namespace glengine {
     private:
         int2 windowSize;
         int windowHandle;
+        float hue;
+
+        std::chrono::steady_clock::time_point lastUpdate;
 
         void clearBuffers();
+        void setLastUpdate();
 
         std::vector<Widget> widgets;
 

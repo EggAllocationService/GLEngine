@@ -78,6 +78,12 @@ struct vec4 {
     vec4 operator +(const vec4<T> &other) {
         return vec4(x + other.x, y + other.y, z + other.z, w + other.w);
     }
+
+    void operator +=(const vec4<T> other) {
+        for (int i = 0; i < 4; i++) {
+            this->data[i] += other.data[i];
+        }
+    }
 };
 
 template <typename T>
