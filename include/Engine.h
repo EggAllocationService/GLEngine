@@ -26,10 +26,6 @@ namespace glengine {
         /// </summary>
         double DeltaTime();
 
-        [[nodiscard]] int2 getWindowSize() const {
-            return windowSize;
-        }
-
         /// <summary>
         /// Target update interval
         /// </summary>
@@ -44,6 +40,8 @@ namespace glengine {
 
         void clearBuffers();
         void setLastUpdate();
+
+        void renderWidgets();
 
         std::vector<Widget> widgets;
 

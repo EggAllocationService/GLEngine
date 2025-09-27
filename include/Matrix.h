@@ -51,6 +51,18 @@ struct Matrix {
         return r;
     }
 
+    template<int VL> vecn<T, Y> operator *(vecn<T, VL> other) {
+        static_assert(VL == X, "Incompatible shapes for matrix-vector multiply");
+
+        vecn<T, Y> acc = vecn<T, Y>::zero();
+
+        for (int column = 0; column < X; column++) {
+            acc += (*this->operator[](column) * other[column]);
+        }
+
+        return acc;
+    }
+
     friend std::ostream& operator<<(std::ostream& os, const Matrix &m)
     {
         os << "matrix:\n";

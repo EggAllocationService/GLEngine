@@ -5,6 +5,7 @@
 #include "Engine.h"
 #include "engine_GLUT.h"
 #include "Colors.h"
+#include "Widget.h"
 #include <map>
 #include <iostream>
 
@@ -69,13 +70,7 @@ namespace glengine {
 
         clearBuffers();
 
-        glColor4fv(Colors::hsv(floor(hue), 1.0, 1.0));
-
-        glBegin(GL_POLYGON);
-            glVertex2f(0.0, 0.5);
-            glVertex2f(0.5, -0.5);
-            glVertex2f(-0.5, -0.5);
-        glEnd();
+        renderWidgets();
 
         glFlush();
     }
@@ -94,5 +89,16 @@ namespace glengine {
 
     void Engine::setLastUpdate() {
         lastUpdate = std::chrono::steady_clock::now();
+    }
+
+    void Engine::renderWidgets()
+    {
+        MatrixStack2D stack = MatrixStack2D();
+
+        for (Widget& i : widgets) {
+            stack.Push(i.GetTransformMatrix());
+            i.Draw(stack);
+            stack.Pop();
+        }
     }
 } // glengine

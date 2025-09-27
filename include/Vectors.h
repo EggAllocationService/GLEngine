@@ -15,7 +15,11 @@ struct vecn {
 
     T data[LEN];
 
-    T operator[](int index) {
+    void set(int index, T value) {
+        data[index] = value;
+    }
+
+    T& operator[](int index) {
         return data[index];
     }
 
@@ -44,6 +48,12 @@ struct vecn {
             result.data[i] = data[i] + rhs.data[i];
         }
         return result;
+    }
+
+    void operator+=(vecn<T, LEN> rhs) {
+        for (int i = 0; i < LEN; i++) {
+            data[i] += rhs.data[i];
+        }
     }
 };
 
