@@ -7,6 +7,11 @@ template <typename T, int LEN>
 struct vecn {
     vecn() {}
 
+    static vecn zero() {
+        vecn ret;
+        for (int i = 0; i < LEN; i++) ret.data[i] = 0;
+        return ret;
+    }
 
     T data[LEN];
 
