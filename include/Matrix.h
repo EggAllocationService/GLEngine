@@ -11,11 +11,19 @@
 
 template <typename T, int X, int Y>
 struct Matrix {
+    Matrix() = default;
+
+    explicit Matrix(T initialData[X * Y] ) {
+        for (int i = 0; i < X * Y; i++) {
+            data[i] = initialData[i];
+        }
+    }
+
     // column-major
     T data[X * Y];
 
     vecn<T, Y>* operator[](int column) {
-        return (vecn<T, Y> *) &data[column * X];
+        return (vecn<T, Y> *) &data[column * Y];
     }
 
     const int2 size = int2(X, Y);
@@ -27,7 +35,7 @@ struct Matrix {
         for (int column = 0; column < X; column++) {
 
             vecn<T, Y2> *cur_column = other[column];
-            vecn<T, Y> acc = vecn<T, Y2>::zero();
+            vecn<T, Y> acc = vecn<T, Y>::zero();
 
             for (int i = 0; i < Y2; i++) {
                 auto vector = *this->operator[](i);
@@ -47,8 +55,8 @@ struct Matrix {
     {
         os << "matrix:\n";
 
-        for (int x = 0; x < X; x++) {
-            for (int y = 0; y < Y; y++) {
+        for (int y = 0; y < Y; y++) {
+            for (int x = 0; x < X; x++) {
                 os << m.data[x * Y + y] << " ";
             }
             os << "\n";

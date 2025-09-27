@@ -6,12 +6,16 @@
 #include <iostream>
 
 int main() {
-    mat4 m1 = mat4::identity();
-    mat4 m2 = mat4::identity();
-    mat4 m3 = m1 * m2;
+    float m1d[6] = {1.0, 4.0, 2.0, 5.0, 3.0, 6.0};
+    auto m1 = Matrix<float, 3, 2>(m1d);
+
+    float m2d[6] = {7, 9, 11, 8, 10, 12};
+    auto m2 = Matrix<float, 2, 3>(m2d);
 
     std::cout << "Hello, World!" << std::endl;
-
     std::cout << m1;
-    std::cout << m3;
+    std::cout << m2;
+
+    auto result = m1 * m2;
+    std::cout << result;
 }
