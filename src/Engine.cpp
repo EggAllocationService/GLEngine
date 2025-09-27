@@ -32,7 +32,7 @@ namespace glengine {
 
         Instances[windowHandle] = this;
 
-        glutTimerFunc(16, updateExec, 0); // 60 fps
+        glutTimerFunc(1000/maxFPS, updateExec, 0); // 60 fps
         glutDisplayFunc(renderExec);
 
         setLastUpdate();
@@ -62,7 +62,7 @@ namespace glengine {
         glutPostRedisplay();
         setLastUpdate();
 
-        glutTimerFunc(16, updateExec, 0); // 60 fps
+        glutTimerFunc(1000/maxFPS, updateExec, 0);
     }
 
     void Engine::Render() {

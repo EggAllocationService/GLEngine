@@ -30,6 +30,11 @@ namespace glengine {
             return windowSize;
         }
 
+        /// <summary>
+        /// Target update interval
+        /// </summary>
+        int maxFPS = 60;
+
     private:
         int2 windowSize;
         int windowHandle;
