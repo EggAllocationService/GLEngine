@@ -3,6 +3,23 @@
 //
 #pragma once
 
+template<typename vector, typename primitive, int len, int... indicies>
+struct vec_swizzle {
+    float data[len];
+
+    vector operator=(vector rhs) {
+        return vector((data[indicies] = rhs[indicies])...);
+    }
+
+    vector operator=(primitive rhs) {
+        return vector((data[indicies] = rhs)...);
+    }
+
+    operator vector() {
+        return vector(data[indicies]...);
+    }
+};
+
 template<typename T, int LEN>
 struct vecn {
     vecn() {
@@ -58,23 +75,6 @@ struct vecn {
     }
 };
 
-template<typename vector, typename primitive, int A, int B>
-struct vec2_swizzle {
-    float data[2];
-
-    vector operator=(const vector &rhs) {
-        return vector(data[A] = rhs.x, data[B] = rhs.y);
-    }
-
-    vector operator=(const primitive &rhs) {
-        return vector(data[A] = rhs, data[B] = rhs);
-    }
-
-    operator vector() {
-        return vector(data[A], data[B]);
-    }
-};
-
 template<typename T>
 struct vec2 {
     vec2() {
@@ -98,57 +98,18 @@ struct vec2 {
             T r, g;
         };
 
-        vec2_swizzle<vec2<T>, T, 0, 1> xy;
-        vec2_swizzle<vec2<T>, T, 1, 0> yx;
-        vec2_swizzle<vec2<T>, T, 0, 0> xx;
-        vec2_swizzle<vec2<T>, T, 1, 1> yy;
+        vec_swizzle<vec2, T, 2, 0, 1> xy, rg;
+        vec_swizzle<vec2, T, 2, 1, 0> yx, gr;
+        vec_swizzle<vec2, T, 2, 0, 0> xx, rr;
+        vec_swizzle<vec2, T, 2, 1, 1> yy, gg;
     };
 
     operator T *() {
         return &data[0];
     }
-};
 
-template<typename T>
-struct vec4 {
-    vec4() {
-    }
-
-    vec4(T x, T y, T z, T w) {
-        data[0] = x;
-        data[1] = y;
-        data[2] = z;
-        data[3] = w;
-    }
-
-    union {
-        T data[4];
-
-        struct {
-            T x, y, z, w;
-        };
-
-        struct {
-            T r, g, b, a;
-        };
-    };
-
-    operator const T *() const {
-        return &x;
-    }
-
-    vec4 operator *(const vec4<T> &other) {
-        return vec4(x * other.x, y * other.y, z * other.z, w * other.w);
-    }
-
-    vec4 operator +(const vec4<T> &other) {
-        return vec4(x + other.x, y + other.y, z + other.z, w + other.w);
-    }
-
-    void operator +=(const vec4<T> other) {
-        for (int i = 0; i < 4; i++) {
-            this->data[i] += other.data[i];
-        }
+    bool operator==(const vec2<T> &rhs) {
+        return data[0] == rhs.data[0] && data[1] == rhs.data[1];
     }
 };
 
@@ -179,10 +140,79 @@ struct vec3 {
         struct {
             T r, g, b;
         };
+
+        vec_swizzle<vec3, T, 3, 0, 1, 2> xyz, rgb;
+        vec_swizzle<vec3, T, 3, 2, 1, 0> zyx, bgr;
+        vec_swizzle<vec2<T>, T, 3, 0, 1> xy, rg;
+        vec_swizzle<vec2<T>, T, 3, 1, 0> yx, gr;
     };
 
     operator T *() {
         return &data[0];
+    }
+
+    bool operator==(const vec3<T> &rhs) {
+        for (int i = 0; i < 3; i++) {
+            if (data[i] != rhs.data[i]) return false;
+        }
+        return true;
+    }
+};
+
+template<typename T>
+struct vec4 {
+    vec4() {
+    }
+
+    vec4(T x, T y, T z, T w) {
+        data[0] = x;
+        data[1] = y;
+        data[2] = z;
+        data[3] = w;
+    }
+
+    union {
+        T data[4];
+
+        struct {
+            T x, y, z, w;
+        };
+
+        struct {
+            T r, g, b, a;
+        };
+
+        vec_swizzle<vec4, T, 4, 0, 1, 2, 3> xyzw, rgba;
+        vec_swizzle<vec4, T, 4, 0, 1, 2, 3> wzyx, abgr;
+        vec_swizzle<vec3<T>, T, 4, 0, 1, 2> xyz, rgb;
+        vec_swizzle<vec3<T>, T, 4, 2, 1, 0> zyx, bgr;
+        vec_swizzle<vec2<T>, T, 4, 0, 1> xy, rg;
+        vec_swizzle<vec2<T>, T, 4, 1, 0> yx, gr;
+    };
+
+    operator const T *() const {
+        return &x;
+    }
+
+    vec4 operator *(const vec4<T> &other) {
+        return vec4(x * other.x, y * other.y, z * other.z, w * other.w);
+    }
+
+    vec4 operator +(const vec4<T> &other) {
+        return vec4(x + other.x, y + other.y, z + other.z, w + other.w);
+    }
+
+    void operator +=(const vec4<T> other) {
+        for (int i = 0; i < 4; i++) {
+            this->data[i] += other.data[i];
+        }
+    }
+
+    bool operator==(const vec4<T> &other) {
+        for (int i = 0; i < 4; i++) {
+            if (data[i] != other.data[i]) return false;
+        }
+        return true;
     }
 };
 
