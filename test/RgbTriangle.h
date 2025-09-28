@@ -5,11 +5,12 @@ using namespace glengine;
 
 class RgbTriangle : public Widget {
 public:
-	RgbTriangle();
+    RgbTriangle();
 
-	virtual void Update(double DeltaTime) override;
-	virtual void Draw(MatrixStack2D& stack) override;
+    virtual void Update(double DeltaTime) override;
+
+    virtual void Draw(MatrixStack2D &stack) override;
 
 private:
-	float hue;
+    float hue;
 };

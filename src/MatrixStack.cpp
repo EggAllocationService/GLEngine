@@ -3,60 +3,53 @@
 #include "engine_GLUT.h"
 #include <bit>
 
-glengine::MatrixStack2D::MatrixStack2D()
-{
-	stack.push_back(mat3::identity());
+glengine::MatrixStack2D::MatrixStack2D() {
+    stack.push_back(mat3::identity());
 }
 
-void glengine::MatrixStack2D::Push(mat3 matrix)
-{
-	mat3 result = stack.back() * matrix;
-	stack.push_back(result);
+void glengine::MatrixStack2D::Push(mat3 matrix) {
+    mat3 result = stack.back() * matrix;
+    stack.push_back(result);
 }
 
-void glengine::MatrixStack2D::Pop()
-{
-	if (stack.size() > 1) {
-		stack.pop_back();
-	}
+void glengine::MatrixStack2D::Pop() {
+    if (stack.size() > 1) {
+        stack.pop_back();
+    }
 }
 
-float3 glengine::MatrixStack2D::operator*(float3 rhs)
-{
-	return std::bit_cast<float3>(stack.back() * std::bit_cast<vecn<float, 3>>(rhs));
+float3 glengine::MatrixStack2D::operator*(float3 rhs) {
+    return std::bit_cast<float3>(stack.back() * std::bit_cast<vecn<float, 3> >(rhs));
 }
 
-float2 glengine::MatrixStack2D::operator*(float2 rhs)
-{
-	// widen to 3-wide vector
-	vecn<float, 3> tmp;
-	tmp[0] = rhs.x;
-	tmp[1] = rhs.y;
-	tmp[2] = 1.0;
-	
-	tmp = stack.back() * tmp;
+float2 glengine::MatrixStack2D::operator*(float2 rhs) {
+    // widen to 3-wide vector
+    vecn < float, 3 > tmp;
+    tmp[0] = rhs.x;
+    tmp[1] = rhs.y;
+    tmp[2] = 1.0;
 
-	// narrow back
-	return float2(tmp.data[0], tmp.data[1]);
+    tmp = stack.back() * tmp;
+
+    // narrow back
+    return float2(tmp.data[0], tmp.data[1]);
 }
 
-void glengine::MatrixStack2D::DrawPolygon(std::vector<float3> verticies)
-{
-	glBegin(GL_POLYGON);
-	for (float3& vertex : verticies) {
-		glVertex3fv(this->operator*(vertex));
-	}
-	glEnd();
+void glengine::MatrixStack2D::DrawPolygon(std::vector<float3> verticies) {
+    glBegin(GL_POLYGON);
+    for (float3 &vertex: verticies) {
+        glVertex3fv(this->operator*(vertex));
+    }
+    glEnd();
 }
 
-void glengine::MatrixStack2D::DrawRect(float2 a, float2 b)
-{
-	std::vector<float3> verticies = {
-		float3(a, 1.0),
-		float3(a.x, b.y, 1.0),
-		float3(b, 1.0),
-		float3(b.x, a.y, 1.0)
-	};
+void glengine::MatrixStack2D::DrawRect(float2 a, float2 b) {
+    std::vector<float3> verticies = {
+        float3(a, 1.0),
+        float3(a.x, b.y, 1.0),
+        float3(b, 1.0),
+        float3(b.x, a.y, 1.0)
+    };
 
-	DrawPolygon(verticies);
+    DrawPolygon(verticies);
 }

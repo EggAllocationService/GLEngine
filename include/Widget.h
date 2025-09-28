@@ -7,35 +7,36 @@
 #include "MatrixStack.h"
 
 namespace glengine {
-	/// <summary>
+    /// <summary>
 	/// A 2D widget drawn on top of the viewport after 3D rendering.
 	/// 
 	/// 
 	/// </summary>
-	class Widget {
-	public:
-		Widget();
+    class Widget {
+    public:
+        Widget();
 
-		/// <summary>
+        /// <summary>
 		/// Positions this widget. 0,0 is the center  
 		/// </summary>
-		float2 Position;
+        float2 Position;
 
-		/// <summary>
+        /// <summary>
 		/// Scale multiplier for x and y axis
 		/// </summary>
-		float2 Scale;
-		
-		/// <summary>
+        float2 Scale;
+
+        /// <summary>
 		/// Clockwise rotation, in radians.
 		/// </summary>
-		float Rotation;
+        float Rotation;
 
-		virtual void Update(double DeltaTime) = 0;
-		virtual void Draw(MatrixStack2D& stack) = 0;
+        virtual void Update(double DeltaTime) = 0;
 
-		mat3 GetTransformMatrix();
-	};
+        virtual void Draw(MatrixStack2D &stack) = 0;
+
+        mat3 GetTransformMatrix();
+    };
 }
 
 #endif //GLENGINE_WIDGET_H

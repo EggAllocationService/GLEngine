@@ -14,26 +14,26 @@ namespace glengine {
     class Engine {
     public:
         Engine(const std::string &windowName, int2 windowSize);
+
         ~Engine();
 
         void Render();
 
         void Update();
-        
-        
 
         /// <summary>
         /// Target update interval
         /// </summary>
-        int maxFPS = 60;
+        int maxFPS = 120;
 
-        void AddOnscreenWidget(Widget* widget);
+        void AddOnscreenWidget(Widget *widget);
 
     private:
         int2 windowSize;
         int windowHandle;
 
         std::chrono::steady_clock::time_point lastUpdate;
+
         /// <summary>
         /// Gets the number of seconds since the last Update() call.
         /// This will almost always be a very small number
@@ -41,13 +41,14 @@ namespace glengine {
         double calculateDeltaTime();
 
         void clearBuffers();
+
         void setLastUpdate();
 
         void renderWidgets();
+
         void updateWidgets(double deltaTime);
 
-        std::vector<Widget*> widgets;
-
+        std::vector<Widget *> widgets;
     };
 } // glengine
 

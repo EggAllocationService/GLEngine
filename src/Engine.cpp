@@ -12,7 +12,7 @@
 #include <iostream>
 
 namespace glengine {
-    static std::map<int, Engine*> Instances;
+    static std::map<int, Engine *> Instances;
 
     static void renderExec() {
         int currentWindow = glutGetWindow();
@@ -20,6 +20,7 @@ namespace glengine {
             Instances[currentWindow]->Render();
         }
     }
+
     static void updateExec(int) {
         int currentWindow = glutGetWindow();
         if (Instances.contains(currentWindow)) {
@@ -35,7 +36,7 @@ namespace glengine {
 
         Instances[windowHandle] = this;
 
-        glutTimerFunc(1000/maxFPS, updateExec, 0); // 60 fps
+        glutTimerFunc(1000 / maxFPS, updateExec, 0); // 60 fps
         glutDisplayFunc(renderExec);
 
         setLastUpdate();
@@ -47,7 +48,7 @@ namespace glengine {
 
         // remove from global instances table
         auto iter = Instances.find(windowHandle);
-        if(iter != Instances.end()) {
+        if (iter != Instances.end()) {
             Instances.erase(iter);
         }
     }
@@ -60,7 +61,7 @@ namespace glengine {
         glutPostRedisplay();
         setLastUpdate();
 
-        glutTimerFunc(1000/maxFPS, updateExec, 0);
+        glutTimerFunc(1000 / maxFPS, updateExec, 0);
     }
 
     void Engine::Render() {
@@ -73,13 +74,12 @@ namespace glengine {
 
     double Engine::calculateDeltaTime() {
         auto now = std::chrono::steady_clock::now();
-        auto time = std::chrono::duration_cast<std::chrono::duration<double>>(now - lastUpdate);
+        auto time = std::chrono::duration_cast<std::chrono::duration<double> >(now - lastUpdate);
 
         return time.count();
     }
 
-    void Engine::AddOnscreenWidget(Widget* widget)
-    {
+    void Engine::AddOnscreenWidget(Widget *widget) {
         widgets.push_back(widget);
     }
 
@@ -92,19 +92,18 @@ namespace glengine {
         lastUpdate = std::chrono::steady_clock::now();
     }
 
-    void Engine::renderWidgets()
-    {
+    void Engine::renderWidgets() {
         MatrixStack2D stack = MatrixStack2D();
 
-        for (Widget* widget : widgets) {
+        for (Widget *widget: widgets) {
             stack.Push(widget->GetTransformMatrix());
             widget->Draw(stack);
             stack.Pop();
         }
     }
-    void glengine::Engine::updateWidgets(double deltaTime)
-    {
-        for (Widget* widget : widgets) {
+
+    void Engine::updateWidgets(double deltaTime) {
+        for (Widget *widget: widgets) {
             widget->Update(deltaTime);
         }
     }

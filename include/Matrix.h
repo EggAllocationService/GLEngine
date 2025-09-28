@@ -9,11 +9,11 @@
 
 #include "Vectors.h"
 
-template <typename T, int X, int Y>
+template<typename T, int X, int Y>
 struct Matrix {
     Matrix() = default;
 
-    explicit Matrix(T initialData[X * Y] ) {
+    explicit Matrix(T initialData[X * Y]) {
         for (int i = 0; i < X * Y; i++) {
             data[i] = initialData[i];
         }
@@ -22,25 +22,25 @@ struct Matrix {
     // column-major
     T data[X * Y];
 
-    vecn<T, Y>* operator[](int column) {
+    vecn<T, Y> *operator[](int column) {
         return (vecn<T, Y> *) &data[column * Y];
     }
 
     const int2 size = int2(X, Y);
 
-    template<int X2, int Y2> Matrix<T, Y, X2> operator *(Matrix<T, X2, Y2>& other) {
+    template<int X2, int Y2>
+    Matrix<T, Y, X2> operator *(Matrix<T, X2, Y2> &other) {
         static_assert(X == Y2, "Matrix multiplication not defined for this shape!");
         Matrix<T, Y, X2> r;
 
         for (int column = 0; column < X; column++) {
-
             vecn<T, Y2> *cur_column = other[column];
             vecn<T, Y> acc = vecn<T, Y>::zero();
 
             for (int i = 0; i < Y2; i++) {
                 auto vector = *this->operator[](i);
                 auto constant = cur_column->operator[](i);
-                acc = acc + ( vector * constant);
+                acc = acc + (vector * constant);
             }
 
             for (int i = 0; i < Y; i++) {
@@ -51,7 +51,8 @@ struct Matrix {
         return r;
     }
 
-    template<int VL> vecn<T, Y> operator *(vecn<T, VL> other) {
+    template<int VL>
+    vecn<T, Y> operator *(vecn<T, VL> other) {
         static_assert(VL == X, "Incompatible shapes for matrix-vector multiply");
 
         vecn<T, Y> acc = vecn<T, Y>::zero();
@@ -63,8 +64,7 @@ struct Matrix {
         return acc;
     }
 
-    friend std::ostream& operator<<(std::ostream& os, const Matrix &m)
-    {
+    friend std::ostream &operator<<(std::ostream &os, const Matrix &m) {
         os << X << "x" << Y << " matrix:" << std::endl;
 
         for (int y = 0; y < Y; y++) {
