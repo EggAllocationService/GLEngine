@@ -216,7 +216,7 @@ struct vec4 {
         };
 
         vec_swizzle<vec4, T, 4, 0, 1, 2, 3> xyzw, rgba;
-        vec_swizzle<vec4, T, 4, 0, 1, 2, 3> wzyx, abgr;
+        vec_swizzle<vec4, T, 4, 3, 2, 1, 0> wzyx, abgr;
         vec_swizzle<vec3<T>, T, 4, 0, 1, 2> xyz, rgb;
         vec_swizzle<vec3<T>, T, 4, 2, 1, 0> zyx, bgr;
         vec_swizzle<vec2<T>, T, 4, 0, 1> xy, rg;
