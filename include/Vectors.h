@@ -3,23 +3,50 @@
 //
 #pragma once
 
-template<typename vector, typename primitive, int len, int... indicies>
+/// Helper type to allow for glsl-like vector swizzling
+/// @tparam vector the type of the swizzled vector, possibly narrowed from the source
+/// @tparam primitive is the primitive type being stored in the vector, e.g. `float`
+/// @tparam len is the number of primitive elements of the _source_ vector, *not* the swizzled vector
+/// @tparam indices are the mappings from the source lanes to each lane of the swizzled vector.
+///
+/// Example usage for a 3-wide int vector:
+/// @code
+/// union {
+///     int data[3]; // the actual storage
+///
+///     // setup parameters:
+///     // `vec2<int>` indicates this swizzled representation can be converted to a vec2<int>
+///     // `int` indicates the primitive type stored is an int, allowing for broadcast assignments (foo.xy = 3)
+///     // `3` sets the source vector width to 3 (so it fits in the union correctly)
+///     // `0, 1` indicates there are two elements in the swizzled vector, from source lane 0 and 1 respectively.
+///     vec_swizzle<vec2<int>, int, 3, 0, 1> xy;
+///
+///     // we can have a reversed version of the above by reversing the order of `indices`:
+///     vec_swizzle<vec2<int>, int, 3, 1, 0> yx;
+/// }
+/// @endcode
+template<typename vector, typename primitive, int len, int... indices>
 struct vec_swizzle {
     float data[len];
 
     vector operator=(vector rhs) {
-        return vector((data[indicies] = rhs[indicies])...);
+        return vector((data[indices] = rhs[indices])...);
     }
 
     vector operator=(primitive rhs) {
-        return vector((data[indicies] = rhs)...);
+        return vector((data[indices] = rhs)...);
     }
 
     operator vector() {
-        return vector(data[indicies]...);
+        return vector(data[indices]...);
     }
 };
 
+/// Constant-length vector, templated.
+///
+/// Useful for using in other templated code, for e.g. templated matrix multiplication
+/// @tparam T primitive type of vector
+/// @tparam LEN vector width
 template<typename T, int LEN>
 struct vecn {
     vecn() {
@@ -75,6 +102,8 @@ struct vecn {
     }
 };
 
+/// Constant-width vector, 2 lanes
+/// @tparam T primitive type
 template<typename T>
 struct vec2 {
     vec2() {
@@ -113,6 +142,8 @@ struct vec2 {
     }
 };
 
+/// Constant-width vector, 3 lanes
+/// @tparam T primitive type
 template<typename T>
 struct vec3 {
     vec3() {
@@ -159,6 +190,8 @@ struct vec3 {
     }
 };
 
+/// Constant-width vector, 4 lanes
+/// @tparam T primitive type
 template<typename T>
 struct vec4 {
     vec4() {
@@ -216,6 +249,7 @@ struct vec4 {
     }
 };
 
+// basic vector types for convenience
 typedef vec4<float> float4;
 typedef vec4<int> int4;
 
