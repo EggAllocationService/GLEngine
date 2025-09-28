@@ -14,6 +14,8 @@ namespace glengine {
 	/// </summary>
 	class Widget {
 	public:
+		Widget();
+
 		/// <summary>
 		/// Positions this widget. 0,0 is the center  
 		/// </summary>

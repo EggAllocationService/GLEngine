@@ -4,6 +4,11 @@
 
 #include "Widget.h"
 
+glengine::Widget::Widget() {
+	Position = float2(0, 0);
+	Rotation = 0;
+	Scale = float2(1, 1);
+}
 
 mat3 glengine::Widget::GetTransformMatrix()
 {

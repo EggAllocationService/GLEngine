@@ -1,4 +1,5 @@
 #include "Engine.h"
+#include "Engine.h"
 //
 // Created by Kyle Smith on 2025-09-26.
 //
@@ -38,8 +39,6 @@ namespace glengine {
         glutDisplayFunc(renderExec);
 
         setLastUpdate();
-
-        hue = 0;
     }
 
     Engine::~Engine() {
@@ -54,12 +53,9 @@ namespace glengine {
     }
 
     void Engine::Update() {
-        double delta = DeltaTime();
+        double delta = calculateDeltaTime();
 
-        hue += 360 * delta;
-        if (hue > 360) {
-            hue = 0;
-        }
+        updateWidgets(delta);
 
         glutPostRedisplay();
         setLastUpdate();
@@ -68,7 +64,6 @@ namespace glengine {
     }
 
     void Engine::Render() {
-
         clearBuffers();
 
         renderWidgets();
@@ -76,7 +71,7 @@ namespace glengine {
         glFlush();
     }
 
-    double Engine::DeltaTime() {
+    double Engine::calculateDeltaTime() {
         auto now = std::chrono::steady_clock::now();
         auto time = std::chrono::duration_cast<std::chrono::duration<double>>(now - lastUpdate);
 
@@ -101,10 +96,16 @@ namespace glengine {
     {
         MatrixStack2D stack = MatrixStack2D();
 
-        for (Widget* i : widgets) {
-            stack.Push(i->GetTransformMatrix());
-            i->Draw(stack);
+        for (Widget* widget : widgets) {
+            stack.Push(widget->GetTransformMatrix());
+            widget->Draw(stack);
             stack.Pop();
+        }
+    }
+    void glengine::Engine::updateWidgets(double deltaTime)
+    {
+        for (Widget* widget : widgets) {
+            widget->Update(deltaTime);
         }
     }
 } // glengine

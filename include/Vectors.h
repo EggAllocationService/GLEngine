@@ -115,14 +115,36 @@ struct vec3 {
         };
     };
 
-    operator T*() const {
-        return &data;
+    operator T*() {
+        return &data[0];
+    }
+};
+
+template<typename vector, typename primitive, int A, int B>
+struct vec2_swizzle
+{
+    float data[2];
+
+    vector operator=(const vector& rhs)
+    {
+        return vector(data[A] = rhs.x, data[B] = rhs.y);
+    }
+    vector operator=(const primitive& rhs) {
+        return vector(data[A] = rhs, data[B] = rhs);
+    }
+
+    operator vector()
+    {
+        return vector(data[A], data[B]);
     }
 };
 
 template <typename T>
 struct vec2 {
-    vec2() {}
+    vec2() {
+        data[0] = 0;
+        data[1] = 0;
+    }
 
     vec2(T x, T y) {
         data[0] = x;
@@ -136,10 +158,15 @@ struct vec2 {
         struct {
             T r, g;
         };
+
+        vec2_swizzle<vec2<T>, T, 0, 1> xy;
+        vec2_swizzle<vec2<T>, T, 1, 0> yx;
+        vec2_swizzle<vec2<T>, T, 0, 0> xx;
+        vec2_swizzle<vec2<T>, T, 1, 1> yy;
     };
 
-    operator T*() const {
-        return &data;
+    operator T*() {
+        return &data[0];
     }
 };
 
