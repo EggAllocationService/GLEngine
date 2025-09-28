@@ -65,7 +65,7 @@ struct Matrix {
 
     friend std::ostream& operator<<(std::ostream& os, const Matrix &m)
     {
-        os << "matrix:\n";
+        os << X << "x" << Y << " matrix:" << std::endl;
 
         for (int y = 0; y < Y; y++) {
             for (int x = 0; x < X; x++) {
