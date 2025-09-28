@@ -18,23 +18,26 @@ void RgbTriangle::Update(double DeltaTime)
 
 	Scale.xy = abs(sin(Rotation)) + 0.1;
 
+	Position.x = sin(Rotation);
+
 }
 
 void RgbTriangle::Draw(MatrixStack2D& stack)
 {
-	glColor4fv(Colors::hsv(hue, 1.0, 1.0));
+	
 
-	float3 verticies[3] = {
+	std::vector<float3> verticies = {
 		float3(-0.866, -0.5, 1.0),
 		float3(0.866, -0.5, 1.0),
 		float3(0.0, 1.0, 1.0)
 	};
 
-	glBegin(GL_POLYGON);
-	for (float3& vertex : verticies) {
-		glVertex2fv(stack * vertex);
-	}
-	glEnd();
+	glColor4fv(Colors::hsv(360 - hue, 1.0, 1.0));
+	stack.DrawRect(float2(-1.0, -1.0), float2(1.0, 1.0));
+
+	glColor4fv(Colors::hsv(hue, 1.0, 1.0));
+	stack.DrawPolygon(verticies);
+
 
 	glFlush();
 }

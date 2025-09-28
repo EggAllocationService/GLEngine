@@ -34,6 +34,16 @@ namespace glengine {
 		/// </summary>
 		float2 operator*(float2 rhs);
 
+		/// <summary>
+		/// Conveinence method for drawing a polygon, transformed by the top transform on the stack.
+		/// </summary>
+		void DrawPolygon(std::vector<float3> verticies);
+
+		/// <summary>
+		/// Draws a rectangle using point a as the bottom left and point b as the top right.
+		/// </summary>
+		void DrawRect(float2 a, float2 b);
+
 	private:
 		std::vector<mat3> stack; 
 	};

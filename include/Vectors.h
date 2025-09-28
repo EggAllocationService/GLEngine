@@ -57,6 +57,56 @@ struct vecn {
     }
 };
 
+template<typename vector, typename primitive, int A, int B>
+struct vec2_swizzle
+{
+    float data[2];
+
+    vector operator=(const vector& rhs)
+    {
+        return vector(data[A] = rhs.x, data[B] = rhs.y);
+    }
+    vector operator=(const primitive& rhs) {
+        return vector(data[A] = rhs, data[B] = rhs);
+    }
+
+    operator vector()
+    {
+        return vector(data[A], data[B]);
+    }
+};
+
+template <typename T>
+struct vec2 {
+    vec2() {
+        data[0] = 0;
+        data[1] = 0;
+    }
+
+    vec2(T x, T y) {
+        data[0] = x;
+        data[1] = y;
+    }
+    union {
+        T data[2];
+        struct {
+            T x, y;
+        };
+        struct {
+            T r, g;
+        };
+
+        vec2_swizzle<vec2<T>, T, 0, 1> xy;
+        vec2_swizzle<vec2<T>, T, 1, 0> yx;
+        vec2_swizzle<vec2<T>, T, 0, 0> xx;
+        vec2_swizzle<vec2<T>, T, 1, 1> yy;
+    };
+
+    operator T* () {
+        return &data[0];
+    }
+};
+
 template <typename T>
 struct vec4 {
     vec4 () {}
@@ -105,6 +155,13 @@ struct vec3 {
         data[1] = y;
         data[2] = z;
     }
+
+    vec3(vec2<T> xy, T z) {
+        data[0] = xy.x;
+        data[1] = xy.y;
+        data[2] = z;
+    }
+
     union {
         T data[3];
         struct {
@@ -119,57 +176,6 @@ struct vec3 {
         return &data[0];
     }
 };
-
-template<typename vector, typename primitive, int A, int B>
-struct vec2_swizzle
-{
-    float data[2];
-
-    vector operator=(const vector& rhs)
-    {
-        return vector(data[A] = rhs.x, data[B] = rhs.y);
-    }
-    vector operator=(const primitive& rhs) {
-        return vector(data[A] = rhs, data[B] = rhs);
-    }
-
-    operator vector()
-    {
-        return vector(data[A], data[B]);
-    }
-};
-
-template <typename T>
-struct vec2 {
-    vec2() {
-        data[0] = 0;
-        data[1] = 0;
-    }
-
-    vec2(T x, T y) {
-        data[0] = x;
-        data[1] = y;
-    }
-    union {
-        T data[2];
-        struct {
-            T x, y;
-        };
-        struct {
-            T r, g;
-        };
-
-        vec2_swizzle<vec2<T>, T, 0, 1> xy;
-        vec2_swizzle<vec2<T>, T, 1, 0> yx;
-        vec2_swizzle<vec2<T>, T, 0, 0> xx;
-        vec2_swizzle<vec2<T>, T, 1, 1> yy;
-    };
-
-    operator T*() {
-        return &data[0];
-    }
-};
-
 
 typedef vec4<float> float4;
 typedef vec4<int> int4;

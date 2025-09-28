@@ -1,4 +1,6 @@
 #include "MatrixStack.h"
+#include "MatrixStack.h"
+#include "engine_GLUT.h"
 #include <bit>
 
 glengine::MatrixStack2D::MatrixStack2D()
@@ -36,4 +38,25 @@ float2 glengine::MatrixStack2D::operator*(float2 rhs)
 
 	// narrow back
 	return float2(tmp.data[0], tmp.data[1]);
+}
+
+void glengine::MatrixStack2D::DrawPolygon(std::vector<float3> verticies)
+{
+	glBegin(GL_POLYGON);
+	for (float3& vertex : verticies) {
+		glVertex3fv(this->operator*(vertex));
+	}
+	glEnd();
+}
+
+void glengine::MatrixStack2D::DrawRect(float2 a, float2 b)
+{
+	std::vector<float3> verticies = {
+		float3(a, 1.0),
+		float3(a.x, b.y, 1.0),
+		float3(b, 1.0),
+		float3(b.x, a.y, 1.0)
+	};
+
+	DrawPolygon(verticies);
 }
