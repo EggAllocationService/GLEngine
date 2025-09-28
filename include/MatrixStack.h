@@ -23,7 +23,7 @@ namespace glengine {
 		void Pop();
 
 		/// <summary>
-		/// Conveinence overload for matrix-vector multiplication.
+		/// Transforms the given vector by the top matrix on the stack
 		/// </summary>
 		float3 operator*(float3 rhs);
 
