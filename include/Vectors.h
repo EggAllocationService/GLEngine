@@ -27,7 +27,7 @@
 /// @endcode
 template<typename vector, typename primitive, int len, int... indices>
 struct vec_swizzle {
-    float data[len];
+    primitive data[len];
 
     vector operator=(vector rhs) {
         return vector((data[indices] = rhs[indices])...);
