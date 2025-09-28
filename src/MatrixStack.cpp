@@ -19,12 +19,12 @@ void glengine::MatrixStack2D::Pop()
 	}
 }
 
-float3 glengine::MatrixStack2D::operator*(float3& rhs)
+float3 glengine::MatrixStack2D::operator*(float3 rhs)
 {
 	return std::bit_cast<float3>(stack.back() * std::bit_cast<vecn<float, 3>>(rhs));
 }
 
-float2 glengine::MatrixStack2D::operator*(float2& rhs)
+float2 glengine::MatrixStack2D::operator*(float2 rhs)
 {
 	// widen to 3-wide vector
 	vecn<float, 3> tmp;

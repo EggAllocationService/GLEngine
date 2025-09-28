@@ -31,6 +31,8 @@ namespace glengine {
         /// </summary>
         int maxFPS = 60;
 
+        void AddOnscreenWidget(Widget* widget);
+
     private:
         int2 windowSize;
         int windowHandle;
@@ -43,7 +45,7 @@ namespace glengine {
 
         void renderWidgets();
 
-        std::vector<Widget> widgets;
+        std::vector<Widget*> widgets;
 
     };
 } // glengine

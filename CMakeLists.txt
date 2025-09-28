@@ -20,5 +20,5 @@ elseif(${CMAKE_SYSTEM_NAME} MATCHES "Windows")
     target_link_libraries(glengine "C:\\Program Files\\freeglut\\lib\\x64\\freeglut.lib")
 endif()
 
-add_executable(test1 test/main.cpp)
+add_executable(test1 test/main.cpp "test/RgbTriangle.cpp")
 target_link_libraries(test1 PRIVATE glengine)

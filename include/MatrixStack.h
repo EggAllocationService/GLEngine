@@ -1,3 +1,4 @@
+#pragma once
 #include "Matrix.h"
 #include "Vectors.h"
 #include <vector>
@@ -24,14 +25,14 @@ namespace glengine {
 		/// <summary>
 		/// Conveinence overload for matrix-vector multiplication.
 		/// </summary>
-		float3 operator*(float3& rhs);
+		float3 operator*(float3 rhs);
 
 		/// <summary>
 		/// Conveinence overload for transforming 2d points. Internally widens to a vec3 with z = 1.0.
 		/// 
 		/// Less efficent than the float3 version.
 		/// </summary>
-		float2 operator*(float2& rhs);
+		float2 operator*(float2 rhs);
 
 	private:
 		std::vector<mat3> stack; 

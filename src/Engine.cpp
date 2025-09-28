@@ -1,3 +1,4 @@
+#include "Engine.h"
 //
 // Created by Kyle Smith on 2025-09-26.
 //
@@ -82,6 +83,11 @@ namespace glengine {
         return time.count();
     }
 
+    void Engine::AddOnscreenWidget(Widget* widget)
+    {
+        widgets.push_back(widget);
+    }
+
     void Engine::clearBuffers() {
         glColor4fv(Colors::BLACK);
         glClear(GL_COLOR_BUFFER_BIT);
@@ -95,9 +101,9 @@ namespace glengine {
     {
         MatrixStack2D stack = MatrixStack2D();
 
-        for (Widget& i : widgets) {
-            stack.Push(i.GetTransformMatrix());
-            i.Draw(stack);
+        for (Widget* i : widgets) {
+            stack.Push(i->GetTransformMatrix());
+            i->Draw(stack);
             stack.Pop();
         }
     }

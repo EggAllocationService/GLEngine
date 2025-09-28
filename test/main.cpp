@@ -6,13 +6,16 @@
 #include <iostream>
 #include "Engine.h"
 #include "engine_GLUT.h"
+#include "RgbTriangle.h"
 
 using namespace glengine;
 
 int main(int argc, char** argv) {
     glutInit(&argc, argv);
 
-    auto inst = new Engine("Hello World!", int2(300, 300));
+    auto inst = new Engine("Hello World!", int2(600, 600));
+
+    inst->AddOnscreenWidget(new RgbTriangle());
 
     glutMainLoop();
 }
