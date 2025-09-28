@@ -81,6 +81,7 @@ struct Matrix {
         Matrix m;
         for (int i = 0; i < X; i++) {
             for (int j = 0; j < Y; j++) {
+#pragma warning(suppress: 4244) // no data loss possibility here
                 m.data[i * Y + j] = i == j ? 1 : 0;
             }
         }
