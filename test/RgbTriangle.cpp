@@ -20,7 +20,7 @@ void RgbTriangle::Update(double DeltaTime) {
 }
 
 void RgbTriangle::Draw(MatrixStack2D &stack) {
-	std::vector<float3> verticies = {
+	std::vector verticies = {
 		float3(-0.866, -0.5, 1.0),
 		float3(0.866, -0.5, 1.0),
 		float3(0.0, 1.0, 1.0)

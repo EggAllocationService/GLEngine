@@ -6,7 +6,7 @@
 /// Helper type to allow for glsl-like vector swizzling
 /// @tparam vector the type of the swizzled vector, possibly narrowed from the source
 /// @tparam primitive is the primitive type being stored in the vector, e.g. `float`
-/// @tparam len is the number of primitive elements of the _source_ vector, *not* the swizzled vector
+/// @tparam len is the number of lanes in the _source_ vector, *not* the swizzled vector
 /// @tparam indices are the mappings from the source lanes to each lane of the swizzled vector.
 ///
 /// Example usage for a 3-wide int vector:

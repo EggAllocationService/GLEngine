@@ -13,7 +13,7 @@ namespace Colors {
     static float4 WHITE = float4(1.0, 1.0, 1.0, 1.0);
 
     /// <summary>
-    /// Creates a RGBA color from HSV
+    /// Creates an RGBA color from HSV
     /// </summary>
     /// <param name="h">Hue, in degrees. 0 < h < 360</param>
     /// <param name="s">Saturation, 0.0-1.0</param>

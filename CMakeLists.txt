@@ -4,8 +4,8 @@ project(GLEngine)
 set(CMAKE_CXX_STANDARD 20)
 
 add_library(glengine STATIC
-        src/Engine.cpp
-        src/Widget.cpp 
+        "src/Engine.cpp"
+        "src/Widget.cpp"
         "src/Colors.cpp" 
         "src/MatrixStack.cpp")
 
