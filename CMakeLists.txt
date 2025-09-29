@@ -14,6 +14,7 @@ target_include_directories(glengine PUBLIC include)
 if (${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
     target_link_libraries(glengine "-framework GLUT")
     target_link_libraries(glengine "-framework OpenGL")
+    SET(CMAKE_CXX_FLAGS_DEBUG "-g -Og")
 elseif(${CMAKE_SYSTEM_NAME} MATCHES "Windows")
     target_include_directories(glengine PUBLIC "C:\\Program Files\\freeglut\\include")
    
