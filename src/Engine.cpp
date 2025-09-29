@@ -23,6 +23,13 @@ namespace glengine {
         }
     }
 
+    static void reshapeExec(int x, int y) {
+        int currentWindow = glutGetWindow();
+        if (Instances.contains(currentWindow)) {
+            Instances[currentWindow]->SetWindowSize(int2(x, y));
+        }
+    }
+
     Engine::Engine(const std::string &windowName, int2 size) {
         windowSize = size;
         glutInitWindowSize(windowSize.x, windowSize.y);
@@ -33,6 +40,7 @@ namespace glengine {
 
         glutTimerFunc(1000 / maxFPS, updateExec, 0); // 60 fps
         glutDisplayFunc(renderExec);
+        glutReshapeFunc(reshapeExec);
 
         setLastUpdate();
     }
@@ -59,6 +67,11 @@ namespace glengine {
         glutTimerFunc(1000 / maxFPS, updateExec, 0);
     }
 
+    void Engine::SetWindowSize(int2 size) {
+        windowSize = size;
+        glViewport(0, 0, windowSize.x, windowSize.y);
+    }
+
     void Engine::Render() {
         clearBuffers();
 
@@ -75,7 +88,7 @@ namespace glengine {
     }
 
     void Engine::clearBuffers() {
-        glColor4fv(Colors::BLACK);
+        glClearColor(0, 0, 0, 1);
         glClear(GL_COLOR_BUFFER_BIT);
     }
 

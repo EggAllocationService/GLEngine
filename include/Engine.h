@@ -37,6 +37,8 @@ namespace glengine {
             return windowSize;
         }
 
+        void SetWindowSize(int2 size);
+
     private:
         int2 windowSize;
         int windowHandle;

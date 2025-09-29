@@ -13,7 +13,7 @@ using namespace glengine;
 int main(int argc, char **argv) {
     glutInit(&argc, argv);
 
-    auto inst = new Engine("Hello World!", int2(600, 600));
+    auto inst = new Engine("Hello World!", int2(1200, 600));
 
     inst->AddOnscreenWidget<RgbTriangle>();
 
