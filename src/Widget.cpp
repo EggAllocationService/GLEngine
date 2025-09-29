@@ -4,6 +4,8 @@
 
 #include "Widget.h"
 
+#include "GLMath.h"
+
 glengine::Widget::Widget() {
 	Position = float2(0, 0);
 	Rotation = 0;
@@ -24,10 +26,9 @@ mat3 glengine::Widget::GetTransformMatrix(int2 canvasSize) const {
 	scale[2]->set(0, -1.0f);
 	scale[2]->set(1, -1.0f);
 
-	float trigValues[9] = {cos(Rotation), sin(Rotation), 0, -sin(Rotation), cos(Rotation), 0, 0, 0, 1};
-	mat3 rotationMatrix = mat3(trigValues);
+	mat3 rotation = math::rotationMatrix(Rotation);
 
-	return translate * scale * rotationMatrix;
+	return translate * scale * rotation;
 }
 
 glengine::Engine& glengine::Widget::GetEngine() const {
