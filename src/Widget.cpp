@@ -12,19 +12,24 @@ glengine::Widget::Widget() {
 	Scale = float2(1, 1);
 }
 
-mat3 glengine::Widget::GetTransformMatrix(int2 canvasSize) const {
+void glengine::Widget::UpdateAll(double DeltaTime) {
+	Update(DeltaTime);
+	for (auto child : children) {
+		child->UpdateAll(DeltaTime);
+	}
+}
+
+mat3 glengine::Widget::GetTransformMatrix() const {
 	mat3 scale = mat3::identity();
 	mat3 translate = mat3::identity();
 
 	// set transform
-	translate[2]->set(0,  (2.0f * Position.x) / canvasSize.x);
-	translate[2]->set(1, (2.0f * Position.y) / canvasSize.y);
+	translate[2]->set(0,  Position.x);
+	translate[2]->set(1, Position.y);
 
 	// set scales
-	scale[0]->set(0, 2.0f * Scale.x / canvasSize.x);
-	scale[1]->set(1, 2.0f * Scale.y / canvasSize.y);
-	scale[2]->set(0, -1.0f);
-	scale[2]->set(1, -1.0f);
+	scale[0]->set(0, Scale.x );
+	scale[1]->set(1, Scale.y );
 
 	mat3 rotation = math::rotation2D(Rotation);
 
@@ -33,4 +38,12 @@ mat3 glengine::Widget::GetTransformMatrix(int2 canvasSize) const {
 
 glengine::Engine& glengine::Widget::GetEngine() const {
 	return *engine;
+}
+
+void glengine::Widget::RenderChildren(MatrixStack2D &stack) const {
+	for (auto child : children) {
+		stack.Push(child->GetTransformMatrix());
+		child->Draw(stack);
+		stack.Pop();
+	}
 }

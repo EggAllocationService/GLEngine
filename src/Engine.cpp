@@ -99,8 +99,18 @@ namespace glengine {
     void Engine::renderWidgets() {
         MatrixStack2D stack = MatrixStack2D();
 
+        // generate screen pixel coord -> gl coord matrix
+        mat3 screenTransform = mat3::identity();
+        // set scales
+        screenTransform[0]->set(0, 2.0f / windowSize.x);
+        screenTransform[1]->set(1, 2.0f / windowSize.y);
+        screenTransform[2]->set(0, -1.0f);
+        screenTransform[2]->set(1, -1.0f);
+
+        stack.Push(screenTransform);
+
         for (auto widget: widgets) {
-            stack.Push(widget->GetTransformMatrix(windowSize));
+            stack.Push(widget->GetTransformMatrix());
             widget->Draw(stack);
             stack.Pop();
         }
@@ -108,7 +118,7 @@ namespace glengine {
 
     void Engine::updateWidgets(double deltaTime) {
         for (auto widget: widgets) {
-            widget->Update(deltaTime);
+            widget->UpdateAll(deltaTime);
         }
     }
 } // glengine
