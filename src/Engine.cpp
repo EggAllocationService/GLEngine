@@ -16,7 +16,7 @@ namespace glengine {
         }
     }
 
-    static void updateExec() {
+    static void updateExec(int) {
         int currentWindow = glutGetWindow();
         if (Instances.contains(currentWindow)) {
             Instances[currentWindow]->Update();
@@ -38,8 +38,8 @@ namespace glengine {
 
         Instances[windowHandle] = this;
 
-       // glutTimerFunc(1000 / maxFPS, updateExec, 0); // 60 fps
-        glutIdleFunc(updateExec);
+        glutTimerFunc(1000 / maxFPS, updateExec, 0); // 60 fps
+        //glutIdleFunc(updateExec);
         glutDisplayFunc(renderExec);
         glutReshapeFunc(reshapeExec);
 
@@ -63,6 +63,9 @@ namespace glengine {
         updateWidgets(delta);
 
         setLastUpdate();
+
+        glutTimerFunc(1000 / maxFPS, updateExec, 0); // 60 fps
+        glutPostRedisplay();
     }
 
     void Engine::SetWindowSize(int2 size) {
@@ -76,7 +79,6 @@ namespace glengine {
         renderWidgets();
 
         glFlush();
-        glutPostRedisplay();
     }
 
     double Engine::calculateDeltaTime() {
