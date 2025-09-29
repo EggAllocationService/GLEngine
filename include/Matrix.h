@@ -29,7 +29,7 @@ struct Matrix {
     const int2 size = int2(X, Y);
 
     template<int X2, int Y2>
-    Matrix<T, Y, X2> operator *(Matrix<T, X2, Y2> &other) {
+    Matrix<T, Y, X2> operator *(Matrix<T, X2, Y2> other) {
         static_assert(X == Y2, "Matrix multiplication not defined for this shape!");
         Matrix<T, Y, X2> r;
 

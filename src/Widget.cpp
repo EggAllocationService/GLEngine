@@ -26,7 +26,7 @@ mat3 glengine::Widget::GetTransformMatrix(int2 canvasSize) const {
 	scale[2]->set(0, -1.0f);
 	scale[2]->set(1, -1.0f);
 
-	mat3 rotation = math::rotationMatrix(Rotation);
+	mat3 rotation = math::rotation2D(Rotation);
 
 	return translate * scale * rotation;
 }
