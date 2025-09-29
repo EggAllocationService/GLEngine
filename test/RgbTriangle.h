@@ -10,11 +10,11 @@ public:
     virtual void Update(double DeltaTime) override;
 
     virtual void Draw(MatrixStack2D &stack) override;
+    int2 size;
+    float2 velocity;
 
 private:
     float hue;
-    float2 size;
-    float2 velocity;
 
     float innerRotation;
 };

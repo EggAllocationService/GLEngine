@@ -61,7 +61,7 @@ namespace glengine {
     	template<typename T>
 	    std::shared_ptr<T> AddChildWidget() {
     		std::shared_ptr<T> widget = std::shared_ptr<T>(New<T>(engine));
-    		widget->parent = this;
+    		widget->parent = std::shared_ptr<Widget>(this);
     		children.push_back(widget);
     		return widget;
     	}

@@ -161,6 +161,12 @@ struct vec2 {
         data[1] = y;
     }
 
+    template<typename O>
+    vec2(vec2<O> other) {
+        data[0] = other[0];
+        data[1] = other[1];
+    }
+
     union {
         T data[2];
 
