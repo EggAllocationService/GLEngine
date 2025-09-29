@@ -7,6 +7,10 @@
 #include "MatrixStack.h"
 
 namespace glengine {
+	class Engine;
+}
+
+namespace glengine {
     /// <summary>
 	/// A 2D widget drawn on top of the viewport after 3D rendering.
 	/// 
@@ -20,7 +24,7 @@ namespace glengine {
 		/// Positions this widget, in pixels relative to parent.
 		/// 0,0 is bottom left
 		/// </summary>
-        int2 Position;
+        float2 Position;
 
         /// <summary>
 		/// Width and height of this widget, in pixels
@@ -37,6 +41,21 @@ namespace glengine {
         virtual void Draw(MatrixStack2D &stack) = 0;
 
         mat3 GetTransformMatrix(int2 canvasSize) const;
+
+    	template<typename T>
+    	static T *New(Engine *engine) {
+    		static_assert(std::is_base_of_v<Widget, T>, "T must derive from Widget");
+    		T *result = new T();
+    		result->engine = engine;
+    		return result;
+    	}
+    protected:
+    	/// <summary>
+    	/// Get the Engine that owns this Widget
+    	/// </summary>
+    	Engine& GetEngine() const;
+    private:
+    	Engine *engine;
     };
 }
 

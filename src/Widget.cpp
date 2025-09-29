@@ -5,7 +5,7 @@
 #include "Widget.h"
 
 glengine::Widget::Widget() {
-	Position = int2(0, 0);
+	Position = float2(0, 0);
 	Rotation = 0;
 	Scale = float2(1, 1);
 }
@@ -28,4 +28,8 @@ mat3 glengine::Widget::GetTransformMatrix(int2 canvasSize) const {
 	mat3 rotationMatrix = mat3(trigValues);
 
 	return translate * scale * rotationMatrix;
+}
+
+glengine::Engine& glengine::Widget::GetEngine() const {
+	return *engine;
 }

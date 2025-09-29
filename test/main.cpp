@@ -15,7 +15,7 @@ int main(int argc, char **argv) {
 
     auto inst = new Engine("Hello World!", int2(600, 600));
 
-    inst->AddOnscreenWidget(new RgbTriangle());
+    inst->AddOnscreenWidget<RgbTriangle>();
 
     glutMainLoop();
 

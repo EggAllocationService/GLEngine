@@ -1,15 +1,10 @@
 #include "Engine.h"
-#include "Engine.h"
 //
 // Created by Kyle Smith on 2025-09-26.
 //
-
-#include "Engine.h"
 #include "engine_GLUT.h"
 #include "Colors.h"
-#include "Widget.h"
 #include <map>
-#include <iostream>
 
 namespace glengine {
     static std::map<int, Engine *> Instances;
@@ -54,7 +49,6 @@ namespace glengine {
     }
 
     void Engine::Update() {
-        GEngine = this;
         double delta = calculateDeltaTime();
 
         updateWidgets(delta);
@@ -66,7 +60,6 @@ namespace glengine {
     }
 
     void Engine::Render() {
-        GEngine = this;
         clearBuffers();
 
         renderWidgets();
@@ -79,10 +72,6 @@ namespace glengine {
         auto time = std::chrono::duration_cast<std::chrono::duration<double> >(now - lastUpdate);
 
         return time.count();
-    }
-
-    void Engine::AddOnscreenWidget(Widget *widget) {
-        widgets.push_back(widget);
     }
 
     void Engine::clearBuffers() {

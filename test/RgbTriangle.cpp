@@ -1,16 +1,28 @@
 #include "RgbTriangle.h"
 #include "Colors.h"
+#include "Engine.h"
 #include "engine_GLUT.h"
 
 RgbTriangle::RgbTriangle() {
 	hue = 0;
-	Position = int2(300, 300);
+	Position = float2(300, 300);
+	size = int2(150, 150);
+	velocity = float2(80, 90);
 }
 
 void RgbTriangle::Update(double DeltaTime) {
 	hue += DeltaTime * 120;
 	if (hue > 360) {
 		hue = 0;
+	}
+
+	Position += velocity * DeltaTime;
+	if (Position.x + size.x > GetEngine().GetWindowSize().x || Position.x - size.x < 0) {
+		velocity.x = -velocity.x;
+	}
+
+	if (Position.y + size.y > GetEngine().GetWindowSize().y || Position.y - size.y < 0) {
+		velocity.y = -velocity.y;
 	}
 }
 

@@ -1,6 +1,7 @@
 //
 // Created by Kyle Smith on 2025-09-26.
 //
+#include <cmath>
 #pragma once
 
 /// Helper type to allow for glsl-like vector swizzling
@@ -184,6 +185,22 @@ struct vec2 {
     bool operator==(const vec2<T> &rhs) {
         return data[0] == rhs.data[0] && data[1] == rhs.data[1];
     }
+
+    vec2 operator+=(const vec2 rhs) {
+        return vec2(x += rhs.x, y += rhs.y);
+    }
+
+    vec2 operator+(const T rhs) {
+        return vec2(x += rhs, y += rhs);
+    }
+
+    vec2 operator*(const vec2 rhs) {
+        return vec2(x * rhs.x, y * rhs.y);
+    }
+
+    vec2 operator*(const T rhs) {
+        return vec2(x * rhs, y * rhs);
+    }
 };
 
 /// Constant-width vector, 3 lanes
@@ -235,6 +252,10 @@ struct vec3 {
 
     vec3 operator*(const vec3 rhs) {
         return vec3(x * rhs.x, y * rhs.y, z * rhs.z);
+    }
+
+    vec3 operator*(const T rhs) {
+        return vec3(x * rhs, y * rhs, z * rhs);
     }
 };
 
@@ -320,3 +341,8 @@ typedef vec3<int> int3;
 
 typedef vec2<float> float2;
 typedef vec2<int> int2;
+
+// utility methods
+inline int2 floor(float2 a) {
+    return int2(floor(a.x), floor(a.y));
+}

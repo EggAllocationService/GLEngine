@@ -26,7 +26,16 @@ namespace glengine {
         /// </summary>
         int maxFPS = 120;
 
-        void AddOnscreenWidget(Widget *widget);
+        template <typename T>
+        T *AddOnscreenWidget() {
+            T *widget = Widget::New<T>(this);
+            widgets.push_back(widget);
+            return widget;
+        }
+
+        int2 GetWindowSize() const {
+            return windowSize;
+        }
 
     private:
         int2 windowSize;
@@ -50,10 +59,6 @@ namespace glengine {
 
         std::vector<Widget *> widgets;
     };
-
-    /// Current Engine object.
-    /// This will be set before invoking any Update() or Draw() function.
-    static Engine *GEngine = nullptr;
 } // glengine
 
 #endif //GLENGINE_ENGINE_H

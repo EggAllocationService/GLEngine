@@ -13,4 +13,6 @@ public:
 
 private:
     float hue;
+    int2 size;
+    float2 velocity;
 };
