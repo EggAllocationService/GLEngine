@@ -29,7 +29,7 @@ namespace glengine {
         template <typename T>
         T *AddOnscreenWidget() {
             T *widget = Widget::New<T>(this);
-            widgets.push_back(widget);
+            widgets.push_back(std::shared_ptr<Widget>(widget));
             return widget;
         }
 
@@ -59,7 +59,7 @@ namespace glengine {
 
         void updateWidgets(double deltaTime);
 
-        std::vector<Widget *> widgets;
+        std::vector<std::shared_ptr<Widget>> widgets;
     };
 } // glengine
 

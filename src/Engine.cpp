@@ -99,7 +99,7 @@ namespace glengine {
     void Engine::renderWidgets() {
         MatrixStack2D stack = MatrixStack2D();
 
-        for (Widget *widget: widgets) {
+        for (auto widget: widgets) {
             stack.Push(widget->GetTransformMatrix(windowSize));
             widget->Draw(stack);
             stack.Pop();
@@ -107,7 +107,7 @@ namespace glengine {
     }
 
     void Engine::updateWidgets(double deltaTime) {
-        for (Widget *widget: widgets) {
+        for (auto widget: widgets) {
             widget->Update(deltaTime);
         }
     }
