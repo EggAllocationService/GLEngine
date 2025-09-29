@@ -54,6 +54,7 @@ namespace glengine {
     }
 
     void Engine::Update() {
+        GEngine = this;
         double delta = calculateDeltaTime();
 
         updateWidgets(delta);
@@ -65,6 +66,7 @@ namespace glengine {
     }
 
     void Engine::Render() {
+        GEngine = this;
         clearBuffers();
 
         renderWidgets();
@@ -96,7 +98,7 @@ namespace glengine {
         MatrixStack2D stack = MatrixStack2D();
 
         for (Widget *widget: widgets) {
-            stack.Push(widget->GetTransformMatrix());
+            stack.Push(widget->GetTransformMatrix(windowSize));
             widget->Draw(stack);
             stack.Pop();
         }

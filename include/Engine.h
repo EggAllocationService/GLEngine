@@ -50,6 +50,10 @@ namespace glengine {
 
         std::vector<Widget *> widgets;
     };
+
+    /// Current Engine object.
+    /// This will be set before invoking any Update() or Draw() function.
+    static Engine *GEngine = nullptr;
 } // glengine
 
 #endif //GLENGINE_ENGINE_H

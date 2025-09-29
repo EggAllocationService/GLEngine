@@ -17,12 +17,13 @@ namespace glengine {
         Widget();
 
         /// <summary>
-		/// Positions this widget. 0,0 is the center  
+		/// Positions this widget, in pixels relative to parent.
+		/// 0,0 is bottom left
 		/// </summary>
-        float2 Position;
+        int2 Position;
 
         /// <summary>
-		/// Scale multiplier for x and y axis
+		/// Width and height of this widget, in pixels
 		/// </summary>
         float2 Scale;
 
@@ -35,7 +36,7 @@ namespace glengine {
 
         virtual void Draw(MatrixStack2D &stack) = 0;
 
-        mat3 GetTransformMatrix();
+        mat3 GetTransformMatrix(int2 canvasSize) const;
     };
 }
 

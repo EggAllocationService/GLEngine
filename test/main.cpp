@@ -18,4 +18,5 @@ int main(int argc, char **argv) {
     inst->AddOnscreenWidget(new RgbTriangle());
 
     glutMainLoop();
+
 }

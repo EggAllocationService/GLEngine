@@ -232,6 +232,10 @@ struct vec3 {
         }
         return true;
     }
+
+    vec3 operator*(const vec3 rhs) {
+        return vec3(x * rhs.x, y * rhs.y, z * rhs.z);
+    }
 };
 
 /// Constant-width vector, 4 lanes
