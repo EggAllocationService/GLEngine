@@ -32,24 +32,23 @@ void glengine::widgets::Button::Draw(MatrixStack2D& stack)
 	stack.PrintText(float2(border + padding, border + padding), Text.c_str());
 	glFlush();
 
-	// setup blending and set shadow color, if not pressed
+	// setup blending and set shadow color
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glColor4fv(ShadowColor);
 
-	if (!pressed) {
-		// draw bottom edge shadow
-		stack.DrawRect(float2(border, 0), float2(Bounds.x, border));
-
-		// draw right edge shadow
-		stack.DrawRect(float2(Bounds.x - border, 0), Bounds - float2(0, border));
-	}
-	else {
+	if (pressed) {
 		// draw top edge shadow
 		stack.DrawRect(float2(border, Bounds.y - border), float2(Bounds.x - border, Bounds.y));
 
 		// draw left edge shadow
 		stack.DrawRect(float2(0, border), float2(border, Bounds.y));
+	} else {
+		// draw bottom edge shadow
+		stack.DrawRect(float2(border, 0), float2(Bounds.x, border));
+
+		// draw right edge shadow
+		stack.DrawRect(float2(Bounds.x - border, 0), Bounds - float2(0, border));
 	}
 }
 

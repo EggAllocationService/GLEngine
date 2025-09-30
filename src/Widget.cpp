@@ -8,6 +8,7 @@
 
 glengine::Widget::Widget() {
 	Position = float2(0, 0);
+	Bounds = float2(1, 1);
 	Rotation = 0;
 }
 

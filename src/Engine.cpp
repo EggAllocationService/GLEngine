@@ -5,6 +5,8 @@
 #include "engine_GLUT.h"
 #include "Colors.h"
 #include <map>
+#include <algorithm>
+#include <ranges>
 
 namespace glengine {
     static std::map<int, Engine *> Instances;
@@ -40,7 +42,7 @@ namespace glengine {
     Engine::Engine(const std::string &windowName, int2 size) {
         windowSize = size;
         glutInitWindowSize(windowSize.x, windowSize.y);
-        glutInitDisplayMode(GLUT_RGBA);
+        glutInitDisplayMode(GLUT_RGBA|GLUT_DOUBLE);
 
         windowHandle = glutCreateWindow(windowName.c_str());
 
@@ -73,7 +75,6 @@ namespace glengine {
 
         setLastUpdate();
 
-        glutTimerFunc(1000 / maxFPS, updateExec, 0); // 60 fps
         glutPostRedisplay();
     }
 
@@ -82,7 +83,7 @@ namespace glengine {
         float2 pos = float2(x, windowSize.y - y);
 
         // iterate through widgets, find first that contains that point
-        for (auto widget : widgets) {
+        for (auto widget : std::ranges::views::reverse(widgets)) {
             if (widget->Position < pos && pos < (widget->Position + widget->Bounds)) {
                 widget->Click(button, state, pos - widget->Position);
                 return;
@@ -101,6 +102,10 @@ namespace glengine {
         renderWidgets();
 
         glFlush();
+
+        glutTimerFunc(1000 / maxFPS, updateExec, 0);
+
+        glutSwapBuffers();
     }
 
     double Engine::calculateDeltaTime() {
@@ -131,10 +136,20 @@ namespace glengine {
 
         stack.Push(screenTransform);
 
-        for (auto widget: widgets) {
+        // sort widgets back-to-front
+        std::sort(widgets.begin(), widgets.end(), 
+            [](std::shared_ptr<Widget>& a, std::shared_ptr<Widget>& b) {
+                return a->ZIndex < b->ZIndex;
+            });
+
+        int rendered = 0;
+        for (auto widget : widgets) {
             stack.Push(widget->GetTransformMatrix());
             widget->Draw(stack);
             stack.Pop();
+
+            glFlush();
+            rendered++;
         }
     }
 

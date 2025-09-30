@@ -39,8 +39,11 @@ namespace glengine {
         /// Z-index for rendering/hit-testing order. Higher value means more to the front.
         /// 
         /// Items on the same Z-index are rendered in arbitrary order.
+        /// 
+        /// For child widgets, the parent is considered to be -infinity. That is, child widgets will always
+        /// be hit-tested before the parent (by default)
         /// </summary>
-        int ZIndex;
+        int ZIndex = 0;
 
         /**
          * Updates this widget and all children
