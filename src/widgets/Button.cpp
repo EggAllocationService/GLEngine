@@ -20,7 +20,7 @@ void glengine::widgets::Button::Draw(MatrixStack2D& stack)
 	// draw background
 	if (pressed) {
 		// if the button is pressed, then render everything with the shadow color
-		glColor4fv(Colors::blend(BackgroundColor, ShadowColor));
+		glColor4fv(float4(Colors::blend(BackgroundColor, ShadowColor).rgb, 1.0));
 	}
 	else {
 		glColor4fv(BackgroundColor);
