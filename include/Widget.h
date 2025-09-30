@@ -57,8 +57,12 @@ namespace glengine {
         /**
          * Handle a button click within the bounds of the widget
          * @see Widget::Bounds
+         * 
+         * @param button the GLUT button constant for the click (e.g. GLUT_LEFT_BUTTON)
+         * @param state if it was a press or release
+         * @param position relative position to this widget 
          */
-        virtual void Click(int button, int state);
+        virtual void Click(int button, int state, float2 position);
 
         mat3 GetTransformMatrix() const;
 

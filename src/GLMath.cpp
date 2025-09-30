@@ -17,3 +17,12 @@ mat3 glengine::math::scale2D(float2 scale) {
 
     return result;
 }
+
+mat3 glengine::math::translate2D(float2 translation) {
+    mat3 result = mat3::identity();
+
+    result[2]->set(0, translation.x);
+    result[2]->set(1, translation.y);
+
+    return result;
+}

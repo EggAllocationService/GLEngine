@@ -199,7 +199,6 @@ struct vec2 {
     vec2 operator*(const vec2 rhs) {
         return vec2(x * rhs.x, y * rhs.y);
     }
-
     vec2 operator*(const T rhs) {
         return vec2(x * rhs, y * rhs);
     }
@@ -207,9 +206,15 @@ struct vec2 {
     vec2 operator+(const vec2 rhs) {
         return vec2(x + rhs.x, y + rhs.y);
     }
-
     vec2 operator+(const T rhs) {
-        return vec2(x += rhs, y += rhs);
+        return vec2(x + rhs, y + rhs);
+    }
+
+    vec2 operator -(const vec2 rhs) {
+        return vec2(x - rhs.x, y - rhs.y);
+    }
+    vec2 operator-(const T rhs) {
+        return vec2(x - rhs, y - rhs);
     }
 
     vec2 operator-() {

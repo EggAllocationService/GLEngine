@@ -18,9 +18,15 @@ void glengine::Widget::UpdateAll(double DeltaTime) {
 	}
 }
 
-void glengine::Widget::Click(int button, int state)
+void glengine::Widget::Click(int button, int state, float2 position)
 {
-	// no default click handler
+	// by default, see if there's any child elements we can pass the event to
+
+	for (auto child : children) {
+		if (child->Position < position && position < (child->Position + child->Bounds)) {
+			child->Click(button, state, position - child->Position);
+		}
+	}
 }
 
 mat3 glengine::Widget::GetTransformMatrix() const {

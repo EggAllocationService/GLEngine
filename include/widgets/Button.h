@@ -2,6 +2,7 @@
 
 #include "Widget.h"
 #include <string>
+#include <functional>
 
 namespace glengine::widgets {
 	class Button : public Widget {
@@ -10,15 +11,30 @@ namespace glengine::widgets {
 
 		virtual void Draw(MatrixStack2D& stack) override;
 
-		virtual void Click(int button, int state) override;
+		virtual void Click(int button, int state, float2 position) override;
 
 		void SetText(std::string newText);
+		
+		void SetSpacing(int padding, int border);
+
+		void SetClickListener(std::function<void(int button, int state)> listener) {
+			onClick = listener;
+		}
 
 		float4 BackgroundColor = float4(1, 1, 1, 1);
 
 		float4 TextColor = float4(0, 0, 0, 1);
 
 		float4 ShadowColor = float4(0, 0, 0, 0.3);
+
+	protected:
+		virtual float2 CalculateSize() const;
+
+		virtual void Update(double DeltaTime) override;
+
+		std::string Text;
+		
+		std::function<void(int button, int state)> onClick;
 
 		/// <summary>
 		/// Padding between shadow/border and text
@@ -29,12 +45,5 @@ namespace glengine::widgets {
 		/// Width of border/shadow
 		/// </summary>
 		int Border;
-	protected:
-		virtual float2 CalculateSize() const;
-
-		virtual void Update(double DeltaTime) override;
-
-		std::string Text;
-		
 	};
 };

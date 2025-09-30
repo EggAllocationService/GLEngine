@@ -16,4 +16,10 @@ namespace glengine::math {
      * @param scale amount to scale each axis by
      */
     mat3 scale2D(float2 scale);
+
+    /**
+     * Creates a 2d translate transform matrix, using the given x/y values
+     * @param scale amount to translate each axis by
+     */
+    mat3 translate2D(float2 translation);
 }

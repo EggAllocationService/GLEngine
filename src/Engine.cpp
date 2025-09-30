@@ -84,7 +84,7 @@ namespace glengine {
         // iterate through widgets, find first that contains that point
         for (auto widget : widgets) {
             if (widget->Position < pos && pos < (widget->Position + widget->Bounds)) {
-                widget->Click(button, state);
+                widget->Click(button, state, pos - widget->Position);
                 return;
             }
         }

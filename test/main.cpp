@@ -8,6 +8,7 @@
 #include "Engine.h"
 #include "engine_GLUT.h"
 #include "RgbTriangle.h"
+#include <Colors.h>
 
 using namespace glengine;
 
@@ -21,8 +22,12 @@ int main(int argc, char **argv) {
     auto button = inst->AddOnscreenWidget<widgets::Button>();
 
     button->SetText("Click Me!");
-    button->Border = 2;
-    button->Padding = 5;
+    button->SetSpacing(5, 2);
+    button->SetClickListener([=](int kind, int state) {
+            if (kind == GLUT_LEFT_BUTTON && state == GLUT_DOWN) {
+                button->BackgroundColor = Colors::hsv((rand() / (float)RAND_MAX) * 360, 1.0, 1.0);
+            }
+        });
 
     button->Position = float2(100, 100);
 

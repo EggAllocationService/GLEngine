@@ -31,16 +31,16 @@ void glengine::widgets::Button::Draw(MatrixStack2D& stack)
 	glColor4fv(ShadowColor);
 
 	// draw bottom edge shadow
-	stack.DrawRect(float2(1, 1), float2(Bounds.x, Border));
+	stack.DrawRect(float2(Border, 0), float2(Bounds.x, Border));
 
 	// draw right edge shadow
-	stack.DrawRect(float2(Bounds.x - Border, 0), Bounds);
+	stack.DrawRect(float2(Bounds.x - Border, 0), Bounds - float2(0, Border));
 }
 
-void glengine::widgets::Button::Click(int button, int state)
+void glengine::widgets::Button::Click(int button, int state, float2 position)
 {
-	if (button == GLUT_LEFT_BUTTON && state == GLUT_UP) {
-		BackgroundColor = Colors::hsv((rand() / (float) RAND_MAX) * 360, 1.0, 1.0);
+	if (onClick != nullptr) {
+		onClick(button, state);
 	}
 }
 
@@ -50,10 +50,18 @@ void glengine::widgets::Button::SetText(std::string newText)
 	Bounds = CalculateSize();
 }
 
+void glengine::widgets::Button::SetSpacing(int padding, int border)
+{
+	Padding = padding;
+	Border = border;
+
+	Bounds = CalculateSize();
+}
+
 float2 glengine::widgets::Button::CalculateSize() const
 {
 	const int characterWidth = 8; // using 8x13 font
-	const int characterHeight = 13;
+	const int characterHeight = 10;
 
 	return float2(
 		// x = (Border + Padding) + (characterWidth * string length) + (Border + Padding)

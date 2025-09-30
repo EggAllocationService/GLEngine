@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Widget.h"
+#include "widgets/Button.h"
 using namespace glengine;
 
 class RgbTriangle : public Widget {
@@ -17,4 +18,8 @@ private:
     float hue;
 
     float innerRotation;
+
+    float rotationScalar = 1.0f;
+
+    std::shared_ptr<widgets::Button> button;
 };
