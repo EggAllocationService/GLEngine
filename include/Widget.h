@@ -17,6 +17,7 @@ namespace glengine {
     class Widget {
     public:
         Widget();
+    	virtual ~Widget() = default;
 
         /// <summary>
 		/// Positions this widget, in pixels relative to parent.

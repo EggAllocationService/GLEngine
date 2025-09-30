@@ -14,7 +14,7 @@ RgbTriangle::RgbTriangle() {
 	button = AddChildWidget<widgets::Button>();
 
 	button->SetText("Reverse Direction");
-	button->SetClickListener([=](int button, int state) {
+	button->SetClickListener([this](int button, int state) {
 			if (button == GLUT_LEFT_BUTTON && state == GLUT_UP) {
 				this->rotationScalar *= -1.0;
 			}
