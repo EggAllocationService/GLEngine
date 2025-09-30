@@ -50,14 +50,25 @@ namespace glengine {
 
         mat3 GetTransformMatrix() const;
 
+        /**
+         * Create a new widget instance for T, owned by `engine`
+         */
     	template<typename T>
     	static T *New(Engine *engine) {
     		static_assert(std::is_base_of_v<Widget, T>, "T must derive from Widget");
     		T *result = new T();
     		result->engine = engine;
+
+            for (auto child : result->GetChildren()) {
+                // make sure to setup engine reference correctly for child widgets added in constructor
+                child->engine = engine;
+            }
     		return result;
     	}
 
+        /**
+         * Add a child widget to this.
+         */
     	template<typename T>
 	    std::shared_ptr<T> AddChildWidget() {
     		std::shared_ptr<T> widget = std::shared_ptr<T>(New<T>(engine));

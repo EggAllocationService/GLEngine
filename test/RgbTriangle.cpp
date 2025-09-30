@@ -64,12 +64,6 @@ void RgbTriangle::Draw(MatrixStack2D &stack) {
 	}
 	glEnd();
 
-	// make another inner rotating square
-	stack.Push( math::scale2D(float2(0.5, 0.5)) * math::rotation2D(-2 * innerRotation));
-
-	RenderChildren(stack);
-
-	stack.Pop();
 	stack.Pop();
 
 	glFlush();

@@ -354,5 +354,5 @@ typedef vec2<int> int2;
 
 // utility methods
 inline int2 floor(float2 a) {
-    return int2(floor(a.x), floor(a.y));
+    return int2((int)floor(a.x), (int)floor(a.y));
 }
