@@ -30,6 +30,7 @@ int main(int argc, char **argv) {
         });
 
     button->Position = float2(100, 100);
+    button->Toggle = true;
 
     glutMainLoop();
 

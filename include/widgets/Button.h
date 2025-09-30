@@ -21,11 +21,22 @@ namespace glengine::widgets {
 			onClick = listener;
 		}
 
+		bool IsPressed() const {
+			return pressed;
+		}
+
 		float4 BackgroundColor = float4(1, 1, 1, 1);
 
 		float4 TextColor = float4(0, 0, 0, 1);
 
 		float4 ShadowColor = float4(0, 0, 0, 0.3);
+
+		/// <summary>
+		/// Whether or not this button should act as a toggle button.
+		/// 
+		/// When true, the click listener `state` parameter will be GLUT_DOWN if the button is toggled on, or GLUT_UP otherwise.
+		/// </summary>
+		bool Toggle = false; 
 
 	protected:
 		virtual float2 CalculateSize() const;
@@ -39,11 +50,13 @@ namespace glengine::widgets {
 		/// <summary>
 		/// Padding between shadow/border and text
 		/// </summary>
-		int Padding;
+		int padding;
 
 		/// <summary>
 		/// Width of border/shadow
 		/// </summary>
-		int Border;
+		int border;
+
+		bool pressed;
 	};
 };

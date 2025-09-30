@@ -20,4 +20,12 @@ namespace Colors {
     /// <param name="v">Value, 0.0-1.0</param>
     /// <returns>A rgba color. Alpha will always be 1.0</returns>
     float4 hsv(int h, float s, float v);
+
+    /// <summary>
+    /// Blends two RGBA colors.
+    /// (bottom * (1-top.a)) + (top * top.a)
+    /// </summary>
+    /// <param name="bottom">color on the "bottom"</param>
+    /// <param name="top">color being overlaid over the "bottom"</param>
+    float4 blend(float4 bottom, float4 top);
 }
