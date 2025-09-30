@@ -9,7 +9,6 @@
 glengine::Widget::Widget() {
 	Position = float2(0, 0);
 	Rotation = 0;
-	Scale = float2(1, 1);
 }
 
 void glengine::Widget::UpdateAll(double DeltaTime) {
@@ -19,21 +18,22 @@ void glengine::Widget::UpdateAll(double DeltaTime) {
 	}
 }
 
+void glengine::Widget::Click(int button, int state)
+{
+	// no default click handler
+}
+
 mat3 glengine::Widget::GetTransformMatrix() const {
-	mat3 scale = mat3::identity();
 	mat3 translate = mat3::identity();
 
 	// set transform
 	translate[2]->set(0,  Position.x);
 	translate[2]->set(1, Position.y);
 
-	// set scales
-	scale[0]->set(0, Scale.x );
-	scale[1]->set(1, Scale.y );
 
 	mat3 rotation = math::rotation2D(Rotation);
 
-	return translate * scale * rotation;
+	return translate * rotation;
 }
 
 glengine::Engine& glengine::Widget::GetEngine() const {

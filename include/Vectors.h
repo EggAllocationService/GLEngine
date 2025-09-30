@@ -200,16 +200,24 @@ struct vec2 {
         return vec2(x * rhs.x, y * rhs.y);
     }
 
-    vec2 operator+(const T rhs) {
-        return vec2(x += rhs, y += rhs);
-    }
-
     vec2 operator*(const T rhs) {
         return vec2(x * rhs, y * rhs);
     }
 
+    vec2 operator+(const vec2 rhs) {
+        return vec2(x + rhs.x, y + rhs.y);
+    }
+
+    vec2 operator+(const T rhs) {
+        return vec2(x += rhs, y += rhs);
+    }
+
     vec2 operator-() {
         return vec2(-x, -y);
+    }
+
+    bool operator<(vec2 other) {
+        return x < other.x && y < other.y;
     }
 };
 
@@ -320,11 +328,14 @@ struct vec4 {
         return &x;
     }
 
-    vec4 operator *(const vec4<T> &other) {
+    vec4 operator *(const vec4<T> other) {
         return vec4(x * other.x, y * other.y, z * other.z, w * other.w);
     }
+    vec4 operator *(const T other) {
+        return vec4(x * other, y * other, z * other, w * other);
+    }
 
-    vec4 operator +(const vec4<T> &other) {
+    vec4 operator +(const vec4<T> other) {
         return vec4(x + other.x, y + other.y, z + other.z, w + other.w);
     }
 

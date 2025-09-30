@@ -64,6 +64,9 @@ void RgbTriangle::Draw(MatrixStack2D &stack) {
 	}
 	glEnd();
 
+	glColor4fv(Colors::BLACK);
+	stack.PrintText(float2(0, 0), "Hello World!");
+
 	stack.Pop();
 
 	glFlush();

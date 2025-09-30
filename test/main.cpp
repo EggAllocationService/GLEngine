@@ -3,6 +3,7 @@
 //
 
 #include "Matrix.h"
+#include "widgets/Button.h"
 #include <iostream>
 #include "Engine.h"
 #include "engine_GLUT.h"
@@ -17,6 +18,14 @@ int main(int argc, char **argv) {
     inst->maxFPS = 165;
 
     auto widget = inst->AddOnscreenWidget<RgbTriangle>();
+    auto button = inst->AddOnscreenWidget<widgets::Button>();
+
+    button->SetText("Click Me!");
+    button->Border = 2;
+    button->Padding = 5;
+
+    button->Position = float2(100, 100);
+
     glutMainLoop();
 
 }

@@ -21,6 +21,8 @@ namespace glengine {
 
         void Update();
 
+        void Click(int button, int state, int x, int y);
+
         /// <summary>
         /// Target update interval
         /// </summary>

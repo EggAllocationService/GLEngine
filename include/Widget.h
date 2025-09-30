@@ -13,8 +13,6 @@ namespace glengine {
 namespace glengine {
     /// <summary>
 	/// A 2D widget drawn on top of the viewport after 3D rendering.
-	/// 
-	/// 
 	/// </summary>
     class Widget {
     public:
@@ -27,14 +25,22 @@ namespace glengine {
         float2 Position;
 
         /// <summary>
-		/// Width and height of this widget, in pixels
+		/// Width and height of this widget, in pixels.
+        /// This is used for hit-testing mouse events
 		/// </summary>
-        float2 Scale;
+        float2 Bounds;
 
         /// <summary>
 		/// Clockwise rotation, in radians.
 		/// </summary>
         float Rotation;
+
+        /// <summary>
+        /// Z-index for rendering/hit-testing order. Higher value means more to the front.
+        /// 
+        /// Items on the same Z-index are rendered in arbitrary order.
+        /// </summary>
+        int ZIndex;
 
         /**
          * Updates this widget and all children
@@ -47,6 +53,12 @@ namespace glengine {
          * @param stack a matrix stack to help position vertices in an appropriate location
          */
         virtual void Draw(MatrixStack2D &stack) = 0;
+
+        /**
+         * Handle a button click within the bounds of the widget
+         * @see Widget::Bounds
+         */
+        virtual void Click(int button, int state);
 
         mat3 GetTransformMatrix() const;
 

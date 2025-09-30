@@ -37,12 +37,15 @@ namespace glengine {
         /// <summary>
 		/// Conveinence method for drawing a polygon, transformed by the top transform on the stack.
 		/// </summary>
-        void DrawPolygon(std::vector<float3> verticies);
+        void DrawPolygon(std::vector<float3>& verticies);
 
         /// <summary>
 		/// Draws a rectangle using point a as the bottom left and point b as the top right.
 		/// </summary>
         void DrawRect(float2 a, float2 b);
+
+        void PrintText(float2 position, const char* text);
+
 
     private:
         std::vector<mat3> stack;

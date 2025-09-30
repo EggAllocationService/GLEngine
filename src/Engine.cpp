@@ -30,9 +30,17 @@ namespace glengine {
         }
     }
 
+    static void clickExec(int button, int state, int x, int y) {
+        int currentWindow = glutGetWindow();
+        if (Instances.contains(currentWindow)) {
+            Instances[currentWindow]->Click(button, state, x, y);
+        }
+    }
+
     Engine::Engine(const std::string &windowName, int2 size) {
         windowSize = size;
         glutInitWindowSize(windowSize.x, windowSize.y);
+        glutInitDisplayMode(GLUT_RGBA);
 
         windowHandle = glutCreateWindow(windowName.c_str());
 
@@ -42,6 +50,7 @@ namespace glengine {
         //glutIdleFunc(updateExec);
         glutDisplayFunc(renderExec);
         glutReshapeFunc(reshapeExec);
+        glutMouseFunc(clickExec);
 
         setLastUpdate();
     }
@@ -66,6 +75,19 @@ namespace glengine {
 
         glutTimerFunc(1000 / maxFPS, updateExec, 0); // 60 fps
         glutPostRedisplay();
+    }
+
+    void Engine::Click(int button, int state, int x, int y)
+    {
+        float2 pos = float2(x, windowSize.y - y);
+
+        // iterate through widgets, find first that contains that point
+        for (auto widget : widgets) {
+            if (widget->Position < pos && pos < (widget->Position + widget->Bounds)) {
+                widget->Click(button, state);
+                return;
+            }
+        }
     }
 
     void Engine::SetWindowSize(int2 size) {
@@ -102,7 +124,6 @@ namespace glengine {
 
         // generate screen pixel coord -> gl coord matrix
         mat3 screenTransform = mat3::identity();
-        // set scales
         screenTransform[0]->set(0, 2.0f / windowSize.x);
         screenTransform[1]->set(1, 2.0f / windowSize.y);
         screenTransform[2]->set(0, -1.0f);
