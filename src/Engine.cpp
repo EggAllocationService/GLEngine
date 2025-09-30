@@ -48,7 +48,7 @@ namespace glengine {
 
         Instances[windowHandle] = this;
 
-        glutTimerFunc(1000 / maxFPS, updateExec, 0); // 60 fps
+        glutTimerFunc(1000 / maxFPS, updateExec, 0);
         //glutIdleFunc(updateExec);
         glutDisplayFunc(renderExec);
         glutReshapeFunc(reshapeExec);
@@ -76,6 +76,7 @@ namespace glengine {
         setLastUpdate();
 
         glutPostRedisplay();
+        glutTimerFunc(1000/maxFPS, updateExec, 0);
     }
 
     void Engine::Click(int button, int state, int x, int y)
@@ -102,8 +103,6 @@ namespace glengine {
         renderWidgets();
 
         glFlush();
-
-        glutTimerFunc(0, updateExec, 0);
 
         glutSwapBuffers();
     }
