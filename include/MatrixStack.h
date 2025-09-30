@@ -44,6 +44,11 @@ namespace glengine {
 		/// </summary>
         void DrawRect(float2 a, float2 b);
 
+        /// <summary>
+        /// Prints the given text to the screen, at `position`.
+        /// 
+        /// The font is fixed-size and will not be affected by scale or rotation transforms
+        /// </summary>
         void PrintText(float2 position, const char* text);
 
 

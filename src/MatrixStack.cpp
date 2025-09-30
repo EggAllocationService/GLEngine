@@ -18,7 +18,12 @@ void glengine::MatrixStack2D::Pop() {
 }
 
 float3 glengine::MatrixStack2D::operator*(float3 rhs) {
-    return std::bit_cast<float3>(stack.back() * std::bit_cast<vecn<float, 3> >(rhs));
+    // need to convert between float3 and vecn<float, 3> as matrix multiplication is only defined
+    // with vecn instantiations, so the compiler can generate the most optimal machine code for each size
+
+    // in this case std::bit_cast will be a no-op as float3 and vecn<float, 3> are the same size
+    // and are both value types
+    return std::bit_cast<float3>(stack.back() * std::bit_cast<vecn<float, 3>>(rhs));
 }
 
 float2 glengine::MatrixStack2D::operator*(float2 rhs) {

@@ -26,29 +26,38 @@ struct Matrix {
         return (vecn<T, Y> *) &data[column * Y];
     }
 
-    const int2 size = int2(X, Y);
-
+    // matrix-matrix multiply 
     template<int X2, int Y2>
     Matrix<T, Y, X2> operator *(Matrix<T, X2, Y2> other) {
         static_assert(X == Y2, "Matrix multiplication not defined for this shape!");
-        Matrix<T, Y, X2> r;
+        Matrix<T, Y, X2> result;
 
-        for (int column = 0; column < X; column++) {
+        // for each of the columns in the right-hand matrix...
+        for (int column = 0; column < X2; column++) {
+            // grab that column from the right-hand matrix as a vector...
             vecn<T, Y2> *cur_column = other[column];
+
+            // initialize an accumulator...
             vecn<T, Y> acc = vecn<T, Y>::zero();
 
-            for (int i = 0; i < Y2; i++) {
+            // then for each column in the left-hand vector...
+            for (int i = 0; i < X; i++) {
+                // multiply that column by the matching row in the right-hand column...
                 auto vector = *this->operator[](i);
                 auto constant = cur_column->operator[](i);
-                acc = acc + (vector * constant);
+                auto transformed = (vector * constant);
+
+                // then add to the accumulator
+                acc = acc + transformed;
             }
 
+            // finally, copy the transformed column to the output matrix
             for (int i = 0; i < Y; i++) {
-                r.data[(column * Y) + i] = acc.data[i];
+                result.data[(column * Y) + i] = acc.data[i];
             }
         }
 
-        return r;
+        return result;
     }
 
     template<int VL>
