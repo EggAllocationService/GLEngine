@@ -103,7 +103,7 @@ namespace glengine {
 
         glFlush();
 
-        glutTimerFunc(1000 / maxFPS, updateExec, 0);
+        glutTimerFunc(0, updateExec, 0);
 
         glutSwapBuffers();
     }

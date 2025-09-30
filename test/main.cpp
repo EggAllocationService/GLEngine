@@ -4,6 +4,7 @@
 
 #include "Matrix.h"
 #include "widgets/Button.h"
+#include "widgets/PerfCounter.h"
 #include <iostream>
 #include "Engine.h"
 #include "engine_GLUT.h"
@@ -16,10 +17,12 @@ int main(int argc, char **argv) {
     glutInit(&argc, argv);
 
     auto inst = new Engine("Hello World!", int2(1200, 600));
-    inst->maxFPS = 60;
+    inst->maxFPS = 9999999;
 
     auto widget = inst->AddOnscreenWidget<RgbTriangle>();
     auto button = inst->AddOnscreenWidget<widgets::Button>();
+    auto counter = inst->AddOnscreenWidget<widgets::PerfCounter>();
+    counter->Position = float2(10, 10);
 
     button->SetText("Click Me!");
     button->SetSpacing(5, 2);

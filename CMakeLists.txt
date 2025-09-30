@@ -9,7 +9,9 @@ add_library(glengine STATIC
         "src/Colors.cpp" 
         "src/MatrixStack.cpp"
         src/GLMath.cpp
-        include/GLMath.h "src/widgets/Button.cpp")
+        include/GLMath.h 
+        "src/widgets/Button.cpp" 
+        "src/widgets/PerfCounter.cpp")
 
 target_include_directories(glengine PUBLIC include)
 
