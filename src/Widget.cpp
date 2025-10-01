@@ -78,6 +78,19 @@ float2 glengine::Widget::GetEffectiveRelativePosition() const {
 	return Position + calculateAnchorOffset(this->Anchor, GetEnclosingBounds(), this->Bounds);
 }
 
+float2 glengine::Widget::GetEffectiveAbsolutePosition() const {
+	auto base = GetEffectiveRelativePosition();
+
+	// Go up until we reach the window itself, adding relative positions along the way
+	std::shared_ptr<Widget> current = parent;
+	while (current != nullptr) {
+		base += parent->GetEffectiveRelativePosition();
+		current = parent->GetParent();
+	}
+
+	return base;
+}
+
 float2 glengine::Widget::GetEnclosingBounds() const {
 	return (parent == nullptr) ? float2(engine->GetWindowSize()) : parent->Bounds;
 }

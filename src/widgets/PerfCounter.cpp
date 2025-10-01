@@ -48,7 +48,7 @@ void glengine::widgets::PerfCounter::Draw(MatrixStack2D& stack)
 	stack.PrintText(float2(0, 0), text.c_str());
 }
 
-void glengine::widgets::PerfCounter::Click(int button, int state) {
+void glengine::widgets::PerfCounter::Click(int button, int state, float2 pos) {
 	if (state == GLUT_UP) {
 		showInverse = !showInverse;
 	}

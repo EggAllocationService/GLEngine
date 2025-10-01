@@ -25,11 +25,11 @@ namespace glengine::input {
         }
     }
 
-    void MouseManager::Click(int button, int action) {
+    void MouseManager::Click(int button, int action, float2 pos) {
         auto target = hoveredWidget.lock();
 
         if (target != nullptr) {
-            target->Click(button, action);
+            target->Click(button, action, pos - target->GetEffectiveAbsolutePosition());
         }
 
         clicking = action == GLUT_DOWN;

@@ -51,9 +51,12 @@ void glengine::widgets::Button::Draw(MatrixStack2D& stack)
 		// draw right edge shadow
 		stack.DrawRect(float2(Bounds.x - border, 0), Bounds - float2(0, border));
 	}
+
+	glColor4fv(Colors::GREEN);
+	stack.DrawRect(mouseClickPos - float2(10, 10), mouseClickPos + float2(10, 10));
 }
 
-void glengine::widgets::Button::Click(int button, int state)
+void glengine::widgets::Button::Click(int button, int state, float2 pos)
 {
 	if (Toggle) {
 		if (state == GLUT_UP) {

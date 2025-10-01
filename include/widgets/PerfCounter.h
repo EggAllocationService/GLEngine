@@ -10,7 +10,7 @@ namespace glengine::widgets {
 
 		void Update(double DeltaTime) override;
 		void Draw(MatrixStack2D& stack) override;
-		void Click(int button, int state) override;
+		void Click(int button, int state, float2 pos) override;
 
 		float4 TextColor = Colors::GREEN;
 	private:

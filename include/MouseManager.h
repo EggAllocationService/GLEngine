@@ -30,7 +30,7 @@ namespace glengine::input {
         void HandleMotion(float2 position);
 
         /// GLUT click callback
-        void Click(int button, int action);
+        void Click(int button, int action, float2 pos);
 
         /// Called every frame to check that
         void Update(double DeltaTime);

@@ -22,4 +22,15 @@ namespace glengine::math {
      * @param scale amount to translate each axis by
      */
     mat3 translate2D(float2 translation);
+    
+    template<typename T>
+    struct lerp {
+        T a;
+        T b;
+        float c;
+
+        explicit operator T() const {
+            return a * (1 - c) + (b * c);
+        }
+    };
 }

@@ -92,7 +92,7 @@ namespace glengine {
          * @param button the GLUT button constant for the click (e.g. GLUT_LEFT_BUTTON)
          * @param state if it was a press or release
          */
-        virtual void Click(int button, int state) {}
+        virtual void Click(int button, int state, float2 pos) {}
 
         /**
          * Called by the engine when the user's mouse passes enters or leaves the
@@ -108,12 +108,17 @@ namespace glengine {
          * @param bounds the bounds of the parent, for anchor calculations
          * @return the transform matrix for this widget's position and rotation
          */
-        mat3 GetTransformMatrix() const;
+        [[nodiscard]] mat3 GetTransformMatrix() const;
 
         /**
          * Computes the effective relative position of this widget, applying anchoring
          */
-        float2 GetEffectiveRelativePosition() const;
+        [[nodiscard]] float2 GetEffectiveRelativePosition() const;
+
+        /**
+         * Computes the effective absolute window-space position of this widget, applying anchoring
+         */
+        [[nodiscard]] float2 GetEffectiveAbsolutePosition() const;
 
         /**
          * Gets the enclosing bounds of this widget

@@ -11,7 +11,7 @@ namespace glengine::widgets {
 
 		void Draw(MatrixStack2D& stack) override;
 
-		void Click(int button, int state) override;
+		void Click(int button, int state, float2 pos) override;
 
 		void SetText(std::string newText);
 		
@@ -32,7 +32,7 @@ namespace glengine::widgets {
 		float4 ShadowColor = float4(0, 0, 0, 0.3);
 
 		/// <summary>
-		/// Whether or not this button should act as a toggle button.
+		/// Whether this button should act as a toggle button.
 		/// 
 		/// When true, the click listener `state` parameter will be GLUT_DOWN if the button is toggled on, or GLUT_UP otherwise.
 		/// </summary>

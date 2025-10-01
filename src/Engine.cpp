@@ -36,7 +36,11 @@ namespace glengine {
     static void clickExec(int button, int state, int x, int y) {
         int currentWindow = glutGetWindow();
         if (Instances.contains(currentWindow)) {
-            Instances[currentWindow]->GetMouseManager()->Click(button, state);
+            // have to invert y-axis
+            float2 pos = float2(x, y);
+            pos.y = Instances[currentWindow]->GetWindowSize().y - pos.y;
+
+            Instances[currentWindow]->GetMouseManager()->Click(button, state, pos);
         }
     }
 
