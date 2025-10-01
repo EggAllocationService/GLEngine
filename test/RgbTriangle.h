@@ -12,7 +12,6 @@ public:
 
     virtual void Draw(MatrixStack2D &stack) override;
     int2 size;
-    float2 velocity;
 
 private:
     float hue;
@@ -20,6 +19,10 @@ private:
     float innerRotation;
 
     float rotationScalar = 1.0f;
+
+    float2 clickPos;
+
+    bool pause;
 
     std::shared_ptr<widgets::Button> button;
 };

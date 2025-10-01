@@ -20,13 +20,16 @@ int main(int argc, char **argv) {
     inst->MaxFPS = 999;
 
     auto widget = inst->AddOnscreenWidget<RgbTriangle>();
+    widget->Anchor = MIDDLE_MIDDLE;
+
     auto button = inst->AddOnscreenWidget<widgets::Button>();
     auto counter = inst->AddOnscreenWidget<widgets::PerfCounter>();
-    counter->Position = float2(10, 10);
+    counter->Position = float2(10, -10);
+    counter->Anchor = TOP_LEFT;
 
     button->SetText("Click Me!");
     button->SetSpacing(5, 2);
-    button->SetClickListener([=](int kind, int state) {
+    button->SetClickListener([=](int kind, int state, float2 pos) {
             if (kind == GLUT_LEFT_BUTTON && state == GLUT_DOWN) {
                 int hue = (rand() / (float)RAND_MAX) * 360;
                 button->BackgroundColor = Colors::hsv(hue, 1.0, 1.0);
@@ -39,7 +42,6 @@ int main(int argc, char **argv) {
         });
 
     button->Position = float2(0, 100);
-    button->Toggle = true;
     button->Anchor = BOTTOM_MIDDLE;
     button->ZIndex = 100;
 

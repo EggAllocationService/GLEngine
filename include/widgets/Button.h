@@ -32,6 +32,12 @@ namespace glengine::widgets {
 		float4 ShadowColor = float4(0, 0, 0, 0.3);
 
 		/// <summary>
+		/// The minimum width of the button.
+		/// If the button's width is less than this, padding will be added to make up
+		/// </summary>
+		float MinimumWidth = 0.0;
+
+		/// <summary>
 		/// Whether this button should act as a toggle button.
 		/// 
 		/// When true, the click listener `state` parameter will be GLUT_DOWN if the button is toggled on, or GLUT_UP otherwise.

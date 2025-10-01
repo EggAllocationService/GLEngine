@@ -17,7 +17,7 @@ void glengine::widgets::Button::Update(double DeltaTime)
 
 void glengine::widgets::Button::Draw(MatrixStack2D& stack)
 {
-	
+
 	// draw background
 	if (pressed) {
 		// if the button is pressed, then render everything with the shadow color
@@ -29,8 +29,9 @@ void glengine::widgets::Button::Draw(MatrixStack2D& stack)
 	stack.DrawRect(float2(0, 0), Bounds);
 
 	// draw text
+	float textWidth = 8 * Text.length();
 	glColor4fv(TextColor);
-	stack.PrintText(float2(border + padding, border + padding), Text.c_str());
+	stack.PrintText(float2(Bounds.x / 2 - textWidth / 2, border + padding), Text.c_str());
 	glFlush();
 
 	// setup blending and set shadow color
@@ -51,9 +52,6 @@ void glengine::widgets::Button::Draw(MatrixStack2D& stack)
 		// draw right edge shadow
 		stack.DrawRect(float2(Bounds.x - border, 0), Bounds - float2(0, border));
 	}
-
-	glColor4fv(Colors::GREEN);
-	stack.DrawRect(mouseClickPos - float2(10, 10), mouseClickPos + float2(10, 10));
 }
 
 void glengine::widgets::Button::Click(int button, int state, float2 pos)
@@ -91,12 +89,15 @@ float2 glengine::widgets::Button::CalculateSize() const
 	const int characterWidth = 8; // using 8x13 font
 	const int characterHeight = 10;
 
-	return float2(
+	auto result = float2(
 		// x = (Border + Padding) + (characterWidth * string length) + (Border + Padding)
 		(2.0 * (border + padding)) + (characterWidth * Text.length()),
 
 		// y = (Border + Padding) + characterHeight + (Border + Padding)
 		(2.0 * (border + padding)) + characterHeight
 	);
+	result.x = std::max(result.x, MinimumWidth);
+
+	return result;
 }
 

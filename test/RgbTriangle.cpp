@@ -8,24 +8,33 @@ RgbTriangle::RgbTriangle() {
 	hue = 0;
 	size = int2(300, 300);
 	Bounds = float2(300, 350);
-	velocity = float2(50, 65);
 	innerRotation = 0;
 
 	button = AddChildWidget<widgets::Button>();
 
-	button->SetText("Reverse Direction");
-	button->SetClickListener([this](int button, int state) {
+	button->SetText("Drag Me!");
+	button->SetClickListener([this](int button, int state, float2 pos) {
+			if (button == GLUT_LEFT_BUTTON && state == GLUT_DOWN) {
+				this->clickPos = pos;
+				pause = true;
+			}
 			if (button == GLUT_LEFT_BUTTON && state == GLUT_UP) {
-				this->rotationScalar *= -1.0;
+				this->Position += (pos - clickPos);
+				pause = false;
 			}
 		});
 	button->Position = float2(0, 0);
 	button->Anchor = TOP_MIDDLE;
+	button->MinimumWidth = 300;
 	button->SetSpacing(5, 3);
+
+	Bounds.y = 300 + button->Bounds.y + 10;
 }
 
 void RgbTriangle::Update(double DeltaTime) {
-	int2 bounds = GetEngine().GetWindowSize();
+	if (pause) {
+		return;
+	}
 
 	hue += DeltaTime * 120;
 	if (hue > 360) {
@@ -33,15 +42,6 @@ void RgbTriangle::Update(double DeltaTime) {
 	}
 
 	innerRotation += rotationScalar * DeltaTime * (3.14159 / 2);
-
-	Position += velocity * DeltaTime;
-	if (Position.x + Bounds.x > bounds.x || Position.x < 0) {
-		velocity.x = -velocity.x;
-	}
-
-	if (Position.y + Bounds.y > bounds.y || Position.y < 0) {
-		velocity.y = -velocity.y;
-	}
 }
 
 void RgbTriangle::Draw(MatrixStack2D &stack) {
@@ -73,6 +73,5 @@ void RgbTriangle::Draw(MatrixStack2D &stack) {
 	stack.Pop();
 
 	RenderChildren(stack);
-
 	glFlush();
 }
