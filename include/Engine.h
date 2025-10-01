@@ -25,7 +25,7 @@ namespace glengine {
         /// <summary>
         /// Target update interval
         /// </summary>
-        int maxFPS = 120;
+        int MaxFPS = 120;
 
         template <typename T>
         T *AddOnscreenWidget() {

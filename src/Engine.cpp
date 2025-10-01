@@ -60,12 +60,13 @@ namespace glengine {
         windowHandle = glutCreateWindow(windowName.c_str());
         Instances[windowHandle] = this;
 
-        glutTimerFunc(1000 / maxFPS, updateExec, 0);
+        glutTimerFunc(1000 / MaxFPS, updateExec, 0);
         //glutIdleFunc(updateExec);
         glutDisplayFunc(renderExec);
         glutReshapeFunc(reshapeExec);
         glutMouseFunc(clickExec);
         glutPassiveMotionFunc(mouseMoveExec);
+        glutMotionFunc(mouseMoveExec);
 
         setLastUpdate();
     }
@@ -94,7 +95,7 @@ namespace glengine {
         setLastUpdate();
 
         glutPostRedisplay();
-        glutTimerFunc(1000/maxFPS, updateExec, 0);
+        glutTimerFunc(1000/MaxFPS, updateExec, 0);
     }
 
     void Engine::SetWindowSize(int2 size) {

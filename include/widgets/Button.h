@@ -13,10 +13,6 @@ namespace glengine::widgets {
 
 		void Click(int button, int state) override;
 
-		int GetCursor() override {
-			return GLUT_CURSOR_INFO;
-		}
-
 		void SetText(std::string newText);
 		
 		void SetSpacing(int padding, int border);

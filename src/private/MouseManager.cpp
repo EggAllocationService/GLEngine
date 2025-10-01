@@ -53,7 +53,7 @@ namespace glengine::input {
             if (newHovered != nullptr) {
                 // new widget hovered
                 newHovered->HoverStateChanged(true);
-                glutSetCursor(newHovered->GetCursor());
+                glutSetCursor(newHovered->Cursor);
             } else {
                 glutSetCursor(GLUT_CURSOR_INHERIT);
             }

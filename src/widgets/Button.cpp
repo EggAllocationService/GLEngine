@@ -7,6 +7,7 @@ glengine::widgets::Button::Button()
 	padding = 3;
 	border = 1;
 	pressed = false;
+	Cursor = GLUT_CURSOR_INFO;
 }
 
 void glengine::widgets::Button::Update(double DeltaTime)

@@ -17,7 +17,7 @@ int main(int argc, char **argv) {
     glutInit(&argc, argv);
 
     auto inst = new Engine("Hello World!", int2(1200, 600));
-    inst->maxFPS = 999;
+    inst->MaxFPS = 999;
 
     auto widget = inst->AddOnscreenWidget<RgbTriangle>();
     auto button = inst->AddOnscreenWidget<widgets::Button>();

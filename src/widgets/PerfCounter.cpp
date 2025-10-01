@@ -4,6 +4,8 @@
 
 glengine::widgets::PerfCounter::PerfCounter()
 {
+	Cursor = GLUT_CURSOR_INFO;
+
 	// 8 wide characters, room for 10
 	Bounds = float2(8 * 10, 13);
 }

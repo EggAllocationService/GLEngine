@@ -47,6 +47,13 @@ namespace glengine {
         /// </summary>
         int ZIndex = 0;
 
+    	/**
+		 * Determines what cursor should be used when hovering this widget
+		 *
+		 * Must be a GLUT cursor constant. Defaults to `GLUT_CURSOR_INHERIT`
+		 */
+    	int Cursor = GLUT_CURSOR_INHERIT;
+
         /**
          * Updates this widget and all children
          * @param DeltaTime Number of seconds since last update. Usually very small.
@@ -75,13 +82,6 @@ namespace glengine {
          * @param hovering whether this widget is being hovered or not
          */
         virtual void HoverStateChanged(bool hovering) {}
-
-        /**
-         * Determines what cursor should be used when hovering this widget
-         *
-         * @return a GLUT cursor constant. Defaults to `GLUT_CURSOR_INHERIT`
-         */
-        virtual int GetCursor() { return GLUT_CURSOR_INHERIT; }
 
         /**
          * Computes a translation and rotation matrix for this widget's position and rotation
