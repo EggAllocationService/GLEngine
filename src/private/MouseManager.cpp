@@ -98,7 +98,7 @@ namespace glengine::input {
         else {
             // children are sorted in ascending z-order each frame, so iterate high -> low
             for (auto child : std::ranges::views::reverse(widget->GetChildren())) {
-                auto child_result = internal_hitTestWidgetAndChildren(transform + child->Position, child, position);
+                auto child_result = internal_hitTestWidgetAndChildren(transform + child->GetEffectiveRelativePosition(), child, position);
 
                 if (child_result != nullptr) return child_result;
             }
@@ -115,9 +115,11 @@ namespace glengine::input {
     std::shared_ptr<Widget> MouseManager::FindHoveredWidget(float2 position) const {
         auto widgets = engine->GetWidgets();
 
+        auto screenSize = float2(engine->GetWindowSize());
+
         // widgets array is sorted by ascending z-index every tick, so search in reverse order
         for (auto widget : std::ranges::views::reverse(widgets)) {
-            auto result = internal_hitTestWidgetAndChildren(widget->Position, widget, position);
+            auto result = internal_hitTestWidgetAndChildren(widget->GetEffectiveRelativePosition(), widget, position);
             if (result != nullptr) return result;
         }
 

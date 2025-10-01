@@ -196,35 +196,35 @@ struct vec2 {
         return vec2(x += rhs.x, y += rhs.y);
     }
 
-    vec2 operator*(const vec2 rhs) {
+    vec2 operator*(const vec2 rhs) const {
         return vec2(x * rhs.x, y * rhs.y);
     }
-    vec2 operator*(const T rhs) {
+    vec2 operator*(const T rhs) const {
         return vec2(x * rhs, y * rhs);
     }
 
-    vec2 operator/(const vec2 rhs) {
+    vec2 operator/(const vec2 rhs) const {
         return vec2(x / rhs.x, y / rhs.y);
     }
-    vec2 operator/(const T rhs) {
+    vec2 operator/(const T rhs) const {
         return vec2(x / rhs, y / rhs);
     }
 
-    vec2 operator+(const vec2 rhs) {
+    vec2 operator+(const vec2 rhs) const {
         return vec2(x + rhs.x, y + rhs.y);
     }
-    vec2 operator+(const T rhs) {
+    vec2 operator+(const T rhs) const {
         return vec2(x + rhs, y + rhs);
     }
 
-    vec2 operator -(const vec2 rhs) {
+    vec2 operator -(const vec2 rhs) const {
         return vec2(x - rhs.x, y - rhs.y);
     }
-    vec2 operator-(const T rhs) {
+    vec2 operator-(const T rhs) const {
         return vec2(x - rhs, y - rhs);
     }
 
-    vec2 operator-() {
+    vec2 operator-() const {
         return vec2(-x, -y);
     }
 

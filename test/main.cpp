@@ -35,8 +35,9 @@ int main(int argc, char **argv) {
             }
         });
 
-    button->Position = float2(100, 100);
+    button->Position = float2(0, 100);
     button->Toggle = true;
+    button->Anchor = BOTTOM_MIDDLE;
     button->ZIndex = 100;
 
     glutMainLoop();

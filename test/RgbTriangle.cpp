@@ -19,7 +19,8 @@ RgbTriangle::RgbTriangle() {
 				this->rotationScalar *= -1.0;
 			}
 		});
-	button->Position = float2(150 - (button->Bounds.x/2), 315);
+	button->Position = float2(0, 0);
+	button->Anchor = TOP_MIDDLE;
 	button->SetSpacing(5, 3);
 }
 

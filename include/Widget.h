@@ -12,6 +12,18 @@ namespace glengine {
 }
 
 namespace glengine {
+	enum Anchoring {
+		BOTTOM_LEFT,
+		BOTTOM_MIDDLE,
+		BOTTOM_RIGHT,
+		MIDDLE_LEFT,
+		MIDDLE_MIDDLE,
+		MIDDLE_RIGHT,
+		TOP_LEFT,
+		TOP_MIDDLE,
+		TOP_RIGHT
+	};
+
     /// <summary>
 	/// A 2D widget drawn on top of the viewport after 3D rendering.
 	/// </summary>
@@ -46,6 +58,13 @@ namespace glengine {
         /// be hit-tested before the parent
         /// </summary>
         int ZIndex = 0;
+
+    	/// <summary>
+    	///	Where the widget's Position is anchored to in the parent.
+    	///
+    	///	Defaults to BOTTOM_LEFT
+    	/// </summary>
+    	Anchoring Anchor = BOTTOM_LEFT;
 
     	/**
 		 * Determines what cursor should be used when hovering this widget
@@ -86,9 +105,21 @@ namespace glengine {
         /**
          * Computes a translation and rotation matrix for this widget's position and rotation
          *
+         * @param bounds the bounds of the parent, for anchor calculations
          * @return the transform matrix for this widget's position and rotation
          */
         mat3 GetTransformMatrix() const;
+
+        /**
+         * Computes the effective relative position of this widget, applying anchoring
+         */
+        float2 GetEffectiveRelativePosition() const;
+
+        /**
+         * Gets the enclosing bounds of this widget
+         * @return The parent's `Bounds`, or the window size if no parent is present.
+         */
+        float2 GetEnclosingBounds() const;
 
         /**
          * Create a new widget instance for T, owned by `engine`
