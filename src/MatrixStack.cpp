@@ -48,14 +48,18 @@ void glengine::MatrixStack2D::DrawPolygon(std::vector<float3>& verticies) {
 }
 
 void glengine::MatrixStack2D::DrawRect(float2 a, float2 b) {
-    std::vector<float3> verticies = {
+    float3 verticies[4] = {
         float3(a, 1.0),
         float3(a.x, b.y, 1.0),
         float3(b, 1.0),
         float3(b.x, a.y, 1.0)
     };
 
-    DrawPolygon(verticies);
+    glBegin(GL_POLYGON);
+    for (auto vertex : verticies) {
+        glVertex3fv(this->operator*(vertex));
+    }
+    glEnd();
 }
 
 void glengine::MatrixStack2D::PrintText(float2 position, const char* text)
