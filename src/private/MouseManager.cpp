@@ -15,7 +15,34 @@ namespace glengine::input {
 
     void MouseManager::HandleMotion(float2 position) {
         if (mouseMode == FREE) {
-            auto newHovered = FindHoveredWidget(position);
+            mousePosition = position;
+        } else {
+            /* int2 windowMiddle = engine->GetWindowSize() / 2;
+            int2 relativePosition = position - windowMiddle;
+            float2 normalized = float2(relativePosition) / float2(engine->GetWindowSize()); */
+
+            centerCursor();
+        }
+    }
+
+    void MouseManager::Click(int button, int action) {
+        auto target = hoveredWidget.lock();
+
+        if (target != nullptr) {
+            target->Click(button, action);
+        }
+
+        clicking = action == GLUT_DOWN;
+    }
+
+    void MouseManager::Update(double DeltaTime) {
+
+        // every frame in free mouse mode, hit test under the cursor
+        // this makes sure moving widgets get hover events correctly
+        // but if the user is clicking, we don't want to change the hovered widget
+        // because then buttons may not get the mouse up event, for example
+        if (mouseMode == FREE && !clicking) {
+            auto newHovered = FindHoveredWidget(mousePosition);
             if (newHovered == hoveredWidget.lock()) return; // still hovering the same widget
 
             if (!hoveredWidget.expired()) {
@@ -32,17 +59,7 @@ namespace glengine::input {
             }
 
             hoveredWidget = newHovered;
-        } else {
-            int2 windowMiddle = engine->GetWindowSize() / 2;
-            int2 relativePosition = position - windowMiddle;
-            float2 normalized = float2(relativePosition) / float2(engine->GetWindowSize());
-
-            centerCursor();
         }
-    }
-
-    void MouseManager::Click(int button, int action, float2 position) {
-
     }
 
     void MouseManager::SetMouseMode(MouseMode mode) {

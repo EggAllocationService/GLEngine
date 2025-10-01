@@ -30,7 +30,10 @@ namespace glengine::input {
         void HandleMotion(float2 position);
 
         /// GLUT click callback
-        void Click(int button, int action, float2 position);
+        void Click(int button, int action);
+
+        /// Called every frame to check that
+        void Update(double DeltaTime);
 
         /// Sets the active mouse mode
         void SetMouseMode(MouseMode mode);
@@ -42,6 +45,9 @@ namespace glengine::input {
     private:
         Engine* engine;
         std::weak_ptr<Widget> hoveredWidget;
+
+        float2 mousePosition;
+        bool clicking = false;
 
         MouseMode mouseMode = FREE;
 

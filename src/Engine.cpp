@@ -36,7 +36,7 @@ namespace glengine {
     static void clickExec(int button, int state, int x, int y) {
         int currentWindow = glutGetWindow();
         if (Instances.contains(currentWindow)) {
-            Instances[currentWindow]->Click(button, state, x, y);
+            Instances[currentWindow]->GetMouseManager()->Click(button, state);
         }
     }
 
@@ -87,20 +87,14 @@ namespace glengine {
     void Engine::Update() {
         double delta = calculateDeltaTime();
 
+        mouseManager->Update(delta);
+
         updateWidgets(delta);
 
         setLastUpdate();
 
         glutPostRedisplay();
         glutTimerFunc(1000/maxFPS, updateExec, 0);
-    }
-
-    void Engine::Click(int button, int state, int x, int y)
-    {
-        auto hoveredWidget = mouseManager->GetHoveredWidget();
-        if (hoveredWidget != nullptr) {
-            hoveredWidget->Click(button, state);
-        }
     }
 
     void Engine::SetWindowSize(int2 size) {
