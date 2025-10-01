@@ -9,9 +9,13 @@ namespace glengine::widgets {
 	public:
 		Button();
 
-		virtual void Draw(MatrixStack2D& stack) override;
+		void Draw(MatrixStack2D& stack) override;
 
-		virtual void Click(int button, int state) override;
+		void Click(int button, int state) override;
+
+		int GetCursor() override {
+			return GLUT_CURSOR_INFO;
+		}
 
 		void SetText(std::string newText);
 		
