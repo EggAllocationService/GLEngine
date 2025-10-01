@@ -32,7 +32,6 @@ void glengine::widgets::Button::Draw(MatrixStack2D& stack)
 	float textWidth = 8 * Text.length();
 	glColor4fv(TextColor);
 	stack.PrintText(float2(Bounds.x / 2 - textWidth / 2, border + padding), Text.c_str());
-	glFlush();
 
 	// setup blending and set shadow color
 	glEnable(GL_BLEND);

@@ -150,10 +150,10 @@ namespace glengine {
             stack.Push(widget->GetTransformMatrix());
             widget->Draw(stack);
             stack.Pop();
-
-            glFlush();
             rendered++;
         }
+
+        glFlush();
     }
 
     void Engine::updateWidgets(double deltaTime) {

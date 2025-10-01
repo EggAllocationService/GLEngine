@@ -73,5 +73,4 @@ void RgbTriangle::Draw(MatrixStack2D &stack) {
 	stack.Pop();
 
 	RenderChildren(stack);
-	glFlush();
 }

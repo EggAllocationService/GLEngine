@@ -11,6 +11,8 @@
 #include "RgbTriangle.h"
 #include <Colors.h>
 
+static int highZ = 10;
+
 using namespace glengine;
 
 int main(int argc, char **argv) {
@@ -27,17 +29,13 @@ int main(int argc, char **argv) {
     counter->Position = float2(10, -10);
     counter->Anchor = TOP_LEFT;
 
-    button->SetText("Click Me!");
+    button->SetText("Add New!");
     button->SetSpacing(5, 2);
     button->SetClickListener([=](int kind, int state, float2 pos) {
             if (kind == GLUT_LEFT_BUTTON && state == GLUT_DOWN) {
-                int hue = (rand() / (float)RAND_MAX) * 360;
-                button->BackgroundColor = Colors::hsv(hue, 1.0, 1.0);
-
-                button->SetText(std::format("Hue: {}", hue));
-            } else if (kind == GLUT_RIGHT_BUTTON && state == GLUT_UP) {
-                button->BackgroundColor = Colors::WHITE;
-                button->SetText("Click Me!");
+                auto newWidget = inst->AddOnscreenWidget<RgbTriangle>();
+                newWidget->Anchor = MIDDLE_MIDDLE;
+                newWidget->ZIndex = highZ++;
             }
         });
 
