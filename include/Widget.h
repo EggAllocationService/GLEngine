@@ -27,7 +27,7 @@ namespace glengine {
     /// <summary>
 	/// A 2D widget drawn on top of the viewport after 3D rendering.
 	/// </summary>
-    class Widget {
+    class Widget : public std::enable_shared_from_this<Widget> {
     public:
         Widget();
     	virtual ~Widget() = default;
@@ -144,9 +144,9 @@ namespace glengine {
          * Create a new widget instance for T, owned by `engine`
          */
     	template<typename T>
-    	static T *New(Engine *engine) {
+    	static std::shared_ptr<T> New(Engine *engine) {
     		static_assert(std::is_base_of_v<Widget, T>, "T must derive from Widget");
-    		T *result = new T();
+    		std::shared_ptr<T> result = std::make_shared<T>();
     		result->engine = engine;
 
             for (auto child : result->GetChildren()) {
@@ -161,8 +161,8 @@ namespace glengine {
          */
     	template<typename T>
 	    std::shared_ptr<T> AddChildWidget() {
-    		std::shared_ptr<T> widget = std::shared_ptr<T>(New<T>(engine));
-    		widget->parent = std::shared_ptr<Widget>(this);
+    		std::shared_ptr<T> widget = New<T>(engine);
+    		widget->parent = weak_from_this();
     		children.push_back(widget);
     		return widget;
     	}
@@ -182,7 +182,7 @@ namespace glengine {
          * @return The parent widget, or null if none exists
          */
         std::shared_ptr<Widget> GetParent() const {
-    		return parent;
+    		return parent.lock();
     	}
 
         /**
@@ -199,7 +199,8 @@ namespace glengine {
     private:
     	Engine *engine;
     	std::vector<std::shared_ptr<Widget>> children;
-    	std::shared_ptr<Widget> parent = nullptr;
+    	std::weak_ptr<Widget> parent;
+
     	bool pendingKill = false;
     };
 }

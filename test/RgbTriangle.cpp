@@ -23,10 +23,19 @@ RgbTriangle::RgbTriangle() {
 				pause = false;
 			}
 		});
-	button->Position = float2(0, 0);
+	button->Position = float2(-20, 0);
 	button->Anchor = TOP_MIDDLE;
-	button->MinimumWidth = 300;
+	button->MinimumWidth = 260;
 	button->SetSpacing(5, 3);
+
+	auto closeButton = AddChildWidget<widgets::Button>();
+	closeButton->Position = float2(0, 0);
+	closeButton->Anchor = TOP_RIGHT;
+	closeButton->MinimumWidth = 20;
+	closeButton->BackgroundColor = float4(1.0, 0.3, 0.3, 1.0);
+	closeButton->SetClickListener([this](int button, int state, float2 pos) {this->Destroy();});
+	closeButton->SetText("X");
+	closeButton->SetSpacing(5, 3);
 
 	Bounds.y = 300 + button->Bounds.y + 10;
 }

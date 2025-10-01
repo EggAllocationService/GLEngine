@@ -9,6 +9,8 @@ namespace glengine::widgets {
 	public:
 		Button();
 
+		~Button() override = default;
+
 		void Draw(MatrixStack2D& stack) override;
 
 		void Click(int button, int state, float2 pos) override;

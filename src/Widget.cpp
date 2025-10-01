@@ -83,17 +83,17 @@ float2 glengine::Widget::GetEffectiveAbsolutePosition() const {
 	auto base = GetEffectiveRelativePosition();
 
 	// Go up until we reach the window itself, adding relative positions along the way
-	std::shared_ptr<Widget> current = parent;
+	std::shared_ptr<Widget> current = parent.lock();
 	while (current != nullptr) {
-		base += parent->GetEffectiveRelativePosition();
-		current = parent->GetParent();
+		base += current->GetEffectiveRelativePosition();
+		current = current->GetParent();
 	}
 
 	return base;
 }
 
 float2 glengine::Widget::GetEnclosingBounds() const {
-	return (parent == nullptr) ? float2(engine->GetWindowSize()) : parent->Bounds;
+	return (parent.expired()) ? float2(engine->GetWindowSize()) : GetParent()->Bounds;
 }
 
 glengine::Engine& glengine::Widget::GetEngine() const {

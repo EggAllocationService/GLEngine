@@ -32,9 +32,11 @@ namespace glengine {
         int MaxFPS = 120;
 
         template <typename T>
-        T *AddOnscreenWidget() {
-            T *widget = Widget::New<T>(this);
-            widgets.push_back(std::shared_ptr<Widget>(widget));
+        std::shared_ptr<T> AddOnscreenWidget() {
+            static_assert(std::is_base_of_v<Widget, T>, "T must be derive from Widget");
+
+            std::shared_ptr<T> widget = Widget::New<T>(this);
+            widgets.push_back(widget);
             return widget;
         }
 
