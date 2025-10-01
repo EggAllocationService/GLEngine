@@ -6,6 +6,7 @@
 
 #include "Engine.h"
 #include "GLMath.h"
+#include <algorithm>
 
 glengine::Widget::Widget() {
 	Position = float2(0, 0);
