@@ -32,6 +32,9 @@ int main(int argc, char **argv) {
                 button->BackgroundColor = Colors::hsv(hue, 1.0, 1.0);
 
                 button->SetText(std::format("Hue: {}", hue));
+            } else if (kind == GLUT_RIGHT_BUTTON && state == GLUT_UP) {
+                button->BackgroundColor = Colors::WHITE;
+                button->SetText("Click Me!");
             }
         });
 
