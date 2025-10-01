@@ -40,7 +40,7 @@ void glengine::widgets::PerfCounter::Draw(MatrixStack2D& stack)
 		text = std::format("{:.2f} FPS", 1.0 / lastFrametime);
 	} 
 	else {
-		text = std::format("{:.2f}ms", lastFrametime);
+		text = std::format("{:.2f}ms", lastFrametime * 1000);
 	}
 
 	stack.PrintText(float2(0, 0), text.c_str());

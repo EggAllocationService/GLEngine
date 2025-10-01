@@ -8,7 +8,7 @@ RgbTriangle::RgbTriangle() {
 	hue = 0;
 	size = int2(300, 300);
 	Bounds = float2(300, 350);
-	velocity = float2(80, 90);
+	velocity = float2(50, 65);
 	innerRotation = 0;
 
 	button = AddChildWidget<widgets::Button>();
@@ -56,21 +56,19 @@ void RgbTriangle::Draw(MatrixStack2D &stack) {
 
 
 	stack.Push(math::translate2D(float2(150, 150)) * math::rotation2D(innerRotation)); // push into inner rotation space
-	stack.Push(math::translate2D(float2(-150, -150)));
+	stack.Push(math::translate2D(float2(-150, -150)) * math::scale2D(float2(size))); // square offset & scaling
 	glBegin(GL_POLYGON);
 	int i = 0;
 	for (float3 &vertex: verticies) {
-		glColor4fv(Colors::hsv(((int) hue + (90 * i)) % 360, 1.0, 1.0));
-		glVertex3fv(stack * (vertex * float3(size, 1.0)));
+		glColor4fv(Colors::hsv((int(hue) + (90 * i)) % 360, 1.0, 1.0));
+		glVertex3fv(stack * vertex);
 		i++;
 	}
 	glEnd();
-
 	stack.Pop();
 
 	glColor4fv(Colors::BLACK);
 	stack.PrintText(float2(0, 0), "Hello World!");
-
 	stack.Pop();
 
 	RenderChildren(stack);

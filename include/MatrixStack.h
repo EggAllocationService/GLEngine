@@ -28,14 +28,14 @@ namespace glengine {
         float3 operator*(float3 rhs);
 
         /// <summary>
-		/// Conveinence overload for transforming 2d points. Internally widens to a vec3 with z = 1.0.
+		/// Convenience overload for transforming 2d points. Internally widens to a vec3 with z = 1.0.
 		/// 
-		/// Less efficent than the float3 version.
+		/// Less efficient than the float3 version.
 		/// </summary>
         float2 operator*(float2 rhs);
 
         /// <summary>
-		/// Conveinence method for drawing a polygon, transformed by the top transform on the stack.
+		/// Convenience method for drawing a polygon, transformed by the top transform on the stack.
 		/// </summary>
         void DrawPolygon(std::vector<float3>& verticies);
 
@@ -44,11 +44,11 @@ namespace glengine {
 		/// </summary>
         void DrawRect(float2 a, float2 b);
 
-        /// <summary>
-        /// Prints the given text to the screen, at `position`.
-        /// 
-        /// The font is fixed-size and will not be affected by scale or rotation transforms
-        /// </summary>
+    	/// <summary>
+    	/// Prints text to the screen, using a 8x13 bitmap font
+    	///
+    	/// `position` is the position in pixels, and `text` is the text to be printed.
+    	/// </summary>
         void PrintText(float2 position, const char* text);
 
 
