@@ -14,15 +14,15 @@ public:
     int2 size;
 
 private:
-    float hue;
+    float hue = 0.0;
 
-    float innerRotation;
+    float innerRotation = 0.0;
 
     float rotationScalar = 1.0f;
 
     float2 clickPos;
 
-    bool pause;
+    bool pause = false;
 
     std::shared_ptr<widgets::Button> button;
 };

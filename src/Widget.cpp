@@ -66,8 +66,8 @@ mat3 glengine::Widget::GetTransformMatrix() const {
 	float2 pos = GetEffectiveRelativePosition();
 
 	// set transform
-	translate[2]->set(0,  pos.x);
-	translate[2]->set(1,  pos.y);
+	translate[2]->set(0, pos.x);
+	translate[2]->set(1, pos.y);
 
 
 	mat3 rotation = math::rotation2D(Rotation);
@@ -83,7 +83,7 @@ float2 glengine::Widget::GetEffectiveAbsolutePosition() const {
 	auto base = GetEffectiveRelativePosition();
 
 	// Go up until we reach the window itself, adding relative positions along the way
-	std::shared_ptr<Widget> current = parent.lock();
+	Widget *current = parent;
 	while (current != nullptr) {
 		base += current->GetEffectiveRelativePosition();
 		current = current->GetParent();
@@ -93,7 +93,7 @@ float2 glengine::Widget::GetEffectiveAbsolutePosition() const {
 }
 
 float2 glengine::Widget::GetEnclosingBounds() const {
-	return (parent.expired()) ? float2(engine->GetWindowSize()) : GetParent()->Bounds;
+	return (parent == nullptr) ? float2(engine->GetWindowSize()) : parent->Bounds;
 }
 
 glengine::Engine& glengine::Widget::GetEngine() const {

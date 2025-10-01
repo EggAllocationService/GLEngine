@@ -27,7 +27,7 @@ namespace glengine {
     /// <summary>
 	/// A 2D widget drawn on top of the viewport after 3D rendering.
 	/// </summary>
-    class Widget : public std::enable_shared_from_this<Widget> {
+    class Widget {
     public:
         Widget();
     	virtual ~Widget() = default;
@@ -161,8 +161,8 @@ namespace glengine {
          */
     	template<typename T>
 	    std::shared_ptr<T> AddChildWidget() {
-    		std::shared_ptr<T> widget = New<T>(engine);
-    		widget->parent = weak_from_this();
+            std::shared_ptr<T> widget = New<T>(engine);
+            widget->parent = this;
     		children.push_back(widget);
     		return widget;
     	}
@@ -181,8 +181,8 @@ namespace glengine {
          * Get the parent widget
          * @return The parent widget, or null if none exists
          */
-        std::shared_ptr<Widget> GetParent() const {
-    		return parent.lock();
+        Widget *GetParent() const {
+            return parent;
     	}
 
         /**
@@ -199,7 +199,7 @@ namespace glengine {
     private:
     	Engine *engine;
     	std::vector<std::shared_ptr<Widget>> children;
-    	std::weak_ptr<Widget> parent;
+    	Widget *parent = nullptr;
 
     	bool pendingKill = false;
     };

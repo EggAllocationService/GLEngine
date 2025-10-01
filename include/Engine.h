@@ -26,11 +26,6 @@ namespace glengine {
             quitRequested = true;
         }
 
-        /// <summary>
-        /// Target update interval
-        /// </summary>
-        int MaxFPS = 120;
-
         template <typename T>
         std::shared_ptr<T> AddOnscreenWidget() {
             static_assert(std::is_base_of_v<Widget, T>, "T must be derive from Widget");
