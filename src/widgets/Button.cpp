@@ -61,13 +61,13 @@ void glengine::widgets::Button::Click(int button, int state, float2 pos)
 	if (Toggle) {
 		if (state == GLUT_UP) {
 			pressed = !pressed;
-			onClick(button, pressed ? GLUT_DOWN : GLUT_UP);
+			onClick(button, pressed ? GLUT_DOWN : GLUT_UP, pos);
 		}
 	}
 	else {
 		pressed = (state == GLUT_DOWN);
 		if (onClick != nullptr) {
-			onClick(button, state);
+			onClick(button, state, pos);
 		}
 	}
 }

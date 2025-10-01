@@ -17,7 +17,7 @@ namespace glengine::widgets {
 		
 		void SetSpacing(int padding, int border);
 
-		void SetClickListener(std::function<void(int button, int state)> listener) {
+		void SetClickListener(std::function<void(int button, int state, float2 pos)> listener) {
 			onClick = listener;
 		}
 
@@ -45,7 +45,7 @@ namespace glengine::widgets {
 
 		std::string Text;
 		
-		std::function<void(int button, int state)> onClick;
+		std::function<void(int button, int state, float2 pos)> onClick;
 
 		/// <summary>
 		/// Padding between shadow/border and text
