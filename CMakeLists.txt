@@ -11,7 +11,9 @@ add_library(glengine STATIC
         src/GLMath.cpp
         include/GLMath.h 
         "src/widgets/Button.cpp" 
-        "src/widgets/PerfCounter.cpp")
+        "src/widgets/PerfCounter.cpp"
+        src/private/MouseManager.cpp
+        include/MouseManager.h)
 
 target_include_directories(glengine PUBLIC include)
 

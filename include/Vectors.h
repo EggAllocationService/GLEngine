@@ -203,6 +203,13 @@ struct vec2 {
         return vec2(x * rhs, y * rhs);
     }
 
+    vec2 operator/(const vec2 rhs) {
+        return vec2(x / rhs.x, y / rhs.y);
+    }
+    vec2 operator/(const T rhs) {
+        return vec2(x / rhs, y / rhs);
+    }
+
     vec2 operator+(const vec2 rhs) {
         return vec2(x + rhs.x, y + rhs.y);
     }

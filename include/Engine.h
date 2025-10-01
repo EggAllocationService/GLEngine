@@ -9,6 +9,7 @@
 #include <chrono>
 #include "Vectors.h"
 #include "Widget.h"
+#include "MouseManager.h"
 
 namespace glengine {
     class Engine {
@@ -39,7 +40,17 @@ namespace glengine {
             return windowSize;
         }
 
+        /// Call to update internal states whenever the window size changes
         void SetWindowSize(int2 size);
+
+        /// Get a reference to the list of active widgets
+        std::vector<std::shared_ptr<Widget>>& GetWidgets() {
+            return widgets;
+        }
+
+        input::MouseManager* GetMouseManager() {
+            return mouseManager;
+        }
 
     private:
         int2 windowSize;
@@ -60,6 +71,8 @@ namespace glengine {
         void renderWidgets();
 
         void updateWidgets(double deltaTime);
+
+        input::MouseManager* mouseManager;
 
         std::vector<std::shared_ptr<Widget>> widgets;
     };

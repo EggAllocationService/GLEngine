@@ -17,6 +17,12 @@ void glengine::Widget::UpdateAll(double DeltaTime) {
 	for (auto child : children) {
 		child->UpdateAll(DeltaTime);
 	}
+
+	// sort children by z-index
+	std::sort(children.begin(), children.end(),
+		[](std::shared_ptr<Widget>& a, std::shared_ptr<Widget>& b) {
+			return a->ZIndex < b->ZIndex;
+		});
 }
 
 void glengine::Widget::Click(int button, int state, float2 position)

@@ -8,6 +8,7 @@
 #include <algorithm>
 #include <ranges>
 
+
 namespace glengine {
     static std::map<int, Engine *> Instances;
 
@@ -39,13 +40,21 @@ namespace glengine {
         }
     }
 
+    static void mouseMoveExec(int x, int y) {
+        int currentWindow = glutGetWindow();
+        if (Instances.contains(currentWindow)) {
+            Instances[currentWindow]->GetMouseManager()->HandleMotion(float2(x, y));
+        }
+    }
+
     Engine::Engine(const std::string &windowName, int2 size) {
+        mouseManager = new input::MouseManager(this);
+
         windowSize = size;
         glutInitWindowSize(windowSize.x, windowSize.y);
         glutInitDisplayMode(GLUT_RGBA|GLUT_DOUBLE);
 
         windowHandle = glutCreateWindow(windowName.c_str());
-
         Instances[windowHandle] = this;
 
         glutTimerFunc(1000 / maxFPS, updateExec, 0);
@@ -53,6 +62,7 @@ namespace glengine {
         glutDisplayFunc(renderExec);
         glutReshapeFunc(reshapeExec);
         glutMouseFunc(clickExec);
+        glutPassiveMotionFunc(mouseMoveExec);
 
         setLastUpdate();
     }
@@ -66,6 +76,9 @@ namespace glengine {
         if (iter != Instances.end()) {
             Instances.erase(iter);
         }
+
+        // destroy owned objects
+        delete mouseManager;
     }
 
     void Engine::Update() {
@@ -135,12 +148,6 @@ namespace glengine {
 
         stack.Push(screenTransform);
 
-        // sort widgets back-to-front
-        std::sort(widgets.begin(), widgets.end(), 
-            [](std::shared_ptr<Widget>& a, std::shared_ptr<Widget>& b) {
-                return a->ZIndex < b->ZIndex;
-            });
-
         int rendered = 0;
         for (auto widget : widgets) {
             stack.Push(widget->GetTransformMatrix());
@@ -156,5 +163,11 @@ namespace glengine {
         for (auto widget: widgets) {
             widget->UpdateAll(deltaTime);
         }
+
+        // sort widgets back-to-front, in case an Update implementation changed a Z-Index
+        std::sort(widgets.begin(), widgets.end(),
+            [](std::shared_ptr<Widget>& a, std::shared_ptr<Widget>& b) {
+                return a->ZIndex < b->ZIndex;
+            });
     }
 } // glengine
