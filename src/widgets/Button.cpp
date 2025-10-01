@@ -52,7 +52,7 @@ void glengine::widgets::Button::Draw(MatrixStack2D& stack)
 	}
 }
 
-void glengine::widgets::Button::Click(int button, int state, float2 position)
+void glengine::widgets::Button::Click(int button, int state)
 {
 	if (Toggle) {
 		if (state == GLUT_UP) {

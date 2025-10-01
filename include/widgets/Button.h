@@ -11,7 +11,7 @@ namespace glengine::widgets {
 
 		virtual void Draw(MatrixStack2D& stack) override;
 
-		virtual void Click(int button, int state, float2 position) override;
+		virtual void Click(int button, int state) override;
 
 		void SetText(std::string newText);
 		

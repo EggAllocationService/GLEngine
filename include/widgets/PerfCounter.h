@@ -7,9 +7,10 @@ namespace glengine::widgets {
 	class PerfCounter : public Widget {
 	public:
 		PerfCounter();
-		virtual void Update(double DeltaTime) override;
-		virtual void Draw(MatrixStack2D& stack) override;
-		virtual void Click(int button, int state, float2 position) override;
+
+		void Update(double DeltaTime) override;
+		void Draw(MatrixStack2D& stack) override;
+		void Click(int button, int state) override;
 
 		float4 TextColor = Colors::GREEN;
 	private:

@@ -18,17 +18,20 @@ namespace glengine::input {
             auto newHovered = FindHoveredWidget(position);
             if (newHovered == hoveredWidget.lock()) return; // still hovering the same widget
 
-            if (newHovered == nullptr && !hoveredWidget.expired()) {
+            if (!hoveredWidget.expired()) {
                 // previously hovered widget is no longer hovered
-                glutSetCursor(GLUT_CURSOR_INFO);
+                hoveredWidget.lock()->HoverStateChanged(false);
             }
-            else if (hoveredWidget.expired() && newHovered != nullptr) {
-                // hovering new widget
-                glutSetCursor(GLUT_CURSOR_CYCLE);
+
+            if (newHovered != nullptr) {
+                // new widget hovered
+                newHovered->HoverStateChanged(true);
+                glutSetCursor(newHovered->GetCursor());
+            } else {
+                glutSetCursor(GLUT_CURSOR_INHERIT);
             }
 
             hoveredWidget = newHovered;
-
         } else {
             int2 windowMiddle = engine->GetWindowSize() / 2;
             int2 relativePosition = position - windowMiddle;
@@ -67,8 +70,11 @@ namespace glengine::input {
     /// <param name="widget"> The widget to hit test, and check the children</param>
     /// <param name="position">Window-space coordinates of the mouse cursor</param>
     std::shared_ptr<Widget> internal_hitTestWidgetAndChildren(float2 transform, std::shared_ptr<Widget> widget, float2 position) {
+        float2 lowerLeft = transform;
+        float2 topRight = transform + widget->Bounds;
+
         if (widget->GetChildren().empty()) {
-            if (internal_isPointInside(position, transform, transform + widget->Bounds)) {
+            if (internal_isPointInside(position, lowerLeft, topRight)) {
                 return widget;
             }
         }

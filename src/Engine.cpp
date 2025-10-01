@@ -43,7 +43,10 @@ namespace glengine {
     static void mouseMoveExec(int x, int y) {
         int currentWindow = glutGetWindow();
         if (Instances.contains(currentWindow)) {
-            Instances[currentWindow]->GetMouseManager()->HandleMotion(float2(x, y));
+            // invert y coordinate
+            float2 pos = float2(x, Instances[currentWindow]->GetWindowSize().y - y);
+
+            Instances[currentWindow]->GetMouseManager()->HandleMotion(pos);
         }
     }
 
@@ -94,14 +97,9 @@ namespace glengine {
 
     void Engine::Click(int button, int state, int x, int y)
     {
-        float2 pos = float2(x, windowSize.y - y);
-
-        // iterate through widgets, find first that contains that point
-        for (auto widget : std::ranges::views::reverse(widgets)) {
-            if (widget->Position < pos && pos < (widget->Position + widget->Bounds)) {
-                widget->Click(button, state, pos - widget->Position);
-                return;
-            }
+        auto hoveredWidget = mouseManager->GetHoveredWidget();
+        if (hoveredWidget != nullptr) {
+            hoveredWidget->Click(button, state);
         }
     }
 

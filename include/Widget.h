@@ -4,6 +4,7 @@
 
 #ifndef GLENGINE_WIDGET_H
 #define GLENGINE_WIDGET_H
+#include "engine_GLUT.h"
 #include "MatrixStack.h"
 
 namespace glengine {
@@ -42,7 +43,7 @@ namespace glengine {
         /// Items on the same Z-index are rendered in arbitrary order.
         /// 
         /// For child widgets, the parent is considered to be -infinity. That is, child widgets will always
-        /// be hit-tested before the parent (by default)
+        /// be hit-tested before the parent
         /// </summary>
         int ZIndex = 0;
 
@@ -64,10 +65,29 @@ namespace glengine {
          * 
          * @param button the GLUT button constant for the click (e.g. GLUT_LEFT_BUTTON)
          * @param state if it was a press or release
-         * @param position relative position to this widget 
          */
-        virtual void Click(int button, int state, float2 position);
+        virtual void Click(int button, int state) {}
 
+        /**
+         * Called by the engine when the user's mouse passes enters or leaves the
+         * widget's bounds
+         *
+         * @param hovering whether this widget is being hovered or not
+         */
+        virtual void HoverStateChanged(bool hovering) {}
+
+        /**
+         * Determines what cursor should be used when hovering this widget
+         *
+         * @return a GLUT cursor constant. Defaults to `GLUT_CURSOR_INHERIT`
+         */
+        virtual int GetCursor() { return GLUT_CURSOR_INHERIT; }
+
+        /**
+         * Computes a translation and rotation matrix for this widget's position and rotation
+         *
+         * @return the transform matrix for this widget's position and rotation
+         */
         mat3 GetTransformMatrix() const;
 
         /**
