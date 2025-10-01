@@ -44,7 +44,7 @@ add_executable(test1 test/main.cpp "test/RgbTriangle.cpp")
 target_link_libraries(test1 PRIVATE glengine)
 
 # enables profiling tools in VS
-if (MSVC AND (${CMAKE_BUILD_TYPE} STREQUAL "Debug" OR ${CMAKE_BUILD_TYPE} STREQUAL "RelWithDebugInfo"))
+if (MSVC AND ${CMAKE_BUILD_TYPE} STREQUAL "Debug")
     set_target_properties(glengine PROPERTIES LINK_FLAGS "/PROFILE")
     set_target_properties(test1 PROPERTIES LINK_FLAGS "/PROFILE")
 endif()
