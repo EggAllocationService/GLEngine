@@ -90,6 +90,11 @@ namespace glengine {
     }
 
     void Engine::Update() {
+        if (quitRequested) {
+            glutDestroyWindow(windowHandle);
+            exit(0);
+        }
+
         double delta = calculateDeltaTime();
 
         mouseManager->Update(delta);
@@ -160,6 +165,11 @@ namespace glengine {
         for (auto widget: widgets) {
             widget->UpdateAll(deltaTime);
         }
+
+        // cleanup widgets to be destroyed
+        std::erase_if(widgets,
+            [](const std::shared_ptr<Widget>& widget) {return widget->IsDestroyed();}
+            );
 
         // sort widgets back-to-front, in case an Update implementation changed a Z-Index
         std::sort(widgets.begin(), widgets.end(),

@@ -43,6 +43,18 @@ int main(int argc, char **argv) {
     button->Anchor = BOTTOM_MIDDLE;
     button->ZIndex = 100;
 
-    glutMainLoop();
+    auto closeButton = inst->AddOnscreenWidget<widgets::Button>();
+    closeButton->Anchor = TOP_RIGHT;
+    closeButton->ZIndex = 1000;
+    closeButton->BackgroundColor = Colors::RED;
+    closeButton->Position = float2(-10, -10);
+    closeButton->SetText("Close");
+    closeButton->SetClickListener([=](int button, int state, float2 pos) {
+        if (button == GLUT_LEFT_BUTTON && state == GLUT_DOWN) {
+            inst->Quit();
+        }
+    });
 
+    glutMainLoop();
+    delete inst;
 }

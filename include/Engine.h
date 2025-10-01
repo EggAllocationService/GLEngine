@@ -22,6 +22,10 @@ namespace glengine {
 
         void Update();
 
+        void Quit() {
+            quitRequested = true;
+        }
+
         /// <summary>
         /// Target update interval
         /// </summary>
@@ -55,6 +59,9 @@ namespace glengine {
         int windowHandle;
 
         std::chrono::steady_clock::time_point lastUpdate;
+
+        /// When true, causes the engine to destroy the window and exit on the next frame.
+        bool quitRequested = false;
 
         /// <summary>
         /// Gets the number of seconds since the last Update() call.

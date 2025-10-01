@@ -127,6 +127,20 @@ namespace glengine {
         float2 GetEnclosingBounds() const;
 
         /**
+         * Marks this widget for deletion
+         */
+        void Destroy() {
+    		pendingKill = true;
+    	}
+
+        /**
+         * @return If this widget has been marked for deletion
+         */
+        bool IsDestroyed() const {
+    		return pendingKill;
+    	}
+
+        /**
          * Create a new widget instance for T, owned by `engine`
          */
     	template<typename T>
@@ -186,6 +200,7 @@ namespace glengine {
     	Engine *engine;
     	std::vector<std::shared_ptr<Widget>> children;
     	std::shared_ptr<Widget> parent = nullptr;
+    	bool pendingKill = false;
     };
 }
 
