@@ -6,6 +6,7 @@
 #define GLENGINE_ENGINE_H
 #include <string>
 #include <vector>
+#include <ranges>
 #include <chrono>
 #include "Vectors.h"
 #include "Widget.h"
@@ -33,6 +34,13 @@ namespace glengine {
             std::shared_ptr<T> widget = Widget::New<T>(this);
             widgets.push_back(widget);
             return widget;
+        }
+        template <typename T>
+        auto GetWidgetsOfType() {
+            static_assert(std::is_base_of_v<Widget, T>, "T must be derive from Widget");
+
+            return std::ranges::views::transform(widgets, [](std::shared_ptr<Widget> widget) {return dynamic_pointer_cast<T>(widget); })
+                | std::ranges::views::filter([](std::shared_ptr<T> transformed) {return transformed != nullptr; });
         }
 
         int2 GetWindowSize() const {

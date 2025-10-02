@@ -31,7 +31,7 @@ int main(int argc, char **argv) {
     button->SetText("Add New!");
     button->SetSpacing(5, 2);
     button->SetClickListener([=](int kind, int state, float2 pos) {
-            if (kind == GLUT_LEFT_BUTTON && state == GLUT_DOWN) {
+            if (kind == GLUT_LEFT_BUTTON && state == GLUT_UP) {
                 auto newWidget = inst->AddOnscreenWidget<RgbTriangle>();
                 newWidget->Anchor = MIDDLE_MIDDLE;
                 newWidget->ZIndex = highZ++;

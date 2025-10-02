@@ -16,6 +16,7 @@ RgbTriangle::RgbTriangle() {
 	button->SetClickListener([this](int type, int state, float2 pos) {
 			if (type == GLUT_LEFT_BUTTON && state == GLUT_DOWN) {
 				this->clickPos = pos + button->GetEffectiveAbsolutePosition();
+				bringToFront();
 			}
 			if (type == GLUT_LEFT_BUTTON && state == GLUT_DRAG) {
 				this->Position += (pos - clickPos);
@@ -32,7 +33,7 @@ RgbTriangle::RgbTriangle() {
 	closeButton->Anchor = TOP_RIGHT;
 	closeButton->MinimumWidth = 20;
 	closeButton->BackgroundColor = float4(1.0, 0.3, 0.3, 1.0);
-	closeButton->SetClickListener([this](int button, int state, float2 pos) {this->Destroy();});
+	closeButton->SetClickListener([this](int button, int state, float2 pos) {if (state == GLUT_UP) this->Destroy();});
 	closeButton->SetText("X");
 	closeButton->SetSpacing(5, 3);
 
@@ -81,4 +82,25 @@ void RgbTriangle::Draw(MatrixStack2D &stack) {
 	stack.Pop();
 
 	RenderChildren(stack);
+}
+
+void RgbTriangle::Click(int button, int state, float2 pos) {
+	if (button == GLUT_LEFT_BUTTON && state == GLUT_DOWN) {
+		bringToFront();
+	}
+}
+
+void RgbTriangle::bringToFront() {
+	int maxZ = 0;
+	for (auto widget : GetEngine().GetWidgetsOfType<RgbTriangle>()) {
+		if (widget->ZIndex > maxZ) {
+			maxZ = widget->ZIndex--;
+		}
+	}
+
+	if (ZIndex >= maxZ) {
+		return;
+	}
+
+	ZIndex = maxZ;
 }
