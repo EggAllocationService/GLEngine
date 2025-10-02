@@ -114,8 +114,6 @@ namespace glengine {
 
         renderWidgets();
 
-        glFlush();
-
         glutSwapBuffers();
     }
 
@@ -149,12 +147,10 @@ namespace glengine {
 
         stack.Push(screenTransform);
 
-        int rendered = 0;
         for (auto widget : widgets) {
             stack.Push(widget->GetTransformMatrix());
             widget->Draw(stack);
             stack.Pop();
-            rendered++;
         }
 
         glFlush();
