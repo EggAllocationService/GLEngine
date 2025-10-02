@@ -8,12 +8,10 @@ add_library(glengine STATIC
         "src/Widget.cpp"
         "src/Colors.cpp" 
         "src/MatrixStack.cpp"
-        src/GLMath.cpp
-        include/GLMath.h 
+        "src/GLMath.cpp"
         "src/widgets/Button.cpp" 
         "src/widgets/PerfCounter.cpp"
-        src/input/MouseManager.cpp
-        include/MouseManager.h)
+        "src/input/MouseManager.cpp")
 
 target_include_directories(glengine PUBLIC include)
 

@@ -1,9 +1,8 @@
 //
 // Created by Kyle Smith on 2025-09-26.
 //
+#pragma once
 
-#ifndef GLENGINE_MATRIX_H
-#define GLENGINE_MATRIX_H
 #include <string>
 #include <iostream>
 
@@ -100,5 +99,3 @@ struct Matrix {
 
 typedef Matrix<float, 4, 4> mat4;
 typedef Matrix<float, 3, 3> mat3;
-
-#endif //GLENGINE_MATRIX_H

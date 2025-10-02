@@ -1,8 +1,8 @@
 //
 // Created by Kyle Smith on 2025-09-26.
 //
-#include <cmath>
 #pragma once
+#include <cmath>
 
 /// Helper type to allow for glsl-like vector swizzling
 /// @tparam vector the type of the swizzled vector, possibly narrowed from the source
