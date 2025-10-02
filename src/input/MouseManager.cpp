@@ -50,7 +50,8 @@ namespace glengine::input {
                     clicking = false;
                 } else {
                     // if it's not freed, then send drag events
-                    hoveredWidget.lock()->Click(GLUT_LEFT_BUTTON, GLUT_DRAG, mousePosition);
+                    auto hovered = hoveredWidget.lock();
+                    hovered->Click(GLUT_LEFT_BUTTON, GLUT_DRAG, mousePosition);
                     return;
                 }
             }

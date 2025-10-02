@@ -44,12 +44,12 @@ namespace glengine::input {
         std::shared_ptr<Widget> GetHoveredWidget() {
             return hoveredWidget.lock();
         }
+        float2 mousePosition;
 
     private:
         Engine* engine;
         std::weak_ptr<Widget> hoveredWidget;
 
-        float2 mousePosition;
         bool clicking = false;
 
         MouseMode mouseMode = FREE;

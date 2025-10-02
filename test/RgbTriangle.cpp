@@ -13,14 +13,13 @@ RgbTriangle::RgbTriangle() {
 	button = AddChildWidget<widgets::Button>();
 
 	button->SetText("Drag Me!");
-	button->SetClickListener([this](int button, int state, float2 pos) {
-			if (button == GLUT_LEFT_BUTTON && state == GLUT_DOWN) {
-				this->clickPos = pos;
-				pause = true;
+	button->SetClickListener([this](int type, int state, float2 pos) {
+			if (type == GLUT_LEFT_BUTTON && state == GLUT_DOWN) {
+				this->clickPos = pos + button->GetEffectiveAbsolutePosition();
 			}
-			if (button == GLUT_LEFT_BUTTON && state == GLUT_UP) {
+			if (type == GLUT_LEFT_BUTTON && state == GLUT_DRAG) {
 				this->Position += (pos - clickPos);
-				pause = false;
+				this->clickPos = pos;
 			}
 		});
 	button->Position = float2(-20, 0);
