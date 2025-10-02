@@ -58,7 +58,7 @@ namespace glengine {
 
         windowSize = size;
         glutInitWindowSize(windowSize.x, windowSize.y);
-        glutInitDisplayMode(GLUT_RGBA|GLUT_DOUBLE);
+        glutInitDisplayMode(GLUT_RGBA|GLUT_DOUBLE|GLUT_MULTISAMPLE);
 
         windowHandle = glutCreateWindow(windowName.c_str());
         Instances[windowHandle] = this;
@@ -136,6 +136,9 @@ namespace glengine {
     }
 
     void Engine::renderWidgets() {
+        glEnable(GL_POLYGON_SMOOTH);
+        glEnable(GL_MULTISAMPLE);
+
         MatrixStack2D stack = MatrixStack2D();
 
         // generate screen pixel coord -> gl coord matrix
