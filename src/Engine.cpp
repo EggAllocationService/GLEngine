@@ -137,7 +137,6 @@ namespace glengine {
 
     void Engine::renderWidgets() {
         glEnable(GL_POLYGON_SMOOTH);
-        glEnable(GL_MULTISAMPLE);
 
         MatrixStack2D stack = MatrixStack2D();
 
