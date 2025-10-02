@@ -6,7 +6,6 @@
 #include "Colors.h"
 #include <map>
 #include <algorithm>
-#include <ranges>
 
 
 namespace glengine {
@@ -19,7 +18,7 @@ namespace glengine {
         }
     }
 
-    static void updateExec(int) {
+    static void updateExec() {
         int currentWindow = glutGetWindow();
         if (Instances.contains(currentWindow)) {
             Instances[currentWindow]->Update();
@@ -64,8 +63,7 @@ namespace glengine {
         windowHandle = glutCreateWindow(windowName.c_str());
         Instances[windowHandle] = this;
 
-        glutTimerFunc(1, updateExec, 0);
-        //glutIdleFunc(updateExec);
+        glutIdleFunc(updateExec);
         glutDisplayFunc(renderExec);
         glutReshapeFunc(reshapeExec);
         glutMouseFunc(clickExec);
@@ -104,7 +102,6 @@ namespace glengine {
         setLastUpdate();
 
         glutPostRedisplay();
-        glutTimerFunc(1, updateExec, 0);
     }
 
     void Engine::SetWindowSize(int2 size) {
