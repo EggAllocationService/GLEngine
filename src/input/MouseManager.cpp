@@ -41,7 +41,22 @@ namespace glengine::input {
         // this makes sure moving widgets get hover events correctly
         // but if the user is clicking, we don't want to change the hovered widget
         // because then buttons may not get the mouse up event, for example
-        if (mouseMode == FREE && !clicking) {
+        if (mouseMode == FREE) {
+
+            // check if we're still dragging from the same element
+            if (clicking) {
+                if (hoveredWidget.expired()) {
+                    // if the object we were clicking has been freed, then set clicking to false
+                    clicking = false;
+                } else {
+                    // if it's not freed, then send drag events
+                    hoveredWidget.lock()->Click(GLUT_LEFT_BUTTON, GLUT_DRAG, mousePosition);
+                    return;
+                }
+            }
+
+
+
             auto newHovered = FindHoveredWidget(mousePosition);
             if (newHovered == hoveredWidget.lock()) return; // still hovering the same widget
 

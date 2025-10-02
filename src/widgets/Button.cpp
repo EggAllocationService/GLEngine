@@ -1,6 +1,7 @@
 #include "widgets/Button.h"
 #include "engine_GLUT.h"
 #include "Colors.h"
+#include "MouseManager.h"
 
 glengine::widgets::Button::Button()
 {
@@ -62,7 +63,7 @@ void glengine::widgets::Button::Click(int button, int state, float2 pos)
 		}
 	}
 	else {
-		pressed = (state == GLUT_DOWN);
+		pressed = (state == GLUT_DOWN || state == GLUT_DRAG);
 		if (onClick != nullptr) {
 			onClick(button, state, pos);
 		}

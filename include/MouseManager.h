@@ -5,6 +5,9 @@
 #include <memory>
 #include "Vectors.h"
 
+// for mouse dragging
+#define GLUT_DRAG 2
+
 namespace glengine {
     class Engine;
     class Widget;
