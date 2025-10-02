@@ -47,10 +47,12 @@ int main(int argc, char **argv) {
     closeButton->ZIndex = 1000;
     closeButton->BackgroundColor = Colors::RED;
     closeButton->Position = float2(-10, -10);
-    closeButton->SetText("Close");
+    closeButton->SetText("Close All");
     closeButton->SetClickListener([=](int button, int state, float2 pos) {
-        if (button == GLUT_LEFT_BUTTON && state == GLUT_DOWN) {
-            inst->Quit();
+        if (button == GLUT_LEFT_BUTTON && state == GLUT_UP) {
+            for (auto widget : inst->GetWidgetsOfType<RgbTriangle>()) {
+                widget->Destroy();
+            }
         }
     });
 

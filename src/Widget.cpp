@@ -20,6 +20,10 @@ void glengine::Widget::UpdateAll(double DeltaTime) {
 		child->UpdateAll(DeltaTime);
 	}
 
+	// remove children marked for destroy
+	std::erase_if(children,
+		[](std::shared_ptr<Widget> child) {return child->IsDestroyed();});
+
 	// sort children by z-index
 	std::sort(children.begin(), children.end(),
 		[](std::shared_ptr<Widget>& a, std::shared_ptr<Widget>& b) {

@@ -28,5 +28,7 @@ private:
 
     bool pause = false;
 
+    bool isTop = false;
+
     std::shared_ptr<widgets::Button> button;
 };

@@ -61,7 +61,11 @@ void RgbTriangle::Draw(MatrixStack2D &stack) {
 		float3(0.0, 0.5, 1.0)
 	};
 
-	glColor4fv(Colors::WHITE);
+	if (isTop) {
+		glColor4fv(Colors::WHITE);
+	} else {
+		glColor4fv(float4(1.0, 1.0, 1.0, 0.5));
+	}
 	stack.DrawRect(float2(0, 0), float2(size));
 
 
@@ -94,9 +98,15 @@ void RgbTriangle::bringToFront() {
 	int maxZ = 0;
 	for (auto widget : GetEngine().GetWidgetsOfType<RgbTriangle>()) {
 		if (widget->ZIndex > maxZ) {
-			maxZ = widget->ZIndex--;
+			if (widget->ZIndex > ZIndex) {
+				maxZ = widget->ZIndex--;
+			}
+
+			widget->isTop = false;
 		}
 	}
+
+	isTop = true;
 
 	if (ZIndex >= maxZ) {
 		return;
