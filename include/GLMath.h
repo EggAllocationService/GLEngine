@@ -24,13 +24,19 @@ namespace glengine::math {
     mat3 translate2D(float2 translation);
     
     template<typename T>
-    struct lerp {
+    struct interp {
         T a;
         T b;
         float c;
 
         explicit operator T() const {
-            return a * (1 - c) + (b * c);
+            return lerp(a, b, c);
         }
     };
+
+    template<typename T>
+    T lerp(T a, T b, float c) {
+        return a * (1 - c) + c * b;
+    }
+
 }

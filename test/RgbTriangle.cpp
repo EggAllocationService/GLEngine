@@ -101,9 +101,8 @@ void RgbTriangle::bringToFront() {
 			if (widget->ZIndex > ZIndex) {
 				maxZ = widget->ZIndex--;
 			}
-
-			widget->isTop = false;
 		}
+		widget->isTop = false;
 	}
 
 	isTop = true;
