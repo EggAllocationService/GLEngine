@@ -231,6 +231,14 @@ struct vec2 {
     bool operator<(vec2 other) {
         return x < other.x && y < other.y;
     }
+
+    T len2() const {
+        return x * x + y * y;
+    }
+
+    T len() const {
+        return sqrt(len2());
+    }
 };
 
 /// Constant-width vector, 3 lanes
