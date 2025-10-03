@@ -36,7 +36,7 @@ namespace glengine::math {
 
     template<typename T>
     T lerp(T a, T b, float c) {
-        return a * (1 - c) + c * b;
+        return (a * (1 - c)) + (b * c);
     }
 
 }
