@@ -327,6 +327,14 @@ struct vec3 {
         return vec3(x + rhs, y + rhs, z + rhs);
     }
 
+    vec3 operator-(const vec3 rhs) const {
+        return vec3(x - rhs.x, y - rhs.y, z - rhs.z);
+    }
+
+    vec3 operator-(const T rhs) const {
+        return vec3(x - rhs, y - rhs, z - rhs);
+    }
+
     // cross product
     vec3 cross(const vec3 rhs) const {
         return vec3(
