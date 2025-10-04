@@ -82,7 +82,7 @@ struct vec_swizzle {
     /// <summary>
     /// Converts this swizzled view to a vector
     /// </summary>
-    operator vector() {
+    operator vector() const {
         return vector(data[indices]...);
     }
 };
