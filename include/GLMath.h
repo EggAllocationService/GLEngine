@@ -3,6 +3,8 @@
 //
 #pragma once
 #include "Matrix.h"
+#include <vector>
+#include <span>
 
 namespace glengine::math {
     /**
@@ -38,5 +40,7 @@ namespace glengine::math {
     T lerp(T a, T b, float c) {
         return (a * (1 - c)) + (b * c);
     }
+
+    std::unique_ptr<std::vector<float3>> subdividePolygon(std::span<const float3> polygon, int additionalVertices);
 
 }
