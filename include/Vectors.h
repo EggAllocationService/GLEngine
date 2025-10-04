@@ -239,6 +239,10 @@ struct vec2 {
     T len() const {
         return sqrt(len2());
     }
+
+    T dot(const vec2 other) const {
+        return x * other.x + y * other.y;
+    }
 };
 
 /// Constant-width vector, 3 lanes
