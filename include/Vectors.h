@@ -243,6 +243,10 @@ struct vec2 {
     T dot(const vec2 other) const {
         return x * other.x + y * other.y;
     }
+
+    vec2 norm() const {
+        return this / len();
+    }
 };
 
 /// Constant-width vector, 3 lanes
@@ -306,6 +310,15 @@ struct vec3 {
 
     vec3 operator+(const T rhs) {
         return vec3(x + rhs, y + rhs, z + rhs);
+    }
+
+    // cross product
+    vec3 cross(const vec3 rhs) const {
+        return vec3(
+            y * rhs.z - z * rhs.y,
+            z * rhs.x - x * rhs.z,
+            x * rhs.y - y * rhs.x
+        )
     }
 };
 
