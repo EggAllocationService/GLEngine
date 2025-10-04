@@ -245,7 +245,7 @@ struct vec2 {
     }
 
     vec2 norm() const {
-        return this / len();
+        return *this / len();
     }
 };
 
@@ -266,6 +266,13 @@ struct vec3 {
         data[0] = xy.x;
         data[1] = xy.y;
         data[2] = z;
+    }
+
+    template<typename O>
+    vec3(vec3<O> other) {
+        data[0] = T(other.x);
+        data[1] = T(other.y);
+        data[2] = T(other.z);
     }
 
     union {
@@ -296,19 +303,27 @@ struct vec3 {
         return true;
     }
 
-    vec3 operator*(const vec3 rhs) {
+    vec3 operator*(const vec3 rhs) const {
         return vec3(x * rhs.x, y * rhs.y, z * rhs.z);
     }
 
-    vec3 operator*(const T rhs) {
+    vec3 operator*(const T rhs) const {
         return vec3(x * rhs, y * rhs, z * rhs);
     }
 
-    vec3 operator+(const vec3 rhs) {
+    vec3 operator/(const vec3 rhs) const {
+        return vec3(x / rhs.x, y / rhs.y, z / rhs.z);
+    }
+
+    vec3 operator/(const T rhs) const {
+        return vec3(x / rhs, y / rhs, z / rhs);
+    }
+
+    vec3 operator+(const vec3 rhs) const {
         return vec3(x + rhs.x, y + rhs.y, z + rhs.z);
     }
 
-    vec3 operator+(const T rhs) {
+    vec3 operator+(const T rhs) const {
         return vec3(x + rhs, y + rhs, z + rhs);
     }
 
@@ -318,7 +333,7 @@ struct vec3 {
             y * rhs.z - z * rhs.y,
             z * rhs.x - x * rhs.z,
             x * rhs.y - y * rhs.x
-        )
+        );
     }
 };
 
