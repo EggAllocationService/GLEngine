@@ -16,19 +16,19 @@ glengine::Widget::Widget() {
 
 void glengine::Widget::UpdateAll(double DeltaTime) {
 	Update(DeltaTime);
-	for (auto child : children) {
+	for (auto child: children) {
 		child->UpdateAll(DeltaTime);
 	}
 
 	// remove children marked for destroy
 	std::erase_if(children,
-		[](std::shared_ptr<Widget> child) {return child->IsDestroyed();});
+	              [](std::shared_ptr<Widget> child) { return child->IsDestroyed(); });
 
 	// sort children by z-index
 	std::sort(children.begin(), children.end(),
-		[](std::shared_ptr<Widget>& a, std::shared_ptr<Widget>& b) {
-			return a->ZIndex < b->ZIndex;
-		});
+	          [](std::shared_ptr<Widget> &a, std::shared_ptr<Widget> &b) {
+		          return a->ZIndex < b->ZIndex;
+	          });
 }
 
 /**
@@ -46,20 +46,26 @@ float2 calculateAnchorOffset(glengine::Anchoring anchor, float2 bounds, float2 s
 	int x_alignment = anchor % 3;
 	float2 result;
 
-	if (x_alignment == 0) { // LEFT x alignment
+	if (x_alignment == 0) {
+		// LEFT x alignment
 		result.x = 0;
-	} else if (x_alignment == 1) { // MIDDLE x alignment
+	} else if (x_alignment == 1) {
+		// MIDDLE x alignment
 		result.x = (bounds.x / 2) - (size.x / 2);
-	} else if (x_alignment == 2) { // RIGHT x alignment
-		result.x  = bounds.x - size.x;
+	} else if (x_alignment == 2) {
+		// RIGHT x alignment
+		result.x = bounds.x - size.x;
 	}
 
-	if (y_alignment == 0) { // BOTTOM y alignment
+	if (y_alignment == 0) {
+		// BOTTOM y alignment
 		result.y = 0;
-	} else if (y_alignment == 1) { // MIDDLE y alignment
+	} else if (y_alignment == 1) {
+		// MIDDLE y alignment
 		result.y = (bounds.y / 2) - (size.y / 2);
-	} else if (y_alignment == 2) { // TOP y alignment
-		result.y  = bounds.y - size.y;
+	} else if (y_alignment == 2) {
+		// TOP y alignment
+		result.y = bounds.y - size.y;
 	}
 
 	return result;
@@ -100,12 +106,12 @@ float2 glengine::Widget::GetEnclosingBounds() const {
 	return (parent == nullptr) ? float2(engine->GetWindowSize()) : parent->Bounds;
 }
 
-glengine::Engine& glengine::Widget::GetEngine() const {
+glengine::Engine &glengine::Widget::GetEngine() const {
 	return *engine;
 }
 
 void glengine::Widget::RenderChildren(MatrixStack2D &stack) const {
-	for (auto child : children) {
+	for (auto child: children) {
 		stack.Push(child->GetTransformMatrix());
 		child->Draw(stack);
 		stack.Pop();

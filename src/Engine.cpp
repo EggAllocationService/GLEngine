@@ -9,8 +9,15 @@
 
 
 namespace glengine {
+    // since GLUT doesn't let us store custom state on windows,
+    // we need a static map to keep track of which Engine instance
+    // owns which window
     static std::map<int, Engine *> Instances;
 
+#pragma region event handlers
+    /// These event handlers are needed because we can't pass state-owning functions (i.e. lambdas) to C as
+    /// raw function pointers. These will find the Engine instance that owns the active window ID and
+    /// call the appropriate instance function
     static void renderExec() {
         int currentWindow = glutGetWindow();
         if (Instances.contains(currentWindow)) {
@@ -52,13 +59,14 @@ namespace glengine {
             Instances[currentWindow]->GetMouseManager()->HandleMotion(pos);
         }
     }
+#pragma endregion
 
     Engine::Engine(const std::string &windowName, int2 size) {
         mouseManager = new input::MouseManager(this);
 
         windowSize = size;
         glutInitWindowSize(windowSize.x, windowSize.y);
-        glutInitDisplayMode(GLUT_RGBA|GLUT_DOUBLE|GLUT_DEPTH|GLUT_STENCIL);
+        glutInitDisplayMode(GLUT_RGBA | GLUT_DOUBLE | GLUT_DEPTH | GLUT_STENCIL);
 
         windowHandle = glutCreateWindow(windowName.c_str());
         Instances[windowHandle] = this;
@@ -88,6 +96,9 @@ namespace glengine {
     }
 
     void Engine::Update() {
+        // main update loop
+
+        // if game logic requested a quit on the previous frame, then do that now
         if (quitRequested) {
             glutDestroyWindow(windowHandle);
             exit(0);
@@ -95,7 +106,7 @@ namespace glengine {
 
         double delta = calculateDeltaTime();
 
-        mouseManager->Update(delta);
+        mouseManager->Update();
 
         updateWidgets(delta);
 
@@ -110,6 +121,7 @@ namespace glengine {
     }
 
     void Engine::Render() {
+        // perform all rendering then swap the double-buffered view
         clearBuffers();
 
         renderWidgets();
@@ -134,11 +146,13 @@ namespace glengine {
     }
 
     void Engine::renderWidgets() {
-        glEnable(GL_POLYGON_SMOOTH);
-
+        // a matrix stack lets us render nested widgets very conveniently
+        // also provides valuable tools for widgets to render parent-child objects
         MatrixStack2D stack = MatrixStack2D();
 
         // generate screen pixel coord -> gl coord matrix
+        // this matrix scales pixel coordinates by 2.0 / (window size), giving us coords in the range
+        // 0 to 2. it then translates by -1 on both axis to fit into the OpenGL coordinate space of -1 to 1
         mat3 screenTransform = mat3::identity();
         screenTransform[0]->set(0, 2.0f / windowSize.x);
         screenTransform[1]->set(1, 2.0f / windowSize.y);
@@ -147,7 +161,10 @@ namespace glengine {
 
         stack.Push(screenTransform);
 
-        for (auto widget : widgets) {
+        // render each widget one by one
+        // the `widgets` array was sorted back-to-front by z-index at the end of updateWidgets(), so we don't
+        // need to worry about that here.
+        for (const auto& widget: widgets) {
             stack.Push(widget->GetTransformMatrix());
             widget->Draw(stack);
             stack.Pop();
@@ -157,19 +174,20 @@ namespace glengine {
     }
 
     void Engine::updateWidgets(double deltaTime) {
-        for (auto widget: widgets) {
+        // call UpdateAll on each widget to automatically update it and its children recursively
+        for (const auto& widget: widgets) {
             widget->UpdateAll(deltaTime);
         }
 
-        // cleanup widgets to be destroyed
+        // cleanup widgets that need to be destroyed
         std::erase_if(widgets,
-            [](const std::shared_ptr<Widget>& widget) {return widget->IsDestroyed();}
-            );
+                      [](const std::shared_ptr<Widget> &widget) { return widget->IsDestroyed(); }
+        );
 
         // sort widgets back-to-front, in case an Update implementation changed a Z-Index
         std::sort(widgets.begin(), widgets.end(),
-            [](std::shared_ptr<Widget>& a, std::shared_ptr<Widget>& b) {
-                return a->ZIndex < b->ZIndex;
-            });
+                  [](std::shared_ptr<Widget> &a, std::shared_ptr<Widget> &b) {
+                      return a->ZIndex < b->ZIndex;
+                  });
     }
 } // glengine

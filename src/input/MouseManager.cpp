@@ -9,7 +9,7 @@
 #include <ranges>
 
 namespace glengine::input {
-    MouseManager::MouseManager(Engine* engine) {
+    MouseManager::MouseManager(Engine *engine) {
         this->engine = engine;
     }
 
@@ -17,32 +17,32 @@ namespace glengine::input {
         if (mouseMode == FREE) {
             mousePosition = position;
         } else {
-            /* int2 windowMiddle = engine->GetWindowSize() / 2;
-            int2 relativePosition = position - windowMiddle;
-            float2 normalized = float2(relativePosition) / float2(engine->GetWindowSize()); */
-
+            // TODO: this isn't fleshed out yet
+            // the mouse is locked into the window, so just re-center it
+            // in the future we'll need to report relative motion to the game engine, to move a camera or whatever
             centerCursor();
         }
     }
 
     void MouseManager::Click(int button, int action, float2 pos) {
+        // since we're hit-testing on every frame, we should already know what's being clicked
         auto target = hoveredWidget.lock();
 
         if (target != nullptr) {
             target->Click(button, action, pos - target->GetEffectiveAbsolutePosition());
         }
 
+        // need to update this even if we're not clicking any widget, so we don't send drag/mouseup events to a widget
+        // before a mousedown event
         clicking = action == GLUT_DOWN;
     }
 
-    void MouseManager::Update(double DeltaTime) {
-
+    void MouseManager::Update() {
         // every frame in free mouse mode, hit test under the cursor
         // this makes sure moving widgets get hover events correctly
         // but if the user is clicking, we don't want to change the hovered widget
         // because then buttons may not get the mouse up event, for example
         if (mouseMode == FREE) {
-
             // check if we're still dragging from the same element
             if (clicking) {
                 if (hoveredWidget.expired()) {
@@ -56,9 +56,8 @@ namespace glengine::input {
                 }
             }
 
-
-
-            auto newHovered = FindHoveredWidget(mousePosition);
+            // since the user isn't clicking we need to update whatever's being hovered
+            auto newHovered = hitTestWidgets(mousePosition);
             if (newHovered == hoveredWidget.lock()) return; // still hovering the same widget
 
             if (!hoveredWidget.expired()) {
@@ -71,6 +70,7 @@ namespace glengine::input {
                 newHovered->HoverStateChanged(true);
                 glutSetCursor(newHovered->Cursor);
             } else {
+                // was hovering something, now hovering nothing
                 glutSetCursor(GLUT_CURSOR_INHERIT);
             }
 
@@ -79,6 +79,8 @@ namespace glengine::input {
     }
 
     void MouseManager::SetMouseMode(MouseMode mode) {
+        // TODO: update this when implementing 3d control
+        // not needed at the moment
         mouseMode = mode;
         if (mode == FREE) {
             glutSetCursor(GLUT_CURSOR_INHERIT);
@@ -90,6 +92,7 @@ namespace glengine::input {
     }
 
     void MouseManager::centerCursor() const {
+        // teleport the cursor to the center of the window
         int2 windowMiddle = engine->GetWindowSize() / 2;
         glutWarpPointer(windowMiddle.x, windowMiddle.y);
     }
@@ -102,7 +105,8 @@ namespace glengine::input {
     /// <param name="transform">The current transform. This should be the on-screen position of `widget`</param>
     /// <param name="widget"> The widget to hit test, and check the children</param>
     /// <param name="position">Window-space coordinates of the mouse cursor</param>
-    std::shared_ptr<Widget> internal_hitTestWidgetAndChildren(float2 transform, std::shared_ptr<Widget> widget, float2 position) {
+    std::shared_ptr<Widget> internal_hitTestWidgetAndChildren(float2 transform, std::shared_ptr<Widget> widget,
+                                                              float2 position) {
         float2 lowerLeft = transform;
         float2 topRight = transform + widget->Bounds;
 
@@ -110,11 +114,11 @@ namespace glengine::input {
             if (internal_isPointInside(position, lowerLeft, topRight)) {
                 return widget;
             }
-        }
-        else {
+        } else {
             // children are sorted in ascending z-order each frame, so iterate high -> low
-            for (auto child : std::ranges::views::reverse(widget->GetChildren())) {
-                auto child_result = internal_hitTestWidgetAndChildren(transform + child->GetEffectiveRelativePosition(), child, position);
+            for (const auto& child: std::ranges::views::reverse(widget->GetChildren())) {
+                auto child_result = internal_hitTestWidgetAndChildren(transform + child->GetEffectiveRelativePosition(),
+                                                                      child, position);
 
                 if (child_result != nullptr) return child_result;
             }
@@ -128,18 +132,17 @@ namespace glengine::input {
         return nullptr;
     }
 
-    std::shared_ptr<Widget> MouseManager::FindHoveredWidget(float2 position) const {
+    std::shared_ptr<Widget> MouseManager::hitTestWidgets(const float2 position) const {
         auto widgets = engine->GetWidgets();
 
-        auto screenSize = float2(engine->GetWindowSize());
-
         // widgets array is sorted by ascending z-index every tick, so search in reverse order
-        for (auto widget : std::ranges::views::reverse(widgets)) {
+        for (const auto& widget: std::ranges::views::reverse(widgets)) {
             auto result = internal_hitTestWidgetAndChildren(widget->GetEffectiveRelativePosition(), widget, position);
+
             if (result != nullptr) return result;
         }
 
+        // nothing hovered
         return nullptr;
     }
-
 }

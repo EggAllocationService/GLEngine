@@ -23,7 +23,7 @@ float3 glengine::MatrixStack2D::operator*(float3 rhs) {
 
     // in this case std::bit_cast will be a no-op as float3 and vecn<float, 3> are the same size
     // and are both value types
-    return std::bit_cast<float3>(stack.back() * std::bit_cast<vecn<float, 3>>(rhs));
+    return std::bit_cast<float3>(stack.back() * std::bit_cast<vecn<float, 3> >(rhs));
 }
 
 float2 glengine::MatrixStack2D::operator*(float2 rhs) {
@@ -39,7 +39,7 @@ float2 glengine::MatrixStack2D::operator*(float2 rhs) {
     return float2(tmp.data[0], tmp.data[1]);
 }
 
-void glengine::MatrixStack2D::DrawPolygon(std::vector<float3>& verticies) {
+void glengine::MatrixStack2D::DrawPolygon(std::vector<float3> &verticies) {
     glBegin(GL_POLYGON);
     for (float3 &vertex: verticies) {
         glVertex3fv(this->operator*(vertex));
@@ -56,18 +56,16 @@ void glengine::MatrixStack2D::DrawRect(float2 a, float2 b) {
     };
 
     glBegin(GL_POLYGON);
-    for (auto vertex : verticies) {
+    for (auto vertex: verticies) {
         glVertex3fv(this->operator*(vertex));
     }
     glEnd();
 }
 
-void glengine::MatrixStack2D::PrintText(float2 position, const char* text)
-{
+void glengine::MatrixStack2D::PrintText(float2 position, const char *text) {
     int pos = 0;
-    
-    for (const char* current = text; *current != 0; current++) {
-        
+
+    for (const char *current = text; *current != 0; current++) {
         glRasterPos2fv(this->operator*(position + float2(8.0 * pos, 0)));
 
         glutBitmapCharacter(GLUT_BITMAP_8_BY_13, *current);

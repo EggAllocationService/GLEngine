@@ -30,8 +30,7 @@ namespace Colors {
         return result;
     }
 
-    float4 blend(float4 bottom, float4 top)
-    {
+    float4 blend(float4 bottom, float4 top) {
         return (bottom * (1 - top.a)) + (top * top.a);
     }
 }

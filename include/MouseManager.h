@@ -5,7 +5,8 @@
 #include <memory>
 #include "Vectors.h"
 
-// for mouse dragging
+// for mouse drag events
+// probably fine ish since
 #define GLUT_DRAG 2
 
 namespace glengine {
@@ -35,27 +36,38 @@ namespace glengine::input {
         /// GLUT click callback
         void Click(int button, int action, float2 pos);
 
-        /// Called every frame to check that
-        void Update(double DeltaTime);
+        /// Called every frame to send hover and drag events
+        void Update();
 
         /// Sets the active mouse mode
         void SetMouseMode(MouseMode mode);
 
-        std::shared_ptr<Widget> GetHoveredWidget() {
+        /// Gets the currently hovered widget, which may be null
+        [[nodiscard]] std::shared_ptr<Widget> GetHoveredWidget() const {
             return hoveredWidget.lock();
         }
-        float2 mousePosition;
+
+        /// Gets the last reported mouse position, in window x/y coordinates
+        [[nodiscard]] float2 GetMousePosition() const {
+            return mousePosition;
+        }
 
     private:
         Engine* engine;
         std::weak_ptr<Widget> hoveredWidget;
 
+        float2 mousePosition;
+
+        // this essentially freezes the value of `hoveredWidget` while true
+        // the idea is that you can mousedown on a widget, move the mouse outside the widget, then mouseup
+        // and the widget will still receive the mouseup event since `clicking` is true the whole time.
         bool clicking = false;
 
         MouseMode mouseMode = FREE;
 
+        // teleport the cursor to the center of the window
         void centerCursor() const;
 
-        std::shared_ptr<Widget> FindHoveredWidget(float2 position) const;
+        [[nodiscard]] std::shared_ptr<Widget> hitTestWidgets(float2 position) const;
     };
 }
