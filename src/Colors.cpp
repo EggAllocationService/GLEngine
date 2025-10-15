@@ -3,7 +3,8 @@
 
 namespace Colors {
     float4 hsv(int h, float s, float v) {
-        // algorithm copied from https://www.rapidtables.com/convert/color/hsv-to-rgb.html
+        // formula from https://www.rapidtables.com/convert/color/hsv-to-rgb.html
+        // C++ implementation by me
 
         float c = v * s;
         float x = c * (1 - abs(fmod(h / 60.0, 2.0) - 1));
