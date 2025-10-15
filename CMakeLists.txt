@@ -38,6 +38,12 @@ elseif(${CMAKE_SYSTEM_NAME} MATCHES "Windows")
    
 endif()
 
+function(engine_copy_freeglut_if_needed TARGETNAME)
+    if (${CMAKE_SYSTEM_NAME} MATCHES "Windows" AND DEFINED FREEGLUT_DLL)
+        add_custom_command(TARGET ${TARGETNAME} POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy_if_different ${FREEGLUT_DLL} $<TARGET_FILE_DIR:${TARGETNAME}>)
+    endif()
+endfunction()
+
 if (${PROJECT_IS_TOP_LEVEL})
     add_executable(test1 test/main.cpp "test/RgbTriangle.cpp")
     target_link_libraries(test1 PRIVATE glengine)
