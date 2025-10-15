@@ -9,17 +9,20 @@ glengine::widgets::PerfCounter::PerfCounter() {
 	Bounds = float2(8 * 10, 13);
 }
 
-void glengine::widgets::PerfCounter::Update(double DeltaTime) {
-	counts.push_back(DeltaTime);
-	timer += DeltaTime;
+void glengine::widgets::PerfCounter::Update(double deltaTime) {
+	// add the deltaTime onto the list and increment the timer
+	counts.push_back(deltaTime);
+	timer += deltaTime;
 
+	// every second, average the contents of `counts` then reset it
 	if (timer > 1.0) {
+		// first, reset the timer
 		timer = 0.0;
 
-		size_t len = counts.size();
+		const size_t len = counts.size();
 		double total = 0.0;
 
-		for (double frameTime: counts) {
+		for (const double frameTime: counts) {
 			total += frameTime;
 		}
 

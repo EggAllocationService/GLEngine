@@ -5,6 +5,11 @@
 #include <functional>
 
 namespace glengine::widgets {
+
+	/// A simple button widget
+	/// Can operate either in standard or toggle mode
+	/// In normal mode, click events are passed to the click handler given by SetClickListener
+	/// In toggle mode, the button acts like a checkbox and SetClickListener is only called on changes
 	class Button : public Widget {
 	public:
 		Button();
@@ -47,11 +52,14 @@ namespace glengine::widgets {
 		bool Toggle = false; 
 
 	protected:
+		/// <summary>
+		/// Calculates the needed size of the button, given current padding, border, text, and MinimumWidth values
+		/// </summary>
 		virtual float2 CalculateSize() const;
 
-		virtual void Update(double DeltaTime) override;
+		void Update(double deltaTime) override;
 
-		std::string Text;
+		std::string text;
 		
 		std::function<void(int button, int state, float2 pos)> onClick;
 

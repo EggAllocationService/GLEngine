@@ -29,8 +29,6 @@ namespace glengine {
 
         /// <summary>
 		/// Convenience overload for transforming 2d points. Internally widens to a vec3 with z = 1.0.
-		/// 
-		/// Less efficient than the float3 version.
 		/// </summary>
         float2 operator*(float2 rhs);
 

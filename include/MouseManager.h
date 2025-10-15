@@ -6,7 +6,6 @@
 #include "Vectors.h"
 
 // for mouse drag events
-// probably fine ish since
 #define GLUT_DRAG 2
 
 namespace glengine {

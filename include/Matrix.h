@@ -8,6 +8,9 @@
 
 #include "Vectors.h"
 
+/// A templated matrix type
+/// Provides support for templated matrix-vector and matrix-matrix multiplication
+/// Data is stored in column-major format, for efficiency when doing said multiplication
 template<typename T, int X, int Y>
 struct Matrix {
     Matrix() = default;
@@ -25,9 +28,11 @@ struct Matrix {
         return (vecn<T, Y> *) &data[column * Y];
     }
 
-    // matrix-matrix multiply 
+    /// Matrix-matrix multiply
+    /// Since this is templated, the compiler can generate the optimal machine code for any shape
     template<int X2, int Y2>
-    Matrix<T, Y, X2> operator *(Matrix<T, X2, Y2> other) {
+    Matrix<T, Y, X2> operator *(const Matrix<T, X2, Y2> other) const {
+        // verify that matrix multiplication is actually possible for the two matrices
         static_assert(X == Y2, "Matrix multiplication not defined for this shape!");
         Matrix<T, Y, X2> result;
 
@@ -59,22 +64,29 @@ struct Matrix {
         return result;
     }
 
+    /// Matrix-vector multiplication
     template<int VL>
     vecn<T, Y> operator *(vecn<T, VL> other) {
         static_assert(VL == X, "Incompatible shapes for matrix-vector multiply");
 
+        // setup output accumulator
         vecn<T, Y> acc = vecn<T, Y>::zero();
 
+        // for each column...
         for (int column = 0; column < X; column++) {
+            // multiply it by the corresponding lane in the vector and add to the accumulator
             acc += (*this->operator[](column) * other[column]);
         }
 
         return acc;
     }
 
+    /// Helper function to print matrices to the console
     friend std::ostream &operator<<(std::ostream &os, const Matrix &m) {
         os << X << "x" << Y << " matrix:" << std::endl;
 
+        // have to iterate like this because data is stored column-major
+        // but we want to print row-major
         for (int y = 0; y < Y; y++) {
             for (int x = 0; x < X; x++) {
                 os << m.data[x * Y + y] << " ";
@@ -84,6 +96,8 @@ struct Matrix {
         return os;
     }
 
+    /// Get an identity matrix
+    /// Undefined compile for non-square shapes
     static Matrix identity() {
         static_assert(X == Y, "Matrix identity not defined for non-square matrices");
         Matrix m;
@@ -97,5 +111,6 @@ struct Matrix {
     }
 };
 
+/// Typedef the shapes we'll commonly use for convenience
 typedef Matrix<float, 4, 4> mat4;
 typedef Matrix<float, 3, 3> mat3;

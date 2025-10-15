@@ -113,17 +113,19 @@ struct vecn {
         return data[index];
     }
 
-    vecn operator*(vecn<T, LEN> &rhs) {
-        vecn<T, LEN> result;
+    /// lane-wise multiply
+    vecn operator*(const vecn &rhs) const {
+        vecn result;
         for (int i = 0; i < LEN; i++) {
             result.data[i] = data[i] * rhs.data[i];
         }
         return result;
     }
 
+    /// broadcast multiply
     template<typename I>
-    vecn operator*(I rhs) {
-        vecn<T, LEN> result;
+    vecn operator*(const I rhs) const {
+        vecn result;
 
         for (int i = 0; i < LEN; i++) {
             result.data[i] = data[i] * rhs;
@@ -131,8 +133,9 @@ struct vecn {
         return result;
     }
 
-    vecn operator+(vecn<T, LEN> rhs) {
-        vecn<T, LEN> result;
+    /// lane-wise addition
+    vecn operator+(const vecn rhs) const {
+        vecn result;
 
         for (int i = 0; i < LEN; i++) {
             result.data[i] = data[i] + rhs.data[i];
@@ -140,7 +143,8 @@ struct vecn {
         return result;
     }
 
-    void operator+=(vecn<T, LEN> rhs) {
+    /// lane-wise addition + assignment
+    void operator+=(const vecn rhs) const {
         for (int i = 0; i < LEN; i++) {
             data[i] += rhs.data[i];
         }
@@ -188,7 +192,7 @@ struct vec2 {
         return &data[0];
     }
 
-    bool operator==(const vec2<T> &rhs) {
+    bool operator==(const vec2 &rhs) {
         return data[0] == rhs.data[0] && data[1] == rhs.data[1];
     }
 
@@ -224,6 +228,7 @@ struct vec2 {
         return vec2(x - rhs, y - rhs);
     }
 
+    /// lane-wise numerical negation
     vec2 operator-() const {
         return vec2(-x, -y);
     }
@@ -232,10 +237,12 @@ struct vec2 {
         return x < other.x && y < other.y;
     }
 
+    /// length squared
     T len2() const {
         return x * x + y * y;
     }
 
+    /// absolute length
     T len() const {
         return sqrt(len2());
     }
@@ -296,13 +303,14 @@ struct vec3 {
         return &data[0];
     }
 
-    bool operator==(const vec3<T> &rhs) {
+    bool operator==(const vec3 &rhs) const {
         for (int i = 0; i < 3; i++) {
             if (data[i] != rhs.data[i]) return false;
         }
         return true;
     }
 
+    // TODO: surely these can be macros
     vec3 operator*(const vec3 rhs) const {
         return vec3(x * rhs.x, y * rhs.y, z * rhs.z);
     }
@@ -396,24 +404,24 @@ struct vec4 {
         return &x;
     }
 
-    vec4 operator *(const vec4<T> other) {
+    vec4 operator *(const vec4 other) const {
         return vec4(x * other.x, y * other.y, z * other.z, w * other.w);
     }
-    vec4 operator *(const T other) {
+    vec4 operator *(const T other) const {
         return vec4(x * other, y * other, z * other, w * other);
     }
 
-    vec4 operator +(const vec4<T> other) {
+    vec4 operator +(const vec4 other) const {
         return vec4(x + other.x, y + other.y, z + other.z, w + other.w);
     }
 
-    void operator +=(const vec4<T> other) {
+    void operator +=(const vec4 other) const {
         for (int i = 0; i < 4; i++) {
             this->data[i] += other.data[i];
         }
     }
 
-    bool operator==(const vec4<T> &other) {
+    bool operator==(const vec4 &other) const {
         for (int i = 0; i < 4; i++) {
             if (data[i] != other.data[i]) return false;
         }

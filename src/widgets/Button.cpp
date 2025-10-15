@@ -29,12 +29,12 @@ void glengine::widgets::Button::Draw(MatrixStack2D &stack) {
 
 	// calculate the width of just the text, in case we have MinimumWidth set
 	// this lets us center the text even when the button is very wide
-	float textWidth = 8 * Text.length();
+	float textWidth = 8 * text.length();
 	float textPosX = Bounds.x / 2 - textWidth / 2;
 
 	// draw text
 	glColor4fv(TextColor);
-	stack.PrintText(float2(textPosX, border + padding), Text.c_str());
+	stack.PrintText(float2(textPosX, border + padding), text.c_str());
 
 	// setup blending and set shadow color
 	glEnable(GL_BLEND);
@@ -76,7 +76,7 @@ void glengine::widgets::Button::Click(int button, int state, float2 pos) {
 }
 
 void glengine::widgets::Button::SetText(std::string newText) {
-	Text = newText;
+	text = newText;
 	Bounds = CalculateSize();
 }
 
@@ -93,7 +93,7 @@ float2 glengine::widgets::Button::CalculateSize() const {
 
 	auto result = float2(
 		// x = (Border + Padding) + (characterWidth * string length) + (Border + Padding)
-		(2.0 * (border + padding)) + (characterWidth * Text.length()),
+		(2.0 * (border + padding)) + (characterWidth * text.length()),
 
 		// y = (Border + Padding) + characterHeight + (Border + Padding)
 		(2.0 * (border + padding)) + characterHeight

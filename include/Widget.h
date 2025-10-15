@@ -11,6 +11,10 @@ namespace glengine {
 }
 
 namespace glengine {
+
+	/// Constants for the various types of anchoring supported
+	/// Represents a point on the given edge, i.e. MIDDLE_RIGHT is the midpoint of the right edge
+	/// MIDDLE_MIDDLE is the centerpoint of the widget
 	enum Anchoring {
 		BOTTOM_LEFT,
 		BOTTOM_MIDDLE,
@@ -39,7 +43,7 @@ namespace glengine {
 
         /// <summary>
 		/// Width and height of this widget, in pixels.
-        /// This is used for hit-testing mouse events
+        /// This is used for hit-testing and layout anchoring
 		/// </summary>
         float2 Bounds;
 
@@ -54,12 +58,14 @@ namespace glengine {
         /// Items on the same Z-index are rendered in arbitrary order.
         /// 
         /// For child widgets, the parent is considered to be -infinity. That is, child widgets will always
-        /// be hit-tested before the parent
+        /// be hit-tested before the parent, and rendered on top of the parent
         /// </summary>
         int ZIndex = 0;
 
     	/// <summary>
     	///	Where the widget's Position is anchored to in the parent.
+    	///	The layout algorithm will make the corresponding points line up, so for example
+    	///	TOP_MIDDLE will make the midpoint of the top edge of this widget coincident with the parent's top edge midpoint
     	///
     	///	Defaults to BOTTOM_LEFT
     	/// </summary>
@@ -74,9 +80,9 @@ namespace glengine {
 
         /**
          * Updates this widget and all children
-         * @param DeltaTime Number of seconds since last update. Usually very small.
+         * @param deltaTime Number of seconds since last update. Usually very small.
          */
-        virtual void UpdateAll(double DeltaTime);
+        virtual void UpdateAll(double deltaTime);
 
         /**
          * Render this widget to the screen
@@ -85,11 +91,13 @@ namespace glengine {
         virtual void Draw(MatrixStack2D &stack) = 0;
 
         /**
-         * Handle a button click within the bounds of the widget
-         * @see Widget::Bounds
+         * Handle a button click/drag within the bounds of the widget
+         * Note that for drag events, `button` will always be `GLUT_LEFT_BUTTON`.
+         * The position parameter might be outside the bounds of the widget when `state` is not `GLUT_DOWN`
          * 
          * @param button the GLUT button constant for the click (e.g. GLUT_LEFT_BUTTON)
-         * @param state if it was a press or release
+         * @param state one of GLUT_DOWN, GLUT_UP, or GLUT_DRAG
+         * @param pos where the click happened, relative to the widget's origin
          */
         virtual void Click(int button, int state, float2 pos) {}
 
@@ -104,7 +112,6 @@ namespace glengine {
         /**
          * Computes a translation and rotation matrix for this widget's position and rotation
          *
-         * @param bounds the bounds of the parent, for anchor calculations
          * @return the transform matrix for this widget's position and rotation
          */
         [[nodiscard]] mat3 GetTransformMatrix() const;
@@ -121,7 +128,7 @@ namespace glengine {
 
         /**
          * Gets the enclosing bounds of this widget
-         * @return The parent's `Bounds`, or the window size if no parent is present.
+         * @return The parent's `Bounds` field, or the window size if no parent is present.
          */
         float2 GetEnclosingBounds() const;
 
@@ -149,16 +156,18 @@ namespace glengine {
     		result->engine = engine;
 
             for (auto child : result->GetChildren()) {
-                // make sure to setup engine reference correctly for child widgets added in constructor
+                // make sure to set up engine reference correctly for child widgets added in constructor
                 child->engine = engine;
             }
     		return result;
     	}
 
         /**
-         * Add a child widget to this.
+         * Creates a new widget and adds it as a child to the current widget
+         * @tparam T type of widget to create
+         * @return a shared pointer to the newly created widget
          */
-    	template<typename T>
+        template<typename T>
 	    std::shared_ptr<T> AddChildWidget() {
             std::shared_ptr<T> widget = New<T>(engine);
             widget->parent = this;
