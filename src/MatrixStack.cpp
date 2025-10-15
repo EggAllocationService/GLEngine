@@ -17,7 +17,7 @@ void glengine::MatrixStack2D::Pop() {
     }
 }
 
-float3 glengine::MatrixStack2D::operator*(float3 rhs) {
+float3 glengine::MatrixStack2D::operator*(const float3 rhs) {
     // need to convert between float3 and vecn<float, 3> as matrix multiplication is only defined
     // with vecn instantiations, so the compiler can generate the most optimal machine code for each size
 
@@ -26,29 +26,29 @@ float3 glengine::MatrixStack2D::operator*(float3 rhs) {
     return std::bit_cast<float3>(stack.back() * std::bit_cast<vecn<float, 3> >(rhs));
 }
 
-float2 glengine::MatrixStack2D::operator*(float2 rhs) {
+float2 glengine::MatrixStack2D::operator*(const float2 rhs) {
     // widen to 3-wide vector
-    vecn < float, 3 > tmp;
+    vecn<float, 3> tmp;
     tmp[0] = rhs.x;
     tmp[1] = rhs.y;
     tmp[2] = 1.0;
 
     tmp = stack.back() * tmp;
 
-    // narrow back
+    // narrow back to float2
     return float2(tmp.data[0], tmp.data[1]);
 }
 
-void glengine::MatrixStack2D::DrawPolygon(std::vector<float3> &verticies) {
+void glengine::MatrixStack2D::DrawPolygon(std::vector<float3> &vertices) {
     glBegin(GL_POLYGON);
-    for (float3 &vertex: verticies) {
+    for (const float3 &vertex: vertices) {
         glVertex3fv(this->operator*(vertex));
     }
     glEnd();
 }
 
-void glengine::MatrixStack2D::DrawRect(float2 a, float2 b) {
-    float3 verticies[4] = {
+void glengine::MatrixStack2D::DrawRect(const float2 a, const float2 b) {
+    float3 vertices[4] = {
         float3(a, 1.0),
         float3(a.x, b.y, 1.0),
         float3(b, 1.0),
@@ -56,20 +56,20 @@ void glengine::MatrixStack2D::DrawRect(float2 a, float2 b) {
     };
 
     glBegin(GL_POLYGON);
-    for (auto vertex: verticies) {
+    for (const auto vertex: vertices) {
         glVertex3fv(this->operator*(vertex));
     }
     glEnd();
 }
 
-void glengine::MatrixStack2D::PrintText(float2 position, const char *text) {
-    int pos = 0;
+void glengine::MatrixStack2D::PrintText(const float2 position, const char *text) {
+    int offset = 0;
 
     for (const char *current = text; *current != 0; current++) {
-        glRasterPos2fv(this->operator*(position + float2(8.0 * pos, 0)));
+        glRasterPos2fv(this->operator*(position + float2(offset, 0)));
 
         glutBitmapCharacter(GLUT_BITMAP_8_BY_13, *current);
 
-        pos++;
+        offset += 8.0; // 8 pixels of offset for each character
     }
 }

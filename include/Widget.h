@@ -1,9 +1,8 @@
 //
 // Created by Kyle Smith on 2025-09-26.
 //
+#pragma once
 
-#ifndef GLENGINE_WIDGET_H
-#define GLENGINE_WIDGET_H
 #include "engine_GLUT.h"
 #include "MatrixStack.h"
 
@@ -175,7 +174,9 @@ namespace glengine {
     	/// <summary>
     	/// Get the Engine that owns this Widget
     	/// </summary>
-    	Engine& GetEngine() const;
+    	Engine* GetEngine() const {
+    		return engine;
+    	};
 
         /**
          * Get the parent widget
@@ -204,5 +205,3 @@ namespace glengine {
     	bool pendingKill = false;
     };
 }
-
-#endif //GLENGINE_WIDGET_H

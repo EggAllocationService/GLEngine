@@ -15,7 +15,10 @@ glengine::Widget::Widget() {
 }
 
 void glengine::Widget::UpdateAll(double DeltaTime) {
+	// update self
 	Update(DeltaTime);
+
+	// update children
 	for (auto child: children) {
 		child->UpdateAll(DeltaTime);
 	}
@@ -79,7 +82,6 @@ mat3 glengine::Widget::GetTransformMatrix() const {
 	translate[2]->set(0, pos.x);
 	translate[2]->set(1, pos.y);
 
-
 	mat3 rotation = math::rotation2D(Rotation);
 
 	return translate * rotation;
@@ -106,12 +108,8 @@ float2 glengine::Widget::GetEnclosingBounds() const {
 	return (parent == nullptr) ? float2(engine->GetWindowSize()) : parent->Bounds;
 }
 
-glengine::Engine &glengine::Widget::GetEngine() const {
-	return *engine;
-}
-
 void glengine::Widget::RenderChildren(MatrixStack2D &stack) const {
-	for (auto child: children) {
+	for (const auto& child: children) {
 		stack.Push(child->GetTransformMatrix());
 		child->Draw(stack);
 		stack.Pop();

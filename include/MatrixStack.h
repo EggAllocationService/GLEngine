@@ -5,7 +5,7 @@
 
 namespace glengine {
     /// <summary>
-	/// Stack of matricies, for nested 2D transforms.
+	/// Stack of matrices, for nested 2D transforms.
 	/// </summary>
     class MatrixStack2D {
     public:
@@ -37,7 +37,7 @@ namespace glengine {
         /// <summary>
 		/// Convenience method for drawing a polygon, transformed by the top transform on the stack.
 		/// </summary>
-        void DrawPolygon(std::vector<float3>& verticies);
+        void DrawPolygon(std::vector<float3>& vertices);
 
         /// <summary>
 		/// Draws a rectangle using point a as the bottom left and point b as the top right.

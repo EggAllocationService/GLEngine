@@ -96,7 +96,7 @@ void RgbTriangle::Click(int button, int state, float2 pos) {
 
 void RgbTriangle::bringToFront() {
 	int maxZ = 0;
-	for (auto widget : GetEngine().GetWidgetsOfType<RgbTriangle>()) {
+	for (auto widget : GetEngine()->GetWidgetsOfType<RgbTriangle>()) {
 		if (widget->ZIndex > maxZ) {
 			if (widget->ZIndex > ZIndex) {
 				maxZ = widget->ZIndex--;
