@@ -31,7 +31,7 @@ struct Matrix {
     /// Matrix-matrix multiply
     /// Since this is templated, the compiler can generate the optimal machine code for any shape
     template<int X2, int Y2>
-    Matrix<T, Y, X2> operator *(const Matrix<T, X2, Y2> other) const {
+    Matrix<T, Y, X2> operator *(Matrix<T, X2, Y2> other) {
         // verify that matrix multiplication is actually possible for the two matrices
         static_assert(X == Y2, "Matrix multiplication not defined for this shape!");
         Matrix<T, Y, X2> result;

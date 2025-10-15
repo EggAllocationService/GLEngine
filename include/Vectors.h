@@ -144,7 +144,7 @@ struct vecn {
     }
 
     /// lane-wise addition + assignment
-    void operator+=(const vecn rhs) const {
+    void operator+=(const vecn rhs) {
         for (int i = 0; i < LEN; i++) {
             data[i] += rhs.data[i];
         }
@@ -415,7 +415,7 @@ struct vec4 {
         return vec4(x + other.x, y + other.y, z + other.z, w + other.w);
     }
 
-    void operator +=(const vec4 other) const {
+    void operator +=(const vec4 other) {
         for (int i = 0; i < 4; i++) {
             this->data[i] += other.data[i];
         }
