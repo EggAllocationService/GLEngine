@@ -7,7 +7,7 @@ namespace Colors {
         // C++ implementation by me
 
         float c = v * s;
-        float x = c * (1 - abs(fmod(h / 60.0, 2.0) - 1));
+        float x = c * (1 - fabs(fmod(h / 60.0, 2.0) - 1));
         float m = v - c;
 
         float4 result;
