@@ -1,4 +1,3 @@
-#include "GLMath.h"
 //
 // Created by Kyle Smith on 2025-09-29.
 //
