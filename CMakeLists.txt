@@ -15,6 +15,16 @@ add_library(glengine STATIC
 
 target_include_directories(glengine PUBLIC include)
 
+if (${CMAKE_BUILD_TYPE} MATCHES "Release")
+    set_property(TARGET glengine
+            PROPERTY INTERPROCEDURAL_OPTIMIZATION TRUE)
+    target_compile_options(glengine PRIVATE
+            $<$<CXX_COMPILER_ID:GNU>:-mavx>
+            $<$<CXX_COMPILER_ID:Clang>:-mavx>
+            $<$<CXX_COMPILER_ID:MSVC>:/arch:AVX>
+    )
+endif()
+
 if (${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
     target_link_libraries(glengine "-framework GLUT")
     target_link_libraries(glengine "-framework OpenGL")
