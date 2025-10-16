@@ -12,7 +12,7 @@ mat3 glengine::math::rotation2D(const float theta) {
     // 0    , 0     , 1
     // basically a standard 2d rotation matrix but 3x3 so it fits on my 2d matrix stack
 
-    float trigValues[9] = {cos(theta), sin(theta), 0, -sin(theta), cos(theta), 0, 0, 0, 1};
+    float trigValues[9] = {cosf(theta), sinf(theta), 0, -sinf(theta), cosf(theta), 0, 0, 0, 1};
     return mat3(trigValues);
 }
 
