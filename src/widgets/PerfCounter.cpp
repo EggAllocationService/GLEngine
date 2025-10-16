@@ -38,7 +38,7 @@ void glengine::widgets::PerfCounter::Update(double deltaTime) {
 void glengine::widgets::PerfCounter::Draw(MatrixStack2D &stack) {
 	glColor4fv(TextColor);
 
-	stack.PrintText(float2(0, 0), (showInverse ? lastFrametime : lastFPS).c_str());
+	stack.PrintText(float2(0, 0), (showInverse ? lastFPS : lastFrametime).c_str());
 }
 
 void glengine::widgets::PerfCounter::Click(int button, int state, float2 pos) {
