@@ -28,10 +28,9 @@ namespace glengine::widgets {
 		/// </summary>
 		double timer = 0;
 
-		/// <summary>
-		/// result of last average, in frames / second
-		/// </summary>
-		double lastFrametime = 0;
+		/// Cached formatted strings so we're not making unnecessary allocations every frame
+		std::string lastFrametime = "null ms";
+		std::string lastFPS = "null FPS";
 
 		/// <summary>
 		/// if true, shows FPS
