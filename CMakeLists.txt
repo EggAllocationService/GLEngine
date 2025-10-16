@@ -35,7 +35,9 @@ elseif(${CMAKE_SYSTEM_NAME} MATCHES "Windows")
     target_link_libraries(glengine ${FREEGLUT_LIB})
 
     add_custom_command(TARGET glengine POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy_if_different ${FREEGLUT_DLL} $<TARGET_FILE_DIR:glengine>)
-   
+elseif(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
+    target_link_libraries(glengine "glut")
+    target_link_libraries(glengine "OpenGL")
 endif()
 
 function(engine_copy_freeglut_if_needed TARGETNAME)

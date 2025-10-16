@@ -5,6 +5,7 @@
 
 #include "engine_GLUT.h"
 #include "MatrixStack.h"
+#include <memory>
 
 namespace glengine {
 	class Engine;

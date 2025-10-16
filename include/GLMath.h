@@ -5,6 +5,7 @@
 #include "Matrix.h"
 #include <vector>
 #include <span>
+#include <memory>
 
 namespace glengine::math {
     /// Creates a 2d clockwise rotation matrix:
