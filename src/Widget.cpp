@@ -19,19 +19,19 @@ void glengine::Widget::UpdateAll(double DeltaTime) {
 	Update(DeltaTime);
 
 	// update children
-	for (auto child: children) {
+	for (const auto& child: children) {
 		child->UpdateAll(DeltaTime);
 	}
 
 	// remove children marked for destroy
 	std::erase_if(children,
-	              [](std::shared_ptr<Widget> child) { return child->IsDestroyed(); });
+	              [](const std::shared_ptr<Widget>& child) { return child->IsDestroyed(); });
 
 	// sort children by z-index
-	std::sort(children.begin(), children.end(),
-	          [](std::shared_ptr<Widget> &a, std::shared_ptr<Widget> &b) {
-		          return a->ZIndex < b->ZIndex;
-	          });
+	std::ranges::sort(children,
+	                  [](const std::shared_ptr<Widget> &a, const std::shared_ptr<Widget> &b) {
+		                  return a->ZIndex < b->ZIndex;
+	                  });
 }
 
 /**
@@ -95,7 +95,7 @@ float2 glengine::Widget::GetEffectiveAbsolutePosition() const {
 	auto base = GetEffectiveRelativePosition();
 
 	// Go up until we reach the window itself, adding relative positions along the way
-	Widget *current = parent;
+	const Widget *current = parent;
 	while (current != nullptr) {
 		base += current->GetEffectiveRelativePosition();
 		current = current->GetParent();

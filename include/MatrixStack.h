@@ -15,7 +15,7 @@ namespace glengine {
 		/// Applies a new transform. The previous top of the stack will be multiplied by the given matrix,
 		/// then the result will be pushed to the top of the stack.
 		/// </summary>
-        void Push(mat3 matrix);
+        void Push(const mat3 &matrix);
 
         /// <summary>
 		/// Pops a transform from the stack.
@@ -35,7 +35,7 @@ namespace glengine {
         /// <summary>
 		/// Convenience method for drawing a polygon, transformed by the top transform on the stack.
 		/// </summary>
-        void DrawPolygon(std::vector<float3>& vertices);
+        void DrawPolygon(const std::vector<float3>& vertices);
 
         /// <summary>
 		/// Draws a rectangle using point a as the bottom left and point b as the top right.

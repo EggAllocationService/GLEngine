@@ -129,7 +129,7 @@ namespace glengine {
         glutSwapBuffers();
     }
 
-    double Engine::calculateDeltaTime() {
+    double Engine::calculateDeltaTime() const {
         auto now = std::chrono::steady_clock::now();
         auto time = std::chrono::duration_cast<std::chrono::duration<double> >(now - lastUpdate);
 
@@ -185,9 +185,9 @@ namespace glengine {
         );
 
         // sort widgets back-to-front, in case an Update implementation changed a Z-Index
-        std::sort(widgets.begin(), widgets.end(),
-                  [](std::shared_ptr<Widget> &a, std::shared_ptr<Widget> &b) {
-                      return a->ZIndex < b->ZIndex;
-                  });
+        std::ranges::sort(widgets,
+                          [](const std::shared_ptr<Widget> &a, const std::shared_ptr<Widget> &b) {
+                              return a->ZIndex < b->ZIndex;
+                          });
     }
 } // glengine

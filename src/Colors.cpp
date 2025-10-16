@@ -26,12 +26,12 @@ namespace Colors {
             result = float4(c, 0, x, 1);
         }
 
-        result += float4(m, m, m, 0);
+        result.rgb += m;
 
         return result;
     }
 
-    float4 blend(float4 bottom, float4 top) {
+    float4 blend(const float4 bottom, const float4 top) {
         return (bottom * (1 - top.a)) + (top * top.a);
     }
 }

@@ -6,7 +6,7 @@ glengine::MatrixStack2D::MatrixStack2D() {
     stack.push_back(mat3::identity());
 }
 
-void glengine::MatrixStack2D::Push(mat3 matrix) {
+void glengine::MatrixStack2D::Push(const mat3 &matrix) {
     mat3 result = stack.back() * matrix;
     stack.push_back(result);
 }
@@ -23,7 +23,7 @@ float3 glengine::MatrixStack2D::operator*(const float3 rhs) {
 
     // in this case std::bit_cast will be a no-op as float3 and vecn<float, 3> are the same size
     // and are both value types
-    return std::bit_cast<float3>(stack.back() * std::bit_cast<vecn<float, 3> >(rhs));
+    return std::bit_cast<float3>(stack.back() * std::bit_cast<vecn<float, 3>>(rhs));
 }
 
 float2 glengine::MatrixStack2D::operator*(const float2 rhs) {
@@ -36,10 +36,10 @@ float2 glengine::MatrixStack2D::operator*(const float2 rhs) {
     tmp = stack.back() * tmp;
 
     // narrow back to float2
-    return float2(tmp.data[0], tmp.data[1]);
+    return {tmp.data[0], tmp.data[1]};
 }
 
-void glengine::MatrixStack2D::DrawPolygon(std::vector<float3> &vertices) {
+void glengine::MatrixStack2D::DrawPolygon(const std::vector<float3> &vertices) {
     glBegin(GL_POLYGON);
     for (const float3 &vertex: vertices) {
         glVertex3fv(this->operator*(vertex));

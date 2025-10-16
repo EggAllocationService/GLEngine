@@ -13,7 +13,7 @@ glengine::widgets::Button::Button() {
 	Cursor = GLUT_CURSOR_INFO;
 }
 
-void glengine::widgets::Button::Update(double DeltaTime) {
+void glengine::widgets::Button::Update(double deltaTime) {
 	// buttons don't really do anything on their own
 }
 
@@ -88,8 +88,8 @@ void glengine::widgets::Button::SetSpacing(int padding, int border) {
 }
 
 float2 glengine::widgets::Button::CalculateSize() const {
-	const int characterWidth = 8; // using 8x13 font
-	const int characterHeight = 10; // slightly underestimate font height for more visually accurate padding
+	constexpr int characterWidth = 8; // using 8x13 font
+	constexpr int characterHeight = 10; // slightly underestimate font height for more visually accurate padding
 
 	auto result = float2(
 		// x = (Border + Padding) + (characterWidth * string length) + (Border + Padding)
