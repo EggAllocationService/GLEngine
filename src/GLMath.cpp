@@ -41,8 +41,25 @@ mat3 glengine::math::translate2D(const float2 translation) {
     return result;
 }
 
+float4 glengine::math::quatFromEuler(float3 angles) {
+    /// adapted from https://en.wikipedia.org/wiki/Conversion_between_quaternions_and_Euler_angles
+    float cx = cosf(angles.x / 2.0);
+    float sx = sinf(angles.x / 2.0);
+    float cy = cosf(angles.y / 2.0);
+    float sy = sinf(angles.y / 2.0);
+    float cz = cosf(angles.z / 2.0);
+    float sz = sinf(angles.z / 2.0);
+
+    return float4(
+        sx*cy*cz - cx*sy*sz,
+        cx*sy*cz + sx*cy*sz,
+        cx*cy*sz - sx*sy*cz,
+        cx*cy*cz + sx*sy*sz
+    );
+}
+
 std::unique_ptr<std::vector<float3>> glengine::math::subdividePolygon(std::span<const float3> polygon,
-                                                                       int additionalVertices) {
+                                                                      int additionalVertices) {
     // find the total perimeter of the polygon
     double perimeter = 0;
     for (int i = 0; i < polygon.size(); i++) {

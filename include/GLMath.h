@@ -27,6 +27,10 @@ namespace glengine::math {
     /// 0, 0, 1
     mat3 translate2D(float2 translation);
 
+    /// Creates a unit quaternion rotation from
+    /// a set of euler angles.
+    float4 quatFromEuler(float3 angles);
+
     /// Linear interpolation, templated so it can be used with vectors
     template<typename T>
     T lerp(T a, T b, float c) {

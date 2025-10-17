@@ -354,6 +354,19 @@ struct vec3 {
             x * rhs.y - y * rhs.x
         );
     }
+
+    // length squared
+    T len2() {
+        return x*x + y*y + z*z;
+    }
+
+    T len() {
+        return sqrt(len2());
+    }
+
+    vec3 norm() {
+        return *this / len();
+    }
 };
 
 /// Constant-width vector, 4 lanes

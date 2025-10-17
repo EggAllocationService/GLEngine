@@ -96,6 +96,10 @@ struct Matrix {
         return os;
     }
 
+    explicit operator const T*() {
+        return &data;
+    }
+
     /// Get an identity matrix
     /// Undefined compile for non-square shapes
     static Matrix identity() {
