@@ -261,6 +261,9 @@ struct vec2 {
 template<typename T>
 struct vec3 {
     vec3() {
+        data[0] = 0;
+        data[1] = 0;
+        data[2] = 0;
     }
 
     vec3(T x, T y, T z) {
@@ -358,6 +361,10 @@ struct vec3 {
 template<typename T>
 struct vec4 {
     vec4() {
+        data[0] = 0;
+        data[1] = 0;
+        data[2] = 0;
+        data[3] = 0;
     }
 
     vec4(T x, T y, T z, T w) {
