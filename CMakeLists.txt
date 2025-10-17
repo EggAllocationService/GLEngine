@@ -66,11 +66,11 @@ function(engine_copy_freeglut_if_needed TARGETNAME)
 endfunction()
 
 if (${PROJECT_IS_TOP_LEVEL})
-    add_executable(test1 test/main.cpp "test/RgbTriangle.cpp")
-    target_link_libraries(test1 PRIVATE glengine)
+    add_executable(test2d test2d/main.cpp "test2d/RgbTriangle.cpp")
+    target_link_libraries(test2d PRIVATE glengine)
 
     if (MSVC AND ${CMAKE_BUILD_TYPE} STREQUAL "Debug")
-        set_target_properties(test1 PROPERTIES LINK_FLAGS "/PROFILE")
+        set_target_properties(test2d PROPERTIES LINK_FLAGS "/PROFILE")
     endif()
 endif()
 
