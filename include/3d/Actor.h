@@ -19,6 +19,27 @@ namespace glengine::world {
             return static_cast<mat4>(transform_);
         }
 
+        /// Returns a reference to the first component of type T
+        template <typename T>
+        std::weak_ptr<T> GetComponent() {
+            for (const auto &component : components_) {
+                if (auto result= std::dynamic_pointer_cast<T>(component)) {
+                    return result;
+                }
+            }
+            return std::weak_ptr<T>();
+        }
+
+    protected:
+        template <typename T>
+        std::weak_ptr<T> CreateComponent() {
+            static_assert(std::is_base_of<ActorComponent, T>::value, "T must derive from ActorComponent");
+            auto x = std::make_shared<T>();
+            x->SetActor(this);
+            components_.push_back(x);
+            return x;
+        }
+
     private:
         Transform transform_;
         std::vector<std::shared_ptr<ActorComponent>> components_;

@@ -4,9 +4,9 @@
 #pragma once
 #include <memory>
 
-#include "Actor.h"
 
 namespace glengine::world {
+    class Actor;
 
     /// Base class for any component that can be placed onto an actor
     /// Basic components do not have a scene transform and are not rendered onscreen
@@ -16,6 +16,11 @@ namespace glengine::world {
         virtual ~ActorComponent() = default;
 
         virtual void Update(double deltaTime) = 0;
+
+        void SetActor(Actor *actor) {
+            actor_ = actor;
+        }
+
     protected:
         Actor *GetActor() const {
             return actor_;
