@@ -25,8 +25,8 @@ void Transform::SetPosition(float3) {
     RecalculateMatrix();
 }
 
-void Transform::SetParent(Transform &parent) {
-    this->parent = &parent;
+void Transform::SetParent(Transform *parent) {
+    this->parent = parent;
 }
 
 Transform::operator mat4() const {

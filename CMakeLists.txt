@@ -13,6 +13,14 @@ add_library(glengine STATIC
         "src/widgets/PerfCounter.cpp"
         "src/input/MouseManager.cpp"
         "src/3d/Transform.cpp"
+        src/3d/Actor.cpp
+        include/3d/Actor.h
+        src/3d/ActorComponent.cpp
+        include/3d/ActorComponent.h
+        src/3d/ActorSceneComponent.cpp
+        include/3d/ActorSceneComponent.h
+        src/3d/ActorPrimitiveComponent.cpp
+        include/3d/ActorPrimitiveComponent.h
 )
 
 target_include_directories(glengine PUBLIC include)

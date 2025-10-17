@@ -38,7 +38,7 @@ class Transform {
     }
 
     /// Sets the parent transform
-    void SetParent(Transform &parent);
+    void SetParent(Transform *parent);
 
     /// Converts this transform to a 4x4 matrix
     /// Does not include the parent's transform
@@ -49,7 +49,7 @@ class Transform {
 
     /// Converts this transform to a 4x4 matrix
     /// Will be combined with all parent matrices
-    mat4 GetAbsoluteMatrix() const;
+    [[nodiscard]] mat4 GetAbsoluteMatrix() const;
 private:
     mat4 cachedMatrix;
     float3 rotation;
