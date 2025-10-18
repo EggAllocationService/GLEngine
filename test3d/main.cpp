@@ -12,8 +12,10 @@ int main(int argc, char** argv) {
     auto engine = new Engine("3D Test", int2(1280, 720));
 
     auto cube = engine->SpawnActor<SpinnyCube>();
+    auto cube2 = engine->SpawnActor<SpinnyCube>();
 
-    cube->GetTransform()->SetPosition(float3(0, 0, 4));
+    cube->GetTransform()->SetPosition(float3(-4, 0, 4));
+    cube2->GetTransform()->SetPosition(float3(4, 0, 4));
 
     glutMainLoop();
 }
