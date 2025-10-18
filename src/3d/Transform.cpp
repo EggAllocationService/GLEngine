@@ -15,13 +15,13 @@ void Transform::SetRotation(float3 rot) {
     RecalculateMatrix();
 }
 
-void Transform::SetScale(float3) {
-    this->scale = float3(1, 1, 1);
+void Transform::SetScale(float3 scale) {
+    this->scale = scale;
     RecalculateMatrix();
 }
 
-void Transform::SetPosition(float3) {
-    this->position = float3(0, 0, 0);
+void Transform::SetPosition(float3 pos) {
+    this->position = pos;
     RecalculateMatrix();
 }
 
@@ -82,8 +82,8 @@ void Transform::RecalculateMatrix() {
 
     auto row2 = cachedMatrix[2];
     row2->set(0, (sy) * scale.z);
-    row2->set(0, (-cy * sx) * scale.z);
-    row2->set(0, (cx * cy) * scale.z);
+    row2->set(1, (-cy * sx) * scale.z);
+    row2->set(2, (cx * cy) * scale.z);
 
     auto row3 = cachedMatrix[3];
     row3->set(0, position.x);

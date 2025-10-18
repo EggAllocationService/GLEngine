@@ -56,9 +56,13 @@ namespace glengine::world {
             return destroyed_;
         }
 
+        Transform *GetTransform() {
+            return &transform_;
+        }
+
     protected:
         template <typename T>
-        std::weak_ptr<T> CreateComponent() {
+        std::shared_ptr<T> CreateComponent() {
             static_assert(std::is_base_of_v<ActorComponent, T>, "T must derive from ActorComponent");
             auto x = std::make_shared<T>();
             x->SetActor(this);

@@ -129,6 +129,10 @@ namespace glengine {
     void Engine::SetWindowSize(int2 size) {
         windowSize = size;
         glViewport(0, 0, windowSize.x, windowSize.y);
+
+        if (auto pawn = possessedPawn.lock()) {
+            pawn->GetActiveCamera()->SetProjectionMatrix();
+        }
     }
 
     void Engine::Render() {
@@ -235,10 +239,13 @@ namespace glengine {
         }
     }
 
-    void Engine::renderWorld() {
+    void Engine::renderWorld() const {
         if (possessedPawn.expired()) {
             return; // before first update
         }
+
+        glEnable(GL_DEPTH_TEST);
+        glEnable(GL_CULL_FACE);
 
         glMatrixMode(GL_MODELVIEW);
         glLoadIdentity();
@@ -247,8 +254,8 @@ namespace glengine {
         auto cameraPos = activeCamera->GetAbsolutePosition();
         auto cameraCenter = cameraPos + activeCamera->GetForwardVector();
 
-        gluLookAt(cameraPos.x, cameraPos.y, cameraPos.z,
-                cameraCenter.x, cameraCenter.y, cameraCenter.z,
+        gluLookAt(cameraPos.x, cameraPos.y, 10,
+                0, 0, 0,
                 0.0f, 1.0f, 0.0f
             );
 

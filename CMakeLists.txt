@@ -24,6 +24,7 @@ add_library(glengine STATIC
         include/3d/Pawn.h
         src/3d/DefaultPawn.cpp
         src/3d/DefaultPawn.h
+        test3d/main.cpp
 )
 
 target_include_directories(glengine PUBLIC include)
@@ -85,6 +86,13 @@ if (${PROJECT_IS_TOP_LEVEL})
     if (MSVC AND ${CMAKE_BUILD_TYPE} STREQUAL "Debug")
         set_target_properties(test2d PROPERTIES LINK_FLAGS "/PROFILE")
     endif()
+
+    add_executable(test3d test3d/main.cpp
+            test3d/SpinnyCube.cpp
+            test3d/SpinnyCube.h
+            test3d/CubeSceneComponent.cpp
+            test3d/CubeSceneComponent.h)
+    target_link_libraries(test3d PRIVATE glengine)
 endif()
 
 # enables profiling tools in VS

@@ -103,7 +103,7 @@ namespace glengine {
 
         void updateActors(double deltaTime);
 
-        void renderWorld();
+        void renderWorld() const;
 
         input::MouseManager* mouseManager;
 
