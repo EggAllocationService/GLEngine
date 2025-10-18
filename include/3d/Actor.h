@@ -39,6 +39,14 @@ namespace glengine::world {
             engine_ = engine;
         }
 
+        void Destroy() {
+            destroyed_ = true;
+        }
+
+        [[nodiscard]] bool IsDestroyed() const {
+            return destroyed_;
+        }
+
     protected:
         template <typename T>
         std::weak_ptr<T> CreateComponent() {
@@ -53,6 +61,8 @@ namespace glengine::world {
         Transform transform_;
         std::vector<std::shared_ptr<ActorComponent>> components_;
         Engine *engine_;
+
+        bool destroyed_ = false;
     };
 }
 
