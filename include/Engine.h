@@ -77,6 +77,14 @@ namespace glengine {
             return mouseManager;
         }
 
+        [[nodiscard]] world::Pawn* GetPossessedPawn() const {
+            if (possessedPawn.expired()) {
+                return nullptr;
+            }
+
+            return possessedPawn.lock().get();
+        }
+
     private:
         int2 windowSize;
         int windowHandle;

@@ -17,11 +17,9 @@ float3 glengine::world::ActorPrimitiveComponent::GetAbsolutePosition() const {
 }
 
 float3 glengine::world::ActorPrimitiveComponent::GetForwardVector() const {
-    vecn<float, 4> vector;
-    vector[0] = 0;
-    vector[1] = 0;
+    // z-axis unit vector
+    auto vector = vecn<float, 4>::zero();
     vector[2] = 1;
-    vector[3] = 1;
 
     auto result = GetActor()->GetTransformMatrix() *  GetTransformMatrix() * vector;
 

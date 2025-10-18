@@ -13,7 +13,7 @@ int main(int argc, char** argv) {
 
     auto cube = engine->SpawnActor<SpinnyCube>();
 
-    cube->GetTransform()->SetPosition(float3(5, 0, 0));
+    cube->GetTransform()->SetPosition(float3(0, 0, 4));
 
     glutMainLoop();
 }

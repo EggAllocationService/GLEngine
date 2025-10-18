@@ -245,7 +245,6 @@ namespace glengine {
         }
 
         glEnable(GL_DEPTH_TEST);
-        glEnable(GL_CULL_FACE);
 
         glMatrixMode(GL_MODELVIEW);
         glLoadIdentity();
@@ -254,13 +253,19 @@ namespace glengine {
         auto cameraPos = activeCamera->GetAbsolutePosition();
         auto cameraCenter = cameraPos + activeCamera->GetForwardVector();
 
-        gluLookAt(cameraPos.x, cameraPos.y, 10,
-                0, 0, 0,
+        gluLookAt(cameraPos.x, cameraPos.y, cameraPos.z,
+                cameraCenter.x, cameraCenter.y, cameraCenter.z,
                 0.0f, 1.0f, 0.0f
             );
 
         // render all scene components
         for (const auto& actor : actors) {
+            // check if actor has any renderable components
+            // skip if nothing to do, so we don't waste time matrix multiplying
+            if (!actor->GetComponent<world::ActorSceneComponent>()) {
+                continue;
+            }
+
             glPushMatrix();
             auto actorTransform = actor->GetTransformMatrix();
             glMultMatrixf(static_cast<const float *>(actorTransform));

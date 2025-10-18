@@ -27,13 +27,13 @@ namespace glengine::world {
 
         /// Returns a reference to the first component of type T
         template <typename T>
-        std::weak_ptr<T> GetComponent() {
+        std::shared_ptr<T> GetComponent() {
             for (const auto &component : components_) {
                 if (auto result= std::dynamic_pointer_cast<T>(component)) {
                     return result;
                 }
             }
-            return std::weak_ptr<T>();
+            return nullptr;
         }
 
         std::span<std::shared_ptr<ActorComponent>> GetComponents() {
