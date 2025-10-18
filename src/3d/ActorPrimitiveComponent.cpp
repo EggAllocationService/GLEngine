@@ -15,3 +15,7 @@ float3 glengine::world::ActorPrimitiveComponent::GetAbsolutePosition() const {
 
     return {resultVec[0], resultVec[1], resultVec[2]};
 }
+
+float3 glengine::world::ActorPrimitiveComponent::GetForwardVector() const {
+    return transform_.GetForwardVector();
+}

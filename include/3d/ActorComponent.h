@@ -2,8 +2,6 @@
 // Created by Kyle Smith on 2025-10-17.
 //
 #pragma once
-#include <memory>
-
 
 namespace glengine::world {
     class Actor;
@@ -12,7 +10,6 @@ namespace glengine::world {
     /// Basic components do not have a scene transform and are not rendered onscreen
     class ActorComponent {
     public:
-        ActorComponent();
         virtual ~ActorComponent() = default;
 
         virtual void Update(double deltaTime) = 0;
@@ -29,6 +26,6 @@ namespace glengine::world {
     private:
         /// Reference to the owning actor for this component
         /// Will always be valid, as an actor will always outlive its components
-        Actor* actor_;
+        Actor* actor_ = nullptr;
     };
 }

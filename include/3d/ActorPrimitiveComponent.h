@@ -22,6 +22,8 @@ namespace glengine::world {
         /// Gets the component's absolute world-space coordinates
         float3 GetAbsolutePosition() const;
 
+        float3 GetForwardVector() const;
+
     protected:
         Transform transform_;
     };

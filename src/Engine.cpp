@@ -6,6 +6,10 @@
 #include "Colors.h"
 #include <map>
 #include <algorithm>
+#include <stack>
+
+#include "3d/ActorSceneComponent.h"
+#include "3d/DefaultPawn.h"
 
 
 namespace glengine {
@@ -110,9 +114,16 @@ namespace glengine {
 
         updateWidgets(delta);
 
+        updateActors(delta);
+
         setLastUpdate();
 
         glutPostRedisplay();
+    }
+
+    void Engine::Possess(std::shared_ptr<world::Pawn> target) {
+        possessedPawn = target;
+        target->GetActiveCamera()->SetProjectionMatrix();
     }
 
     void Engine::SetWindowSize(int2 size) {
@@ -123,6 +134,8 @@ namespace glengine {
     void Engine::Render() {
         // perform all rendering then swap the double-buffered view
         clearBuffers();
+
+        renderWorld();
 
         renderWidgets();
 
@@ -146,6 +159,15 @@ namespace glengine {
     }
 
     void Engine::renderWidgets() {
+        // reset opengl matrices
+        glMatrixMode(GL_PROJECTION);
+        float savedProj[16];
+        glGetFloatv(GL_PROJECTION_MATRIX, savedProj);
+        glLoadIdentity();
+
+        glMatrixMode(GL_MODELVIEW);
+        glLoadIdentity();
+
         // a matrix stack lets us render nested widgets very conveniently
         // also provides valuable tools for widgets to render parent-child objects
         MatrixStack2D stack = MatrixStack2D();
@@ -171,6 +193,11 @@ namespace glengine {
         }
 
         glFlush();
+
+        // reload projection matrix
+        glMatrixMode(GL_PROJECTION);
+        glLoadIdentity();
+        glLoadMatrixf(savedProj);
     }
 
     void Engine::updateWidgets(double deltaTime) {
@@ -189,5 +216,63 @@ namespace glengine {
                           [](const std::shared_ptr<Widget> &a, const std::shared_ptr<Widget> &b) {
                               return a->ZIndex < b->ZIndex;
                           });
+    }
+
+    void Engine::updateActors(double deltaTime) {
+        // first, make sure there's actually a pawn possessed at the moment
+        // this is done during engine startup
+        if (possessedPawn.expired()) {
+            auto pawn = SpawnActor<world::DefaultPawn>();
+            Possess(pawn);
+        }
+
+        for (const auto& actor : actors) {
+            actor->Update(deltaTime);
+            // update components
+            for (const auto& component : actor->GetComponents()) {
+                component->Update(deltaTime);
+            }
+        }
+    }
+
+    void Engine::renderWorld() {
+        if (possessedPawn.expired()) {
+            return; // before first update
+        }
+
+        glMatrixMode(GL_MODELVIEW);
+        glLoadIdentity();
+
+        auto activeCamera = possessedPawn.lock()->GetActiveCamera();
+        auto cameraPos = activeCamera->GetAbsolutePosition();
+        auto cameraCenter = cameraPos + activeCamera->GetForwardVector();
+
+        gluLookAt(cameraPos.x, cameraPos.y, cameraPos.z,
+                cameraCenter.x, cameraCenter.y, cameraCenter.z,
+                0.0f, 1.0f, 0.0f
+            );
+
+        // render all scene components
+        for (const auto& actor : actors) {
+            glPushMatrix();
+            auto actorTransform = actor->GetTransformMatrix();
+            glMultMatrixf(static_cast<const float *>(actorTransform));
+
+            for (const auto& component : actor->GetComponents()) {
+                if (auto sceneComponent = std::dynamic_pointer_cast<world::ActorSceneComponent>(component)) {
+                    auto componentTransform = sceneComponent->GetTransformMatrix();
+
+                    glPushMatrix();
+                    glMultMatrixf(static_cast<const float *>(componentTransform));
+
+                    sceneComponent->Render();
+
+                    glPopMatrix();
+                }
+            }
+            glPopMatrix();
+        }
+
+        glFlush();
     }
 } // glengine

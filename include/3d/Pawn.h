@@ -1,7 +1,7 @@
 #pragma once
 
-#include "Actor.h"
 #include "components/CameraComponent.h"
+#include "Actor.h"
 
 /// Pawns are actors that can be possessed and controlled by the player
 namespace glengine::world {

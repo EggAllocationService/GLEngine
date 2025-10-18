@@ -4,6 +4,8 @@
 
 #include "3d/Pawn.h"
 
+#include "Engine.h"
+
 glengine::world::Pawn::Pawn() {
     defaultCamera = CreateComponent<components::CameraComponent>();
 }

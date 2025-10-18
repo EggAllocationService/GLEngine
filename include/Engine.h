@@ -10,6 +10,8 @@
 #include "Vectors.h"
 #include "Widget.h"
 #include "MouseManager.h"
+#include "3d/Actor.h"
+#include "3d/Pawn.h"
 
 namespace glengine {
     class Engine {
@@ -39,6 +41,17 @@ namespace glengine {
             return widget;
         }
 
+        template <typename T>
+        std::shared_ptr<T> SpawnActor() {
+            static_assert(std::is_base_of_v<world::Actor, T>, "T must be derive from Actor");
+            std::shared_ptr<T> actor = std::make_shared<T>();
+            actor->SetEngine(this);
+            actors.push_back(actor);
+            return actor;
+        }
+
+        void Possess(std::shared_ptr<world::Pawn> target);
+
         /// Helper function to find all widgets of a given type
         template <typename T>
         auto GetWidgetsOfType() {
@@ -60,7 +73,7 @@ namespace glengine {
             return widgets;
         }
 
-        input::MouseManager* GetMouseManager() const {
+        [[nodiscard]] input::MouseManager* GetMouseManager() const {
             return mouseManager;
         }
 
@@ -88,8 +101,15 @@ namespace glengine {
 
         void updateWidgets(double deltaTime);
 
+        void updateActors(double deltaTime);
+
+        void renderWorld();
+
         input::MouseManager* mouseManager;
 
         std::vector<std::shared_ptr<Widget>> widgets;
+        std::vector<std::shared_ptr<world::Actor>> actors;
+
+        std::weak_ptr<world::Pawn> possessedPawn;
     };
 } // glengine

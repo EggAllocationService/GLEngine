@@ -97,7 +97,7 @@ struct Matrix {
     }
 
     explicit operator const T*() {
-        return &data;
+        return &data[0];
     }
 
     /// Get an identity matrix

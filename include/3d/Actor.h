@@ -3,10 +3,15 @@
 //
 #pragma once
 #include <vector>
+#include <ranges>
+#include <valarray>
 
 #include "ActorComponent.h"
-#include "Engine.h"
 #include "Transform.h"
+
+namespace glengine {
+    class Engine;
+}
 
 /// Any object that can be represented in the 3D world.
 namespace glengine::world {
@@ -31,6 +36,10 @@ namespace glengine::world {
             return std::weak_ptr<T>();
         }
 
+        std::span<std::shared_ptr<ActorComponent>> GetComponents() {
+            return {components_.begin(), components_.size()};
+        }
+
         Engine *GetEngine() {
             return engine_;
         }
@@ -50,7 +59,7 @@ namespace glengine::world {
     protected:
         template <typename T>
         std::weak_ptr<T> CreateComponent() {
-            static_assert(std::is_base_of<ActorComponent, T>::value, "T must derive from ActorComponent");
+            static_assert(std::is_base_of_v<ActorComponent, T>, "T must derive from ActorComponent");
             auto x = std::make_shared<T>();
             x->SetActor(this);
             components_.push_back(x);
@@ -60,7 +69,7 @@ namespace glengine::world {
     private:
         Transform transform_;
         std::vector<std::shared_ptr<ActorComponent>> components_;
-        Engine *engine_;
+        Engine *engine_= nullptr;
 
         bool destroyed_ = false;
     };
