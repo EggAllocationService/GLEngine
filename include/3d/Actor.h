@@ -5,6 +5,7 @@
 #include <vector>
 
 #include "ActorComponent.h"
+#include "Engine.h"
 #include "Transform.h"
 
 /// Any object that can be represented in the 3D world.
@@ -30,6 +31,14 @@ namespace glengine::world {
             return std::weak_ptr<T>();
         }
 
+        Engine *GetEngine() {
+            return engine_;
+        }
+
+        void SetEngine(Engine *engine) {
+            engine_ = engine;
+        }
+
     protected:
         template <typename T>
         std::weak_ptr<T> CreateComponent() {
@@ -43,6 +52,7 @@ namespace glengine::world {
     private:
         Transform transform_;
         std::vector<std::shared_ptr<ActorComponent>> components_;
+        Engine *engine_;
     };
 }
 

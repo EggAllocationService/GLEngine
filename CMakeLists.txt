@@ -18,6 +18,8 @@ add_library(glengine STATIC
         include/3d/ActorSceneComponent.h
         src/3d/ActorPrimitiveComponent.cpp
         include/3d/ActorPrimitiveComponent.h
+        src/3d/components/CameraComponent.cpp
+        include/3d/components/CameraComponent.h
 )
 
 target_include_directories(glengine PUBLIC include)

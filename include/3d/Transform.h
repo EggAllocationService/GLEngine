@@ -15,7 +15,7 @@ class Transform {
     /// Rotation is done in X Y Z order
     void SetRotation(float3);
 
-    /// Gets the local rotation as a quaternion
+    /// Gets the local rotation as euler angles
     [[nodiscard]] float3 GetRotation() const {
         return rotation;
     }
@@ -50,6 +50,9 @@ class Transform {
     /// Converts this transform to a 4x4 matrix
     /// Will be combined with all parent matrices
     [[nodiscard]] mat4 GetAbsoluteMatrix() const;
+
+    /// Computes the forward (+Z) vector of this transform in world space
+    [[nodiscard]] float3 GetForwardVector() const;
 private:
     mat4 cachedMatrix;
     float3 rotation;

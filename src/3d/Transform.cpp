@@ -45,6 +45,19 @@ mat4 Transform::GetAbsoluteMatrix() const {
     return cachedMatrix;
 }
 
+float3 Transform::GetForwardVector() const {
+    float cx = cosf(rotation.x);
+    float sx = sinf(rotation.x);
+    float cy = cosf(rotation.y);
+    float sy = sinf(rotation.y);
+
+    return float3(
+        sy,
+        -cy * sx,
+        cx * cy
+    ).norm();
+}
+
 void Transform::RecalculateMatrix() {
     // a bit of a messy method, but it's fast
     // directly computes a combined rotation, scale, and translation matrix
