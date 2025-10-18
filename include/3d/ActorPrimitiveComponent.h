@@ -19,6 +19,10 @@ namespace glengine::world {
             transform_.SetParent(parent);
         }
 
+        Transform *GetTransform() {
+            return &transform_;
+        }
+
         /// Gets the component's absolute world-space coordinates
         float3 GetAbsolutePosition() const;
 
