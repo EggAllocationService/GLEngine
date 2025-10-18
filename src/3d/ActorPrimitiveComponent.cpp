@@ -3,6 +3,7 @@
 //
 
 #include "3d/ActorPrimitiveComponent.h"
+#include "3d/Actor.h"
 
 float3 glengine::world::ActorPrimitiveComponent::GetAbsolutePosition() const {
     auto selfMatrix = GetTransformMatrix();
