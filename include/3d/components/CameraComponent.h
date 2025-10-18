@@ -8,7 +8,7 @@ namespace glengine::world::components {
     /// Represents a viewpoint into the world
     class CameraComponent : public ActorPrimitiveComponent {
     public:
-        CameraComponent();
+        void Update(double) override {}
 
         void SetProjectionMatrix();
 

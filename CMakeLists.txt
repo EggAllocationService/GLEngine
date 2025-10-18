@@ -20,6 +20,8 @@ add_library(glengine STATIC
         include/3d/ActorPrimitiveComponent.h
         src/3d/components/CameraComponent.cpp
         include/3d/components/CameraComponent.h
+        src/3d/Pawn.cpp
+        include/3d/Pawn.h
 )
 
 target_include_directories(glengine PUBLIC include)
