@@ -90,6 +90,7 @@ namespace glengine::input {
             glutSetCursor(GLUT_CURSOR_NONE);
             centerCursor();
             hoveredWidget = std::weak_ptr<Widget>();
+            mousePosition = float2(0, 0);
         }
     }
 

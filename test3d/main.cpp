@@ -10,7 +10,10 @@
 using namespace glengine;
 
 int main(int argc, char** argv) {
-    //FreeConsole();
+#ifdef _WIN32
+    // Hide the console window on Windows
+    FreeConsole();
+#endif
     
     glutInit(&argc, argv);
 
@@ -33,17 +36,6 @@ int main(int argc, char** argv) {
 
     engine->GetInputManager()->AddAction('v', [=]() {
             engine->GetMouseManager()->SetMouseMode(glengine::input::MouseMode::CAPTIVE);
-        });
-
-    auto button = engine->AddOnscreenWidget<widgets::Button>();
-    button->SetSpacing(3, 3);
-    button->Anchor = TOP_RIGHT;
-    button->Position = float2(-3, -3);
-    button->SetText("Capture Mouse");
-    button->SetClickListener([=](int, int state, float2) {
-        if (state == GLUT_UP) {
-            engine->GetMouseManager()->SetMouseMode(glengine::input::MouseMode::CAPTIVE);
-            }
         });
     
     glutMainLoop();
