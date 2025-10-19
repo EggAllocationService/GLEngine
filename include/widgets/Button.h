@@ -3,6 +3,7 @@
 #include "Widget.h"
 #include <string>
 #include <functional>
+#include "glengine_export.h"
 
 namespace glengine::widgets {
 
@@ -10,7 +11,7 @@ namespace glengine::widgets {
 	/// Can operate either in standard or toggle mode
 	/// In normal mode, click events are passed to the click handler given by SetClickListener
 	/// In toggle mode, the button acts like a checkbox and SetClickListener is only called on changes
-	class Button : public Widget {
+	class GLENGINE_EXPORT Button : public Widget {
 	public:
 		Button();
 

@@ -2,13 +2,14 @@
 #include <vector>
 #include "Widget.h"
 #include "Colors.h"
+#include "glengine_export.h"
 
 namespace glengine::widgets {
 
 	/// Lightweight performance counter
 	/// Draws the current framerate to the screen, averaged over a second
 	/// Clicking on the displayed value toggles between framerate (FPS) and frametime (milliseconds)
-	class PerfCounter : public Widget {
+	class GLENGINE_EXPORT PerfCounter : public Widget {
 	public:
 		PerfCounter();
 

@@ -35,7 +35,7 @@ namespace glengine::math {
 
     /// Linear interpolation, templated so it can be used with vectors
     template<typename T>
-    T GLENGINE_EXPORT lerp(T a, T b, float c) {
+    T lerp(T a, T b, float c) {
         return (a * (1 - c)) + (b * c);
     }
 
