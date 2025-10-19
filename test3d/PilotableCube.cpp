@@ -1,6 +1,6 @@
 #include "PilotableCube.h"
 #include "CubeSceneComponent.h"
-#include "Engine.h";
+#include "Engine.h"
 
 using namespace glengine;
 
