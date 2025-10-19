@@ -68,6 +68,7 @@ namespace glengine {
         int currentWindow = glutGetWindow();
         if (Instances.contains(currentWindow)) {
             Instances[currentWindow]->GetInputManager()->AcceptKeyInput(keycode);
+            Instances[currentWindow]->GetPawnInputManager()->AcceptKeyInput(keycode);
         }
     }
 
@@ -75,6 +76,7 @@ namespace glengine {
         int currentWindow = glutGetWindow();
         if (Instances.contains(currentWindow)) {
             Instances[currentWindow]->GetInputManager()->KeyReleased(keycode);
+            Instances[currentWindow]->GetPawnInputManager()->KeyReleased(keycode);
         }
     }
 
@@ -83,6 +85,7 @@ namespace glengine {
     Engine::Engine(const std::string &windowName, int2 size) {
         mouseManager = new input::MouseManager(this);
         inputManager = new input::InputManager(this);
+        pawnInputManager = new input::InputManager(this);
         
         windowSize = size;
         glutInitWindowSize(windowSize.x, windowSize.y);
@@ -113,6 +116,8 @@ namespace glengine {
 
         // destroy owned objects
         delete mouseManager;
+        delete inputManager;
+        delete pawnInputManager;
     }
 
     void Engine::Update() {
@@ -128,6 +133,7 @@ namespace glengine {
 
         mouseManager->Update();
         inputManager->Update(delta);
+        pawnInputManager->Update(delta);
 
         updateWidgets(delta);
 
@@ -139,13 +145,13 @@ namespace glengine {
     }
 
     void Engine::Possess(std::shared_ptr<world::Pawn> target) {
-        inputManager->Reset();
+        pawnInputManager->Reset();
         if (auto realPossessed = possessedPawn.lock()) {
             realPossessed->OnUnpossess();
         }
         possessedPawn = target;
         target->GetActiveCamera()->SetProjectionMatrix();
-        target->OnPossess(inputManager);
+        target->OnPossess(pawnInputManager);
     }
 
     void Engine::SetWindowSize(int2 size) {
@@ -193,6 +199,7 @@ namespace glengine {
 
         glMatrixMode(GL_MODELVIEW);
         glLoadIdentity();
+        glDisable(GL_DEPTH_TEST);
 
         // a matrix stack lets us render nested widgets very conveniently
         // also provides valuable tools for widgets to render parent-child objects

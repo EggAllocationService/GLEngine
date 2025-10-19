@@ -4,6 +4,7 @@
 #pragma once
 #include "CubeSceneComponent.h"
 #include "3d/Actor.h"
+#include "3d/ActorPrimitiveComponent.h"
 
 
 class SpinnyCube : public glengine::world::Actor {
@@ -13,5 +14,6 @@ public:
 
 private:
     float rotation = 0.0f;
-    std::shared_ptr<CubeSceneComponent> cube;
+    std::shared_ptr<glengine::world::ActorPrimitiveComponent> root;
+    std::shared_ptr<glengine::world::ActorPrimitiveComponent> root2;
 };

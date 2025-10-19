@@ -10,6 +10,8 @@ namespace glengine::world {
     /// rendered on screen. This class can be used for control points or camera positions, for example
     class ActorPrimitiveComponent : public ActorComponent {
     public:
+        void Update(double deltaTime) override {};
+
         /// Gets the transform matrix for this component
         mat4 GetTransformMatrix() const {
             return transform_.GetAbsoluteMatrix();

@@ -82,6 +82,10 @@ namespace glengine {
             return inputManager;
         }
 
+        [[nodiscard]] input::InputManager* GetPawnInputManager() const {
+            return pawnInputManager;
+        }
+
         [[nodiscard]] world::Pawn* GetPossessedPawn() const {
             if (possessedPawn.expired()) {
                 return nullptr;
@@ -119,7 +123,10 @@ namespace glengine {
         void renderWorld() const;
 
         input::MouseManager* mouseManager;
+
+        // Two input managers are needed, one for global keybinds and one for the currently possessed pawn
         input::InputManager* inputManager;
+        input::InputManager* pawnInputManager;
 
         std::vector<std::shared_ptr<Widget>> widgets;
         std::vector<std::shared_ptr<world::Actor>> actors;
