@@ -103,5 +103,5 @@ endif()
 
 # enables profiling tools in VS
 if (MSVC AND ${CMAKE_BUILD_TYPE} STREQUAL "Debug")
-    set_target_properties(glengine PROPERTIES LINK_FLAGS "/PROFILE /ENTRY:mainCRTStartup")
+    set_target_properties(glengine PROPERTIES LINK_FLAGS "/PROFILE")
 endif()
