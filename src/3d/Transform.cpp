@@ -74,18 +74,18 @@ void Transform::RecalculateMatrix() {
     float sz = sinf(rotation.z);
 
     auto row0 = cachedMatrix[0];
-    row0->set(0, cy*cz * scale.x);
-    row0->set(1, (cx*sz + cz*sx*sy) * scale.x);
-    row0->set(2, (sx*sz - cx*cz*sy) * scale.x);
+    row0->set(0, (cy*cz + sy*sz*sx) * scale.x);
+    row0->set(1, (cx*sz) * scale.x);
+    row0->set(2, (cy*sx*sz - cz*sy) * scale.x);
 
     auto row1 = cachedMatrix[1];
-    row1->set(0, (-cy * sz) * scale.y);
-    row1->set(1, (cx*cz - sx*sy*sz) * scale.y);
-    row1->set(2, (cz*sx + cx*sy*sz) * scale.y);
+    row1->set(0, (cz*sy*sx - cy*sz) * scale.y);
+    row1->set(1, (cx*cz) * scale.y);
+    row1->set(2, (cy*cz*sx + sy*sz) * scale.y);
 
     auto row2 = cachedMatrix[2];
-    row2->set(0, (sy) * scale.z);
-    row2->set(1, (-cy * sx) * scale.z);
+    row2->set(0, (cx*sy) * scale.z);
+    row2->set(1, (-sx) * scale.z);
     row2->set(2, (cx * cy) * scale.z);
 
     auto row3 = cachedMatrix[3];
