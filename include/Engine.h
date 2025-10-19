@@ -51,7 +51,7 @@ namespace glengine {
             return actor;
         }
 
-        void Possess(std::shared_ptr<world::Pawn> target);
+        void Possess(const std::shared_ptr<world::Pawn>& target);
 
         /// Helper function to find all widgets of a given type
         template <typename T>

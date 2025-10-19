@@ -102,6 +102,8 @@ namespace glengine {
         glutMotionFunc(mouseMoveExec);
         glutKeyboardFunc(keyExec);
         glutKeyboardUpFunc(keyUpExec);
+
+        setLastUpdate();
     }
 
     Engine::~Engine() {
@@ -144,9 +146,9 @@ namespace glengine {
         glutPostRedisplay();
     }
 
-    void Engine::Possess(std::shared_ptr<world::Pawn> target) {
+    void Engine::Possess(const std::shared_ptr<world::Pawn>& target) {
         pawnInputManager->Reset();
-        if (auto realPossessed = possessedPawn.lock()) {
+        if (const auto realPossessed = possessedPawn.lock()) {
             realPossessed->OnUnpossess();
         }
         possessedPawn = target;
