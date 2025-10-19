@@ -16,7 +16,7 @@ namespace glengine {
 
 /// Any object that can be represented in the 3D world.
 namespace glengine::world {
-    class GLENGINE_EXPORT Actor {
+    class GLENGINE_EXPORT Actor : public std::enable_shared_from_this<Actor> {
     public:
         virtual ~Actor() = default;
 

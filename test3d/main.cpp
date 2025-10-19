@@ -5,6 +5,7 @@
 #include "Engine.h"
 #include "SpinnyCube.h"
 #include "widgets/PerfCounter.h"
+#include "PilotableCube.h"
 #include "widgets/Button.h"
 
 #define KEY_ESCAPE 27
@@ -40,6 +41,9 @@ int main(int argc, char** argv) {
     engine->GetInputManager()->AddAction('v', [=]() {
             engine->GetMouseManager()->SetMouseMode(glengine::input::MouseMode::CAPTIVE);
         });
+
+    auto plane = engine->SpawnActor<PilotableCube>();
+    engine->Possess(plane);
     
     glutMainLoop();
 }

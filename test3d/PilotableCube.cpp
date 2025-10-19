@@ -1,11 +1,19 @@
-//
-// Created by Kyle Smith on 2025-10-18.
-//
+#include "PilotableCube.h"
+#include "CubeSceneComponent.h"
+#include "Engine.h";
 
-#include "DefaultPawn.h"
+using namespace glengine;
 
+PilotableCube::PilotableCube()
+{
+	auto box = CreateComponent<CubeSceneComponent>();
+	box->Color = float4(0, 1, 1, 1);
+	box->Scale = 0.4;
+	defaultCamera->GetTransform()->SetPosition(float3(0, 0.5, -2.5));
+	defaultCamera->GetTransform()->SetRotation(float3(3.14159 / 8.0, 0, 0));
+}
 
-void glengine::world::DefaultPawn::OnPossess(input::InputManager* manager)
+void PilotableCube::OnPossess(input::InputManager* manager)
 {
 	manager->AddMouseAxis([this](float2 delta) {
 		auto rotation = this->GetTransform()->GetRotation();
@@ -37,10 +45,22 @@ void glengine::world::DefaultPawn::OnPossess(input::InputManager* manager)
 		this->GetTransform()->SetPosition(position);
 
 		});
+
+	manager->AddAction('e', [this]() {
+		if (next == nullptr) {
+			next = GetEngine()->SpawnActor<PilotableCube>();
+			next->GetTransform()->SetPosition(GetTransform()->GetPosition());
+			next->previous = dynamic_pointer_cast<PilotableCube>(this->shared_from_this());
+		}
+		GetEngine()->Possess(next);
+		});
+	manager->AddAction('q', [this]() {
+		if (previous != nullptr) {
+			GetEngine()->Possess(previous);
+		}
+		});
 }
 
-void glengine::world::DefaultPawn::OnUnpossess()
+void PilotableCube::OnUnpossess()
 {
-	// Don't keep these things around, we found a better pawn to possess
-	Destroy();
 }

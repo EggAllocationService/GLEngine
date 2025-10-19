@@ -12,9 +12,9 @@
             "ctestCommandArgs": ""
         },
         {
-            "name": "x64-RelWithDebugInfo",
+            "name": "x64-Release",
             "generator": "Ninja",
-            "configurationType": "RelWithDebInfo",
+            "configurationType": "Release",
             "buildRoot": "${projectDir}\\out\\build\\${name}",
             "installRoot": "${projectDir}\\out\\install\\${name}",
             "cmakeCommandArgs": "",
@@ -34,16 +34,15 @@
             "inheritEnvironments": [ "msvc_x86" ]
         },
         {
-            "name": "x86-RelWithDebugInfo",
+            "name": "x86-Release",
             "generator": "Ninja",
-            "configurationType": "RelWithDebInfo",
+            "configurationType": "Release",
             "buildRoot": "${projectDir}\\out\\build\\${name}",
             "installRoot": "${projectDir}\\out\\install\\${name}",
             "cmakeCommandArgs": "",
             "buildCommandArgs": "",
             "ctestCommandArgs": "",
-            "inheritEnvironments": [ "msvc_x86" ],
-            "variables": []
+            "inheritEnvironments": [ "msvc_x86" ]
         }
     ]
 }
