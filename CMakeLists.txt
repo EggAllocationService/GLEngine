@@ -13,19 +13,12 @@ add_library(glengine STATIC
         "src/widgets/PerfCounter.cpp"
         "src/input/MouseManager.cpp"
         "src/3d/Transform.cpp"
-        include/3d/Actor.h
-        include/3d/ActorComponent.h
-        include/3d/ActorSceneComponent.h
         src/3d/ActorPrimitiveComponent.cpp
-        include/3d/ActorPrimitiveComponent.h
         src/3d/components/CameraComponent.cpp
-        include/3d/components/CameraComponent.h
         src/3d/Pawn.cpp
-        include/3d/Pawn.h
         src/3d/DefaultPawn.cpp
         src/3d/DefaultPawn.h
-        test3d/main.cpp
- "src/input/InputManager.cpp")
+        "src/input/InputManager.cpp")
 
 target_include_directories(glengine PUBLIC include)
 
