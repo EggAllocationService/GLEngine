@@ -5,13 +5,14 @@
 #include <unordered_set>
 #include "engine_GLUT.h"
 #include "Vectors.h"
+#include "glengine_export.h"
 
 namespace glengine {
 	class Engine;
 }
 
 namespace glengine::input {
-	class InputManager {
+	class GLENGINE_EXPORT InputManager {
 	public:
 		InputManager(Engine* engineRef);
 

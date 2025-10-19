@@ -2,12 +2,13 @@
 #include "Matrix.h"
 #include "Vectors.h"
 #include <vector>
+#include "glengine_export.h"
 
 namespace glengine {
     /// <summary>
 	/// Stack of matrices, for nested 2D transforms.
 	/// </summary>
-    class MatrixStack2D {
+    class GLENGINE_EXPORT MatrixStack2D {
     public:
         MatrixStack2D();
 

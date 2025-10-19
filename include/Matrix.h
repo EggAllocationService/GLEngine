@@ -7,12 +7,13 @@
 #include <iostream>
 
 #include "Vectors.h"
+#include "glengine_export.h"
 
 /// A templated matrix type
 /// Provides support for templated matrix-vector and matrix-matrix multiplication
 /// Data is stored in column-major format, for efficiency when doing said multiplication
 template<typename T, int X, int Y>
-struct Matrix {
+struct GLENGINE_EXPORT Matrix {
     Matrix() = default;
 
     explicit Matrix(T initialData[X * Y]) {

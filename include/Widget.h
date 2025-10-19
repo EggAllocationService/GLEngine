@@ -6,6 +6,7 @@
 #include "engine_GLUT.h"
 #include "MatrixStack.h"
 #include <memory>
+#include "glengine_export.h"
 
 namespace glengine {
 	class Engine;
@@ -16,7 +17,7 @@ namespace glengine {
 	/// Constants for the various types of anchoring supported
 	/// Represents a point on the given edge, i.e. MIDDLE_RIGHT is the midpoint of the right edge
 	/// MIDDLE_MIDDLE is the centerpoint of the widget
-	enum Anchoring {
+	enum GLENGINE_EXPORT Anchoring {
 		BOTTOM_LEFT,
 		BOTTOM_MIDDLE,
 		BOTTOM_RIGHT,
@@ -31,7 +32,7 @@ namespace glengine {
     /// <summary>
 	/// A 2D widget drawn on top of the viewport after 3D rendering.
 	/// </summary>
-    class Widget {
+    class GLENGINE_EXPORT Widget {
     public:
         Widget();
     	virtual ~Widget() = default;

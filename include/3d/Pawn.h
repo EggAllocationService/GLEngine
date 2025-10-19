@@ -3,10 +3,11 @@
 #include "components/CameraComponent.h"
 #include "InputManager.h"
 #include "Actor.h"
+#include "glengine_export.h"
 
 /// Pawns are actors that can be possessed and controlled by the player
 namespace glengine::world {
-    class Pawn : public Actor {
+    class GLENGINE_EXPORT Pawn : public Actor {
     public:
         Pawn();
 

@@ -4,8 +4,9 @@
 #pragma once
 #include "Matrix.h"
 #include "Vectors.h"
+#include "glengine_export.h"
 
-class Transform {
+class GLENGINE_EXPORT Transform {
     public:
     /// By default, initializes an identity transform
     Transform();

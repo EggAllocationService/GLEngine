@@ -4,11 +4,12 @@
 #pragma once
 #include "ActorComponent.h"
 #include "Transform.h"
+#include "glengine_export.h"
 
 namespace glengine::world {
     /// An actor primitive component has a 3d position relative to the owning actor, but are not
     /// rendered on screen. This class can be used for control points or camera positions, for example
-    class ActorPrimitiveComponent : public ActorComponent {
+    class GLENGINE_EXPORT ActorPrimitiveComponent : public ActorComponent {
     public:
         void Update(double deltaTime) override {};
 

@@ -13,9 +13,10 @@
 #include "3d/Actor.h"
 #include "3d/Pawn.h"
 #include "InputManager.h"
+#include "glengine_export.h"
 
 namespace glengine {
-    class Engine {
+    class GLENGINE_EXPORT Engine {
     public:
         Engine(const std::string &windowName, int2 windowSize);
 

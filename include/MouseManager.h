@@ -4,6 +4,7 @@
 #pragma once
 #include <memory>
 #include "Vectors.h"
+#include "glengine_export.h"
 
 // for mouse drag events
 #define GLUT_DRAG 2
@@ -15,7 +16,7 @@ namespace glengine {
 
 namespace glengine::input {
     /// How the engine is handling mouse input
-    enum MouseMode {
+    enum GLENGINE_EXPORT MouseMode {
         /// The user is free to use the mouse. Hover and click events will be passed to widgets
         FREE,
 
@@ -25,7 +26,7 @@ namespace glengine::input {
     };
 
     /// Handles mouse input from GLUT
-    class MouseManager {
+    class GLENGINE_EXPORT MouseManager {
     public:
         explicit MouseManager(Engine* engine);
 

@@ -8,6 +8,7 @@
 
 #include "ActorComponent.h"
 #include "Transform.h"
+#include "glengine_export.h"
 
 namespace glengine {
     class Engine;
@@ -15,7 +16,7 @@ namespace glengine {
 
 /// Any object that can be represented in the 3D world.
 namespace glengine::world {
-    class Actor {
+    class GLENGINE_EXPORT Actor {
     public:
         virtual ~Actor() = default;
 

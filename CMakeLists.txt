@@ -22,6 +22,18 @@ add_library(glengine SHARED
 
 target_include_directories(glengine PUBLIC include)
 
+include(GenerateExportHeader)
+generate_export_header(glengine)
+target_include_directories(glengine PRIVATE ${CMAKE_CURRENT_BINARY_DIR})
+target_sources(
+        glengine
+        PUBLIC
+            FILE_SET generated_headers
+                TYPE HEADERS
+                BASE_DIRS $<TARGET_PROPERTY:glengine,BINARY_DIR>
+                FILES ${CMAKE_CURRENT_BINARY_DIR}/glengine_export.h
+)
+
 if (${CMAKE_BUILD_TYPE} MATCHES "Release")
     set_property(TARGET glengine
             PROPERTY INTERPROCEDURAL_OPTIMIZATION TRUE)
