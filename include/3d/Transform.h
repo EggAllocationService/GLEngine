@@ -40,12 +40,12 @@ class Transform {
     /// Sets the parent transform
     void SetParent(Transform *parent);
 
-    /// Converts this transform to a 4x4 matrix
+    /// Gets a 4x4 matrix representing this transform
     /// Does not include the parent's transform
-    explicit operator mat4() const;
+    [[nodiscard]] mat4 GetMatrix() const;
 
     /// Gets a pointer to the local column-major 4x4 matrix
-    explicit operator float*();
+    const float* GetMatrixPointer();
 
     /// Converts this transform to a 4x4 matrix
     /// Will be combined with all parent matrices

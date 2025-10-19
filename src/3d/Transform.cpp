@@ -29,11 +29,11 @@ void Transform::SetParent(Transform *parent) {
     this->parent = parent;
 }
 
-Transform::operator mat4() const {
+mat4 Transform::GetMatrix() const {
     return cachedMatrix;
 }
 
-Transform::operator float*() {
+const float *Transform::GetMatrixPointer() {
     return reinterpret_cast<float *>(&cachedMatrix);
 }
 

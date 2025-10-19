@@ -22,7 +22,7 @@ namespace glengine::world {
         virtual void Update(double deltaTime) = 0;
 
         mat4 GetTransformMatrix() const {
-            return static_cast<mat4>(transform_);
+            return transform_.GetMatrix();
         }
 
         /// Returns a reference to the first component of type T
