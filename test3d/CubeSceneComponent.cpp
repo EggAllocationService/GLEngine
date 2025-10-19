@@ -8,6 +8,6 @@
 #include "Colors.h"
 
 void CubeSceneComponent::Render() {
-    glColor4fv(Colors::RED);
-    glutWireCube(Scale);
+    glColor4fv(Color);
+    glutSolidTeapot(Scale);
 }

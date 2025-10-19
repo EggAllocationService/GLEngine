@@ -4,6 +4,7 @@
 
 #include "SpinnyCube.h"
 
+#include "Colors.h"
 #include "Engine.h"
 
 SpinnyCube::SpinnyCube() {
@@ -12,6 +13,7 @@ SpinnyCube::SpinnyCube() {
 
     auto smallerCube = CreateComponent<CubeSceneComponent>();
     smallerCube->SetupAttachment(root->GetTransform());
+    smallerCube->Color = Colors::GREEN;
 
     smallerCube->GetTransform()->SetPosition(float3(0, 0, 3));
     smallerCube->GetTransform()->SetScale(float3(0.4, 0.4, 0.4));
@@ -22,6 +24,7 @@ SpinnyCube::SpinnyCube() {
 
     auto evenSmallerCube = CreateComponent<CubeSceneComponent>();
     evenSmallerCube->SetupAttachment(root2->GetTransform());
+    evenSmallerCube->Color = float4(1, 1, 0, 1);
 
     evenSmallerCube->GetTransform()->SetPosition(float3(1.5, 0, 0));
     evenSmallerCube->GetTransform()->SetScale(float3(0.4, 0.4, 0.4));

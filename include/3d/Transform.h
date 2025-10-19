@@ -58,7 +58,7 @@ class Transform {
     [[nodiscard]] float3 GetUpVector();
 
     /// Computes the right (+X) vector of this transform in local space
-    [[nodiscard]] float3 GetLeftVector();
+    [[nodiscard]] float3 GetRightVector();
 private:
     mat4 cachedMatrix;
     float3 rotation;

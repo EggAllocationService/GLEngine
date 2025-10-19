@@ -12,5 +12,11 @@ void glengine::world::components::CameraComponent::SetProjectionMatrix() {
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
     gluPerspective(FoV, screenSize.x / screenSize.y, Near, Far);
+
+    // invert x axis so that +x is right
+    mat4 view = mat4::identity();
+    view[0]->set(0, -1);
+    glMultMatrixf(static_cast<const float *>(view));
+
     glMatrixMode(GL_MODELVIEW);
 }

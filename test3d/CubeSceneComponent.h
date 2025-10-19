@@ -10,6 +10,7 @@ public:
     void Render() override;
     void Update(double deltaTime) override {};
 
+    float4 Color = float4(1, 0, 0, 1);
     float Scale = 1.0f;
 
 };

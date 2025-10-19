@@ -56,7 +56,7 @@ float3 Transform::GetUpVector() {
     return float3(yVec[0], yVec[1], yVec[2]).norm();
 }
 
-float3 Transform::GetLeftVector() {
+float3 Transform::GetRightVector() {
     auto xVec = *cachedMatrix[0];
     return float3(xVec[0], xVec[1], xVec[2]).norm();
 }
