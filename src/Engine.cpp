@@ -202,6 +202,7 @@ namespace glengine {
         glMatrixMode(GL_MODELVIEW);
         glLoadIdentity();
         glDisable(GL_DEPTH_TEST);
+        glDisable(GL_CULL_FACE);
 
         // a matrix stack lets us render nested widgets very conveniently
         // also provides valuable tools for widgets to render parent-child objects
