@@ -38,6 +38,11 @@ void glengine::input::InputManager::AcceptKeyInput(int key)
 
 void glengine::input::InputManager::KeyReleased(int key)
 {
+	if (key >= 'A' && key <= 'Z') {
+		// convert capitals to lowercase
+		key = key + ('a' - 'A');
+	}
+
 	pressedKeys_.erase(key);
 }
 
