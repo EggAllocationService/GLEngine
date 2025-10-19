@@ -4,7 +4,7 @@
 #pragma once
 #include <vector>
 #include <ranges>
-#include <valarray>
+#include <memory>
 
 #include "ActorComponent.h"
 #include "Transform.h"

@@ -62,6 +62,7 @@ elseif(${CMAKE_SYSTEM_NAME} MATCHES "Windows")
 elseif(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
     target_link_libraries(glengine "glut")
     target_link_libraries(glengine "OpenGL")
+    target_link_libraries(glengine "GLU")
 endif()
 
 function(engine_copy_freeglut_if_needed TARGETNAME)
