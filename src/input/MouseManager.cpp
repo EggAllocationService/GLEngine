@@ -17,9 +17,9 @@ namespace glengine::input {
         if (mouseMode == FREE) {
             mousePosition = position;
         } else {
-            // TODO: this isn't fleshed out yet
-            // the mouse is locked into the window, so just re-center it
-            // in the future we'll need to report relative motion to the game engine, to move a camera or whatever
+            auto windowMiddle = float2(engine->GetWindowSize() / 2);
+            auto delta = position - windowMiddle;
+            mousePosition = delta;
             centerCursor();
         }
     }
@@ -48,7 +48,8 @@ namespace glengine::input {
                 if (hoveredWidget.expired()) {
                     // if the object we were clicking has been freed, then set clicking to false
                     clicking = false;
-                } else {
+                }
+                else {
                     // if it's not freed, then send drag events
                     auto hovered = hoveredWidget.lock();
                     hovered->Click(GLUT_LEFT_BUTTON, GLUT_DRAG, mousePosition);
@@ -69,7 +70,8 @@ namespace glengine::input {
                 // new widget hovered
                 newHovered->HoverStateChanged(true);
                 glutSetCursor(newHovered->Cursor);
-            } else {
+            }
+            else {
                 // was hovering something, now hovering nothing
                 glutSetCursor(GLUT_CURSOR_INHERIT);
             }

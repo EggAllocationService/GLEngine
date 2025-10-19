@@ -63,11 +63,27 @@ namespace glengine {
             Instances[currentWindow]->GetMouseManager()->HandleMotion(pos);
         }
     }
+
+    static void keyExec(unsigned char keycode, int, int) {
+        int currentWindow = glutGetWindow();
+        if (Instances.contains(currentWindow)) {
+            Instances[currentWindow]->GetInputManager()->AcceptKeyInput(keycode);
+        }
+    }
+
+    static void keyUpExec(unsigned char keycode, int, int) {
+        int currentWindow = glutGetWindow();
+        if (Instances.contains(currentWindow)) {
+            Instances[currentWindow]->GetInputManager()->KeyReleased(keycode);
+        }
+    }
+
 #pragma endregion
 
     Engine::Engine(const std::string &windowName, int2 size) {
         mouseManager = new input::MouseManager(this);
-
+        inputManager = new input::InputManager(this);
+        
         windowSize = size;
         glutInitWindowSize(windowSize.x, windowSize.y);
         glutInitDisplayMode(GLUT_RGBA | GLUT_DOUBLE | GLUT_DEPTH | GLUT_STENCIL);
@@ -81,8 +97,8 @@ namespace glengine {
         glutMouseFunc(clickExec);
         glutPassiveMotionFunc(mouseMoveExec);
         glutMotionFunc(mouseMoveExec);
-
-        setLastUpdate();
+        glutKeyboardFunc(keyExec);
+        glutKeyboardUpFunc(keyUpExec);
     }
 
     Engine::~Engine() {
@@ -111,6 +127,7 @@ namespace glengine {
         double delta = calculateDeltaTime();
 
         mouseManager->Update();
+        inputManager->Update(delta);
 
         updateWidgets(delta);
 
@@ -122,8 +139,13 @@ namespace glengine {
     }
 
     void Engine::Possess(std::shared_ptr<world::Pawn> target) {
+        inputManager->Reset();
+        if (auto realPossessed = possessedPawn.lock()) {
+            realPossessed->OnUnpossess();
+        }
         possessedPawn = target;
         target->GetActiveCamera()->SetProjectionMatrix();
+        target->OnPossess(inputManager);
     }
 
     void Engine::SetWindowSize(int2 size) {

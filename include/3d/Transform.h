@@ -51,8 +51,14 @@ class Transform {
     /// Will be combined with all parent matrices
     [[nodiscard]] mat4 GetAbsoluteMatrix() const;
 
-    /// Computes the forward (+Z) vector of this transform in world space
-    [[nodiscard]] float3 GetForwardVector() const;
+    /// Computes the forward (+Z) vector of this transform in local space
+    [[nodiscard]] float3 GetForwardVector();
+
+    /// Computes the Up (+Y) vector of this transform in local space
+    [[nodiscard]] float3 GetUpVector();
+
+    /// Computes the right (+X) vector of this transform in local space
+    [[nodiscard]] float3 GetLeftVector();
 private:
     mat4 cachedMatrix;
     float3 rotation;

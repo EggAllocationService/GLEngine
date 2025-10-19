@@ -45,17 +45,20 @@ mat4 Transform::GetAbsoluteMatrix() const {
     return cachedMatrix;
 }
 
-float3 Transform::GetForwardVector() const {
-    float cx = cosf(rotation.x);
-    float sx = sinf(rotation.x);
-    float cy = cosf(rotation.y);
-    float sy = sinf(rotation.y);
+float3 Transform::GetForwardVector() {
+    auto zVec = *cachedMatrix[2];
 
-    return float3(
-        sy,
-        -cy * sx,
-        cx * cy
-    ).norm();
+    return float3(zVec[0], zVec[1], zVec[2]).norm();
+}
+
+float3 Transform::GetUpVector() {
+    auto yVec = *cachedMatrix[1];
+    return float3(yVec[0], yVec[1], yVec[2]).norm();
+}
+
+float3 Transform::GetLeftVector() {
+    auto xVec = *cachedMatrix[0];
+    return float3(xVec[0], xVec[1], xVec[2]).norm();
 }
 
 void Transform::RecalculateMatrix() {

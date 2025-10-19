@@ -51,6 +51,10 @@ namespace glengine::input {
             return mousePosition;
         }
 
+        [[nodiscard]] MouseMode GetMouseMode() const {
+            return mouseMode;
+        }
+
     private:
         Engine* engine;
         std::weak_ptr<Widget> hoveredWidget;

@@ -9,6 +9,8 @@ namespace glengine::world {
     class DefaultPawn : public Pawn {
     public:
         void Update(double deltaTime) override {};
+
+        void OnPossess(input::InputManager* manager) override;
     };
 
 }

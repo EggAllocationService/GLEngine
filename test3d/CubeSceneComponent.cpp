@@ -9,5 +9,5 @@
 
 void CubeSceneComponent::Render() {
     glColor4fv(Colors::RED);
-    glutWireSphere(1.0, 32, 32);
+    glutWireCube(Scale);
 }

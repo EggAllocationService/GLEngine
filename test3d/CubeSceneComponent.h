@@ -9,4 +9,7 @@ class CubeSceneComponent : public glengine::world::ActorSceneComponent {
 public:
     void Render() override;
     void Update(double deltaTime) override {};
+
+    float Scale = 1.0f;
+
 };

@@ -25,7 +25,7 @@ add_library(glengine STATIC
         src/3d/DefaultPawn.cpp
         src/3d/DefaultPawn.h
         test3d/main.cpp
-)
+ "src/input/InputManager.cpp")
 
 target_include_directories(glengine PUBLIC include)
 
@@ -97,5 +97,5 @@ endif()
 
 # enables profiling tools in VS
 if (MSVC AND ${CMAKE_BUILD_TYPE} STREQUAL "Debug")
-    set_target_properties(glengine PROPERTIES LINK_FLAGS "/PROFILE")
+    set_target_properties(glengine PROPERTIES LINK_FLAGS "/PROFILE /ENTRY:mainCRTStartup")
 endif()

@@ -12,6 +12,7 @@
 #include "MouseManager.h"
 #include "3d/Actor.h"
 #include "3d/Pawn.h"
+#include "InputManager.h"
 
 namespace glengine {
     class Engine {
@@ -34,7 +35,7 @@ namespace glengine {
         /// Returns a shared reference to the created widget
         template <typename T>
         std::shared_ptr<T> AddOnscreenWidget() {
-            static_assert(std::is_base_of_v<Widget, T>, "T must be derive from Widget");
+            static_assert(std::is_base_of_v<Widget, T>, "T must be derived from Widget");
 
             std::shared_ptr<T> widget = Widget::New<T>(this);
             widgets.push_back(widget);
@@ -43,7 +44,7 @@ namespace glengine {
 
         template <typename T>
         std::shared_ptr<T> SpawnActor() {
-            static_assert(std::is_base_of_v<world::Actor, T>, "T must be derive from Actor");
+            static_assert(std::is_base_of_v<world::Actor, T>, "T must be derived from Actor");
             std::shared_ptr<T> actor = std::make_shared<T>();
             actor->SetEngine(this);
             actors.push_back(actor);
@@ -75,6 +76,10 @@ namespace glengine {
 
         [[nodiscard]] input::MouseManager* GetMouseManager() const {
             return mouseManager;
+        }
+
+        [[nodiscard]] input::InputManager* GetInputManager() const {
+            return inputManager;
         }
 
         [[nodiscard]] world::Pawn* GetPossessedPawn() const {
@@ -114,6 +119,7 @@ namespace glengine {
         void renderWorld() const;
 
         input::MouseManager* mouseManager;
+        input::InputManager* inputManager;
 
         std::vector<std::shared_ptr<Widget>> widgets;
         std::vector<std::shared_ptr<world::Actor>> actors;
