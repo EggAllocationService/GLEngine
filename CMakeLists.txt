@@ -3,7 +3,7 @@ project(GLEngine)
 
 set(CMAKE_CXX_STANDARD 20)
 
-add_library(glengine STATIC
+add_library(glengine SHARED
         "src/Engine.cpp"
         "src/Widget.cpp"
         "src/Colors.cpp" 
@@ -13,11 +13,11 @@ add_library(glengine STATIC
         "src/widgets/PerfCounter.cpp"
         "src/input/MouseManager.cpp"
         "src/3d/Transform.cpp"
-        src/3d/ActorPrimitiveComponent.cpp
-        src/3d/components/CameraComponent.cpp
-        src/3d/Pawn.cpp
-        src/3d/DefaultPawn.cpp
-        src/3d/DefaultPawn.h
+        "src/3d/ActorPrimitiveComponent.cpp"
+        "src/3d/components/CameraComponent.cpp"
+        "src/3d/Pawn.cpp"
+        "src/3d/DefaultPawn.cpp"
+        "src/3d/DefaultPawn.h"
         "src/input/InputManager.cpp")
 
 target_include_directories(glengine PUBLIC include)
