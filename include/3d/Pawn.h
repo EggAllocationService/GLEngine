@@ -22,10 +22,10 @@ namespace glengine::world {
         virtual void OnUnpossess() {};
 
         virtual components::CameraComponent *GetActiveCamera() {
-            return defaultCamera.lock().get();
+            return defaultCamera.get();
         }
     protected:
-        std::weak_ptr<components::CameraComponent> defaultCamera;
+        std::shared_ptr<components::CameraComponent> defaultCamera;
     };
 
 }

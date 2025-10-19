@@ -5,12 +5,16 @@
 #include "3d/Pawn.h"
 
 namespace glengine::world {
-    /// a stationary pawn so that the engine can actually render stuff
+    /// Default flying-controlled pawn so we have something to spawn & possess as a fallback
+    /// Just a flying camera, basically.
+    /// WASD movement controls, mouse look controls
     class DefaultPawn : public Pawn {
     public:
         void Update(double deltaTime) override {};
 
         void OnPossess(input::InputManager* manager) override;
+
+        void OnUnpossess() override;
     };
 
 }

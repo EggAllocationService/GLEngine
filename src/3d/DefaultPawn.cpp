@@ -34,3 +34,9 @@ void glengine::world::DefaultPawn::OnPossess(input::InputManager* manager)
 
 		});
 }
+
+void glengine::world::DefaultPawn::OnUnpossess()
+{
+	// Don't keep these things around, we found a better pawn to possess
+	Destroy();
+}

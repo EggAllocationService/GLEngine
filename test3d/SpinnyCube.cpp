@@ -25,7 +25,6 @@ SpinnyCube::SpinnyCube() {
 
     evenSmallerCube->GetTransform()->SetPosition(float3(1.5, 0, 0));
     evenSmallerCube->GetTransform()->SetScale(float3(0.4, 0.4, 0.4));
-    evenSmallerCube->GetTransform()->SetRotation(float3(3.14159 /2.0, 1.0, 0.0));
 
 }
 
