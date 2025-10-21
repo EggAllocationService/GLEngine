@@ -2,10 +2,13 @@
 // Created by Kyle Smith on 2025-10-18.
 //
 
+#include <fstream>
+
 #include "Engine.h"
 #include "SpinnyCube.h"
 #include "widgets/PerfCounter.h"
 #include "PilotableCube.h"
+#include "3d/mesh/StaticMesh.h"
 #include "widgets/Button.h"
 
 #define KEY_ESCAPE 27
@@ -17,7 +20,7 @@ int main(int argc, char** argv) {
     // Hide the console window on Windows
     FreeConsole();
 #endif
-    
+
     glutInit(&argc, argv);
 
     auto engine = new Engine("3D Test", int2(1280, 720));

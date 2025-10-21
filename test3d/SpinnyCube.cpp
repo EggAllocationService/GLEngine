@@ -4,12 +4,19 @@
 
 #include "SpinnyCube.h"
 
+#include <fstream>
+
 #include "Colors.h"
 #include "Engine.h"
-
+#include "3d/mesh/StaticMeshComponent.h"
+using namespace glengine::world::mesh;
 SpinnyCube::SpinnyCube() {
     root = CreateComponent<glengine::world::ActorPrimitiveComponent>();
-    CreateComponent<CubeSceneComponent>(); // main cube
+    auto mainShape = CreateComponent<StaticMeshComponent>();
+    auto file = std::ifstream();
+    file.open("/Users/kyle/Downloads/enterprise.txt");
+    auto mesh = StaticMesh::FromOBJ(file);
+    mainShape->SetMesh(mesh.release());
 
     auto smallerCube = CreateComponent<CubeSceneComponent>();
     smallerCube->SetupAttachment(root->GetTransform());
