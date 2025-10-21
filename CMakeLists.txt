@@ -104,8 +104,3 @@ if (${PROJECT_IS_TOP_LEVEL})
             test3d/CubeSceneComponent.h "test3d/PilotableCube.cpp")
     target_link_libraries(test3d PRIVATE glengine)
 endif()
-
-# enables profiling tools in VS
-if (MSVC AND ${CMAKE_BUILD_TYPE} STREQUAL "Debug")
-    set_target_properties(glengine PROPERTIES LINK_FLAGS "/PROFILE")
-endif()
