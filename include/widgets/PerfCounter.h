@@ -12,6 +12,7 @@ namespace glengine::widgets {
 	class GLENGINE_EXPORT PerfCounter : public Widget {
 	public:
 		PerfCounter();
+		~PerfCounter();
 
 		void Update(double deltaTime) override;
 		void Draw(MatrixStack2D& stack) override;
@@ -30,8 +31,8 @@ namespace glengine::widgets {
 		double timer = 0;
 
 		/// Cached formatted strings so we're not making unnecessary allocations every frame
-		std::string lastFrametime = "null ms";
-		std::string lastFPS = "null FPS";
+		char* lastFrametime;
+		char* lastFPS;
 
 		/// <summary>
 		/// if true, shows FPS

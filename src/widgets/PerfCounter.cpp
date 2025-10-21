@@ -7,6 +7,13 @@ glengine::widgets::PerfCounter::PerfCounter() {
 
 	// 8 wide characters, room for 10
 	Bounds = float2(8 * 10, 13);
+	lastFPS = (char*)calloc(20, sizeof(char));
+	lastFrametime = (char*)calloc(20, sizeof(char));
+}
+
+glengine::widgets::PerfCounter::~PerfCounter() {
+	free(lastFPS);
+	free(lastFrametime);
 }
 
 void glengine::widgets::PerfCounter::Update(double deltaTime) {
@@ -28,8 +35,8 @@ void glengine::widgets::PerfCounter::Update(double deltaTime) {
 
 		total /= len;
 
-		lastFrametime = std::format("{:.2f}ms", total * 1000);
-		lastFPS = std::format("{:.2f} FPS", 1.0 / total);
+		sprintf(lastFPS, "%.2f ms", total * 1000.0);
+		sprintf(lastFrametime, "%.2f FPS", 1.0 / total);
 
 		counts.clear();
 	}
@@ -38,7 +45,7 @@ void glengine::widgets::PerfCounter::Update(double deltaTime) {
 void glengine::widgets::PerfCounter::Draw(MatrixStack2D &stack) {
 	glColor4fv(TextColor);
 
-	stack.PrintText(float2(0, 0), (showInverse ? lastFPS : lastFrametime).c_str());
+	stack.PrintText(float2(0, 0), (showInverse ? lastFPS : lastFrametime));
 }
 
 void glengine::widgets::PerfCounter::Click(int button, int state, float2 pos) {
