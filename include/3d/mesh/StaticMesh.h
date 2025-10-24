@@ -3,6 +3,7 @@
 //
 #pragma once
 
+#include <fstream>
 #include <vector>
 #include <memory>
 #include <fstream>

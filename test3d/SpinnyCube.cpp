@@ -6,17 +6,20 @@
 
 #include <fstream>
 
+#include "CubeSceneComponent.h"
 #include "Colors.h"
 #include "Engine.h"
 #include "3d/mesh/StaticMeshComponent.h"
 using namespace glengine::world::mesh;
 SpinnyCube::SpinnyCube() {
     root = CreateComponent<glengine::world::ActorPrimitiveComponent>();
-    auto mainShape = CreateComponent<StaticMeshComponent>();
+    mesh = CreateComponent<StaticMeshComponent>();
+    CreateComponent<CubeSceneComponent>();
     auto file = std::ifstream();
-    file.open("/Users/kyle/Downloads/enterprise.txt");
-    auto mesh = StaticMesh::FromOBJ(file);
-    mainShape->SetMesh(mesh.release());
+    file.open("/Users/kyle/Downloads/rat/rat.obj");
+    auto sMesh = StaticMesh::FromOBJ(file);
+    mesh->SetMesh(sMesh.release());
+    mesh->GetTransform()->SetScale(float3(0.001, 0.001, 0.001));
 
     auto smallerCube = CreateComponent<CubeSceneComponent>();
     smallerCube->SetupAttachment(root->GetTransform());
@@ -35,12 +38,12 @@ SpinnyCube::SpinnyCube() {
 
     evenSmallerCube->GetTransform()->SetPosition(float3(1.5, 0, 0));
     evenSmallerCube->GetTransform()->SetScale(float3(0.4, 0.4, 0.4));
-
 }
 
 void SpinnyCube::Update(double deltaTime) {
     rotation += (3.14159 / 2.0) * deltaTime;
 
+    mesh->GetTransform()->SetRotation(float3(0, rotation, 0));
     root->GetTransform()->SetRotation(float3(0, rotation, 0));
     root2->GetTransform()->SetRotation(float3(0, rotation, 0));
 }

@@ -6,11 +6,11 @@ using namespace glengine;
 
 PilotableCube::PilotableCube()
 {
-	auto box = CreateComponent<CubeSceneComponent>();
-	box->Color = float4(0, 1, 1, 1);
-	box->Scale = 0.4;
-	defaultCamera->GetTransform()->SetPosition(float3(0, 0.5, -2.5));
-	defaultCamera->GetTransform()->SetRotation(float3(3.14159 / 8.0, 0, 0));
+	//auto box = CreateComponent<CubeSceneComponent>();
+	//box->Color = float4(0, 1, 1, 1);
+	//box->Scale = 0.4;
+	//defaultCamera->GetTransform()->SetPosition(float3(0, 0.5, -2.5));
+	//defaultCamera->GetTransform()->SetRotation(float3(3.14159 / 8.0, 0, 0));
 }
 
 void PilotableCube::OnPossess(input::InputManager* manager)
