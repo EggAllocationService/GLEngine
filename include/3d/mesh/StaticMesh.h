@@ -22,7 +22,10 @@ namespace glengine::world::mesh {
     public:
         static std::unique_ptr<StaticMesh> FromOBJ(std::ifstream& file);
 
-        void Render();
+        /// Normalizes the mesh so all vertices are within (-1, -1, -1) to (1, 1, 1)
+        void Normalize();
+
+        void Render() const;
     private:
         std::vector<PackedVertexData> vertices_;
         std::vector<int3> faces_;

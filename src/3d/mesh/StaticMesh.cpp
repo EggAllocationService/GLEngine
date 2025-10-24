@@ -74,14 +74,40 @@ std::unique_ptr<StaticMesh> StaticMesh::FromOBJ(std::ifstream& file) {
     return std::unique_ptr<StaticMesh>(result);
 }
 
-void StaticMesh::Render() {
+float max(float a, float b, float c, float d) {
+    return std::max(std::max(a, std::max(b, c)), d);
+}
+
+float3 abs(float3 a) {
+    return {std::abs(a.x), std::abs(a.y), std::abs(a.z)};
+}
+void StaticMesh::Normalize() {
+    if (vertices_.empty()) {
+        return;
+    }
+
+    float maxPos = 0;
+
+    // find largest coord (abs)
+    for (const auto& vertex :vertices_) {
+        auto position = abs(vertex.position);
+        maxPos = max(maxPos, position.x, position.y, position.z);
+    }
+
+    // divide by largest
+    for (auto& vertex : vertices_) {
+        vertex.position = vertex.position / maxPos;
+    }
+}
+
+void StaticMesh::Render() const {
     glBegin(GL_TRIANGLES);
     float current = 0;
     float max = 0;
 
     if (hasTexCoords_ || hasNormals_) {
         max = faces_.size();
-        // faces array is one vertex per index, with position index, texcood index, and normal index in each int3
+        // faces array is one vertex per index, with position index, texcoord index, and normal index in each int3
         for (auto vertex : faces_) {
             float color = current / max;
             color *= 0.5;

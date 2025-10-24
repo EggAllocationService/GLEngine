@@ -18,8 +18,8 @@ SpinnyCube::SpinnyCube() {
     auto file = std::ifstream();
     file.open("/Users/kyle/Downloads/rat/rat.obj");
     auto sMesh = StaticMesh::FromOBJ(file);
+    sMesh->Normalize();
     mesh->SetMesh(sMesh.release());
-    mesh->GetTransform()->SetScale(float3(0.001, 0.001, 0.001));
 
     auto smallerCube = CreateComponent<CubeSceneComponent>();
     smallerCube->SetupAttachment(root->GetTransform());

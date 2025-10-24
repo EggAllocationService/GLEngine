@@ -192,6 +192,10 @@ struct vec2 {
         return &data[0];
     }
 
+    operator const T *() const {
+        return &data[0];
+    }
+
     bool operator==(const vec2 &rhs) {
         return data[0] == rhs.data[0] && data[1] == rhs.data[1];
     }
@@ -303,6 +307,10 @@ struct vec3 {
     };
 
     operator T *() {
+        return &data[0];
+    }
+
+    operator const T*() const {
         return &data[0];
     }
 
