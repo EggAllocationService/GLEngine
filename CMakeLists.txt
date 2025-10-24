@@ -22,7 +22,9 @@ add_library(glengine SHARED
         src/3d/mesh/StaticMesh.cpp
         include/3d/mesh/StaticMesh.h
         src/3d/mesh/StaticMeshComponent.cpp
-        include/3d/mesh/StaticMeshComponent.h)
+        include/3d/mesh/StaticMeshComponent.h
+        src/console/Console.cpp
+        include/console/Console.h)
 
 target_include_directories(glengine PUBLIC include)
 

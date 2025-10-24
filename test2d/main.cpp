@@ -56,6 +56,10 @@ int main(int argc, char **argv) {
         }
     });
 
+    inst->GetInputManager()->AddAction('`', [=] {
+       inst->ShowConsole();
+    });
+
     glutMainLoop();
     delete inst;
 }

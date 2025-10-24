@@ -110,6 +110,11 @@ namespace glengine::input {
     /// <param name="position">Window-space coordinates of the mouse cursor</param>
     std::shared_ptr<Widget> internal_hitTestWidgetAndChildren(float2 transform, std::shared_ptr<Widget> widget,
                                                               float2 position) {
+
+        if (widget->MouseMode == IGNORE) {
+            return nullptr;
+        }
+
         float2 lowerLeft = transform;
         float2 topRight = transform + widget->Bounds;
 

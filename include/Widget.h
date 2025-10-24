@@ -29,6 +29,13 @@ namespace glengine {
 		TOP_RIGHT
 	};
 
+	enum GLENGINE_EXPORT MouseInteraction {
+		/// The widget will block mouse input from widgets below it
+		BLOCK,
+		/// The widget will be ignored by mouse hit testing
+		IGNORE
+	};
+
     /// <summary>
 	/// A 2D widget drawn on top of the viewport after 3D rendering.
 	/// </summary>
@@ -73,6 +80,13 @@ namespace glengine {
     	/// </summary>
     	Anchoring Anchor = BOTTOM_LEFT;
 
+    	/// <summary>
+    	///	How this widget should interact with mouse input
+    	///
+    	///	Defaults to BLOCK
+    	/// </summary>
+    	MouseInteraction MouseMode = BLOCK;
+
     	/**
 		 * Determines what cursor should be used when hovering this widget
 		 *
@@ -110,6 +124,19 @@ namespace glengine {
          * @param hovering whether this widget is being hovered or not
          */
         virtual void HoverStateChanged(bool hovering) {}
+
+        /**
+         * Called when keyboard input focus state changes, and this widget was either
+         * the previous focus or the new focus
+         * @param focused if this widget is focused or not
+         */
+        virtual void FocusStateChanged(bool focused) {}
+
+        /**
+         * Called when a key has been pressed while this widget was focused
+         * @param keyCode key that was pressed
+         */
+        virtual void KeyPressed(int keyCode) {}
 
         /**
          * Computes a translation and rotation matrix for this widget's position and rotation

@@ -67,16 +67,14 @@ namespace glengine {
     static void keyExec(unsigned char keycode, int, int) {
         int currentWindow = glutGetWindow();
         if (Instances.contains(currentWindow)) {
-            Instances[currentWindow]->GetInputManager()->AcceptKeyInput(keycode);
-            Instances[currentWindow]->GetPawnInputManager()->AcceptKeyInput(keycode);
+            Instances[currentWindow]->KeyPressed(keycode);
         }
     }
 
     static void keyUpExec(unsigned char keycode, int, int) {
         int currentWindow = glutGetWindow();
         if (Instances.contains(currentWindow)) {
-            Instances[currentWindow]->GetInputManager()->KeyReleased(keycode);
-            Instances[currentWindow]->GetPawnInputManager()->KeyReleased(keycode);
+            Instances[currentWindow]->KeyReleased(keycode);
         }
     }
 
@@ -104,6 +102,8 @@ namespace glengine {
         glutKeyboardUpFunc(keyUpExec);
 
         setLastUpdate();
+
+        console = AddOnscreenWidget<console::Console>();
     }
 
     Engine::~Engine() {
@@ -144,6 +144,47 @@ namespace glengine {
         setLastUpdate();
 
         glutPostRedisplay();
+    }
+
+    void Engine::KeyPressed(int keyCode) {
+        if (mouseManager->GetMouseMode() == input::CAPTIVE) {
+            pawnInputManager->AcceptKeyInput(keyCode);
+        }
+
+        if (focusedWidget.expired()) {
+            inputManager->AcceptKeyInput(keyCode);
+        } else {
+            focusedWidget.lock()->KeyPressed(keyCode);
+        }
+    }
+
+    void Engine::KeyReleased(int keyCode) {
+        pawnInputManager->KeyReleased(keyCode);
+        inputManager->KeyReleased(keyCode);
+    }
+
+    void Engine::FocusWidget(std::shared_ptr<Widget> widget) {
+        if (mouseManager->GetMouseMode() == input::CAPTIVE) {
+            return;
+        }
+
+        if (!focusedWidget.expired()) {
+            focusedWidget.lock()->FocusStateChanged(false);
+        }
+        focusedWidget = widget;
+
+        if (widget != nullptr) {
+            widget->FocusStateChanged(true);
+        }
+    }
+
+    void Engine::SetMouseMode(const input::MouseMode mode) {
+        if (mode == input::CAPTIVE && !focusedWidget.expired()) {
+            focusedWidget.lock()->FocusStateChanged(false);
+            focusedWidget = std::weak_ptr<Widget>();
+        }
+
+        mouseManager->SetMouseMode(mode);
     }
 
     void Engine::Possess(const std::shared_ptr<world::Pawn>& target) {

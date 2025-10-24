@@ -14,6 +14,7 @@
 #include "3d/Pawn.h"
 #include "InputManager.h"
 #include "glengine_export.h"
+#include "console/Console.h"
 
 namespace glengine {
     class GLENGINE_EXPORT Engine {
@@ -30,6 +31,23 @@ namespace glengine {
 
         void Quit() {
             quitRequested = true;
+        }
+
+        /// Call when a key has been pressed
+        void KeyPressed(int keyCode);
+
+        /// Call when a key has been released
+        void KeyReleased(int keyCode);
+
+        /// call to focus this widget
+        /// only works when mouse mode is FREE
+        void FocusWidget(std::shared_ptr<Widget> widget);
+
+        /// Sets the current mouse mode to `mode`
+        void SetMouseMode(input::MouseMode mode);
+
+        void ShowConsole() {
+            FocusWidget(console);
         }
 
         /// Creates a new widget of type T and adds it to the viewport
@@ -133,5 +151,7 @@ namespace glengine {
         std::vector<std::shared_ptr<world::Actor>> actors;
 
         std::weak_ptr<world::Pawn> possessedPawn;
+        std::weak_ptr<Widget> focusedWidget;
+        std::shared_ptr<console::Console> console;
     };
 } // glengine
