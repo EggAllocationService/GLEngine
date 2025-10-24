@@ -113,6 +113,10 @@ namespace glengine {
             return possessedPawn.lock().get();
         }
 
+        [[nodiscard]] std::shared_ptr<console::Console> GetConsole() const {
+            return console;
+        }
+
     private:
         int2 windowSize;
         int windowHandle;

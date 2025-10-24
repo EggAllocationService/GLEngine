@@ -63,13 +63,20 @@ void glengine::MatrixStack2D::DrawRect(const float2 a, const float2 b) {
 }
 
 void glengine::MatrixStack2D::PrintText(const float2 position, const char *text) {
-    int offset = 0;
+    float2 offset = float2(0, 0);
 
     for (const char *current = text; *current != 0; current++) {
-        glRasterPos2fv(this->operator*(position + float2(offset, 0)));
+        if (*current == '\n') {
+            // reset x offset and add y offset
+            offset.y -= 13;
+            offset.x = 0;
+            continue;
+        }
+
+        glRasterPos2fv(this->operator*(position + offset));
 
         glutBitmapCharacter(GLUT_BITMAP_8_BY_13, *current);
 
-        offset += 8.0; // 8 pixels of offset for each character
+        offset += float2(8.0, 0.0); // 8 pixels of offset for each character
     }
 }

@@ -60,6 +60,10 @@ int main(int argc, char **argv) {
        inst->ShowConsole();
     });
 
+    inst->GetConsole()->AddConsoleCommand("print", [](const std::string_view x) {
+        std::cout << "(print)" << x << std::endl;
+    });
+
     glutMainLoop();
     delete inst;
 }

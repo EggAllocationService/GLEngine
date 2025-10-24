@@ -17,7 +17,6 @@ add_library(glengine SHARED
         "src/3d/components/CameraComponent.cpp"
         "src/3d/Pawn.cpp"
         "src/3d/DefaultPawn.cpp"
-        "src/3d/DefaultPawn.h"
         "src/input/InputManager.cpp"
         "src/3d/mesh/StaticMesh.cpp"
         "src/3d/mesh/StaticMeshComponent.cpp"
@@ -50,7 +49,7 @@ endif()
 if (${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
     target_link_libraries(glengine "-framework GLUT")
     target_link_libraries(glengine "-framework OpenGL")
-    SET(CMAKE_CXX_FLAGS_DEBUG "-g -Og")
+    SET(CMAKE_CXX_FLAGS_DEBUG "-g")
 elseif(${CMAKE_SYSTEM_NAME} MATCHES "Windows")
     target_include_directories(glengine PUBLIC "C:\\Program Files\\freeglut\\include")
 
