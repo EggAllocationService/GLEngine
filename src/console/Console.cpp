@@ -138,7 +138,8 @@ void Console::execute() {
 
             GetEngine()->FocusWidget(nullptr);
         }
-    } else {
+    }
+    else {
         auto commandName = _inputBuffer.substr(0, firstSpace);
         const auto cmd = commands.find(commandName);
         if (cmd != commands.end()) {
@@ -146,4 +147,5 @@ void Console::execute() {
 
             GetEngine()->FocusWidget(nullptr);
         }
+    }
 }
