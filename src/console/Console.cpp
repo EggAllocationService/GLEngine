@@ -74,7 +74,7 @@ void Console::FocusStateChanged(bool focused) {
 }
 
 void Console::KeyPressed(int keyCode) {
-    if (keyCode == 127) {
+    if (keyCode == 127 || keyCode == 8) {
         // backspace
         if (!_inputBuffer.empty()) {
             _inputBuffer.pop_back();
