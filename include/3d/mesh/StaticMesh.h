@@ -4,6 +4,9 @@
 #pragma once
 
 #include <vector>
+#include <memory>
+#include <fstream>
+
 #include "glengine_export.h"
 #include "Vectors.h"
 

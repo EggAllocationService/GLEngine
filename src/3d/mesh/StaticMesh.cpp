@@ -3,7 +3,7 @@
 //
 
 #include "3d/mesh/StaticMesh.h"
-#include <fstream>
+#include <string>
 
 #include "engine_GLUT.h"
 using namespace glengine::world::mesh;
