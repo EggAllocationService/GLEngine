@@ -7,6 +7,7 @@
 #include "Colors.h"
 #include "Engine.h"
 #include "MouseManager.h"
+#include <algorithm>
 
 using namespace glengine::console;
 

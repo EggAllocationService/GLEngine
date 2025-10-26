@@ -3,12 +3,13 @@
 //
 #pragma once
 #include <map>
-
+#include <functional>
+#include "glengine_export.h"
 #include "Widget.h"
 #include <string>
 
 namespace glengine::console {
-    class Console : public Widget {
+    class GLENGINE_EXPORT Console : public Widget {
     public:
         Console();
         void Update(double DeltaTime) override;
