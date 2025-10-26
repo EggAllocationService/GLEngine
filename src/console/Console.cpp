@@ -52,9 +52,9 @@ void Console::Draw(MatrixStack2D &stack) {
             longestSuggestion = std::max(longestSuggestion, (int)suggestion.size());
         }
 
-        float2 bottomLeft = float2(caretOffset, 26);
-        float2 topRight = float2(caretOffset + (longestSuggestion * 8), 13 * (count + 2));
-        float2 topLeft = float2(caretOffset, 13 * (count + 1));
+        auto bottomLeft = float2(caretOffset, 26);
+        auto topRight = float2(caretOffset + (longestSuggestion * 8), 13 * (count + 2));
+        auto topLeft = float2(caretOffset, 13 * (count + 1));
         glColor4f(0.0, 0.5, 0.0, 0.6);
         stack.DrawRect(bottomLeft, topRight);
 
@@ -68,13 +68,15 @@ void Console::FocusStateChanged(bool focused) {
     _focused = focused;
     if (!focused) {
         _inputBuffer.clear();
+    } else {
+        updateAutocompleteOptions();
     }
 }
 
 void Console::KeyPressed(int keyCode) {
     if (keyCode == 127) {
         // backspace
-        if (_inputBuffer.size() > 0) {
+        if (!_inputBuffer.empty()) {
             _inputBuffer.pop_back();
         }
         updateAutocompleteOptions();
@@ -104,7 +106,6 @@ void Console::AddConsoleCommand(const char *name, std::function<void(std::string
 
 void Console::updateAutocompleteOptions() {
     _autocompleteOptions.clear();
-    if (_inputBuffer.size() == 0) return;
     // don't autocomplete anything other than the command name itself
     // which will be before the first space
     if (_inputBuffer.find_first_of(' ') != std::string::npos) return;
@@ -134,12 +135,15 @@ void Console::execute() {
         const auto cmd = commands.find(_inputBuffer);
         if (cmd != commands.end()) {
             cmd->second(std::string_view(nullptr, 0));
+
+            GetEngine()->FocusWidget(nullptr);
         }
     } else {
         auto commandName = _inputBuffer.substr(0, firstSpace);
         const auto cmd = commands.find(commandName);
         if (cmd != commands.end()) {
-            cmd->second(std::string_view(_inputBuffer.data() + firstSpace, _inputBuffer.size() - firstSpace));
+            cmd->second(std::string_view(_inputBuffer.data() + firstSpace + 1, _inputBuffer.size() - (firstSpace + 1)));
+
+            GetEngine()->FocusWidget(nullptr);
         }
-    }
 }

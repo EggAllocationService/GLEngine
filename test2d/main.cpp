@@ -60,8 +60,27 @@ int main(int argc, char **argv) {
        inst->ShowConsole();
     });
 
-    inst->GetConsole()->AddConsoleCommand("print", [](const std::string_view x) {
+    inst->GetConsole()->AddConsoleCommand("aprint", [](const std::string_view x) {
         std::cout << "(print)" << x << std::endl;
+    });
+
+    inst->GetConsole()->AddConsoleCommand("clear", [=](const std::string_view x) {
+        for (auto widget : inst->GetWidgetsOfType<RgbTriangle>()) {
+            widget->Destroy();
+        }
+    });
+    inst->GetConsole()->AddConsoleCommand("add", [=](const std::string_view x) {
+        int amount = 1;
+        if (x.length() > 0) {
+            std::from_chars(x.data(), x.data() + x.length(), amount);
+        }
+
+        for (int i = 0; i < amount; i++) {
+            auto widget = inst->AddOnscreenWidget<RgbTriangle>();
+            widget->Anchor = MIDDLE_MIDDLE;
+            widget->ZIndex = highZ++;
+            widget->Position = float2(rand() % 30, rand() % 30);
+        }
     });
 
     glutMainLoop();
