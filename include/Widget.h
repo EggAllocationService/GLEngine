@@ -33,7 +33,7 @@ namespace glengine {
 		/// The widget will block mouse input from widgets below it
 		BLOCK,
 		/// The widget will be ignored by mouse hit testing
-		IGNORE
+		IGNORED
 	};
 
     /// <summary>

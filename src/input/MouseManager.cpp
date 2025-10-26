@@ -111,7 +111,7 @@ namespace glengine::input {
     std::shared_ptr<Widget> internal_hitTestWidgetAndChildren(float2 transform, std::shared_ptr<Widget> widget,
                                                               float2 position) {
 
-        if (widget->MouseMode == IGNORE) {
+        if (widget->MouseMode == IGNORED) {
             return nullptr;
         }
 

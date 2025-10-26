@@ -14,7 +14,7 @@ Console::Console() {
     _inputBuffer.reserve(128);
     Position = float2(10, 10);
     ZIndex = INT32_MAX;
-    MouseMode = IGNORE;
+    MouseMode = MouseInteraction::IGNORED;
 }
 
 void Console::Update(double DeltaTime) {

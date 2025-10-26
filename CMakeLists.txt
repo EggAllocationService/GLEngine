@@ -19,12 +19,9 @@ add_library(glengine SHARED
         "src/3d/DefaultPawn.cpp"
         "src/3d/DefaultPawn.h"
         "src/input/InputManager.cpp"
-        src/3d/mesh/StaticMesh.cpp
-        include/3d/mesh/StaticMesh.h
-        src/3d/mesh/StaticMeshComponent.cpp
-        include/3d/mesh/StaticMeshComponent.h
-        src/console/Console.cpp
-        include/console/Console.h)
+        "src/3d/mesh/StaticMesh.cpp"
+        "src/3d/mesh/StaticMeshComponent.cpp"
+        "src/console/Console.cpp")
 
 target_include_directories(glengine PUBLIC include)
 
