@@ -104,6 +104,8 @@ namespace glengine {
         setLastUpdate();
 
         console = AddOnscreenWidget<console::Console>();
+
+        addDefaultCommands();
     }
 
     Engine::~Engine() {
@@ -361,5 +363,24 @@ namespace glengine {
         }
 
         glFlush();
+    }
+
+    void Engine::addDefaultCommands() {
+        console->AddConsoleCommand("quit", [this](std::string_view) {
+           this->Quit();
+        });
+
+        console->AddConsoleCommand("detach", [this](std::string_view) {
+            const auto newPawn = this->SpawnActor<world::DefaultPawn>();
+            const auto currentPawn = this->GetPossessedPawn();
+            newPawn->GetTransform()->SetPosition(currentPawn->GetTransform()->GetPosition());
+
+            this->Possess(newPawn);
+        });
+
+        // Setup console keybind
+        this->GetInputManager()->AddAction('`', [this] {
+            this->ShowConsole();
+        });
     }
 } // glengine

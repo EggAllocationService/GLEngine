@@ -131,7 +131,7 @@ namespace glengine {
         /// Gets the number of seconds since the last Update() call.
         /// This will almost always be a very small number
         /// </summary>
-        double calculateDeltaTime() const;
+        [[nodiscard]] double calculateDeltaTime() const;
 
         void clearBuffers();
 
@@ -144,6 +144,8 @@ namespace glengine {
         void updateActors(double deltaTime);
 
         void renderWorld() const;
+
+        void addDefaultCommands();
 
         input::MouseManager* mouseManager;
 
