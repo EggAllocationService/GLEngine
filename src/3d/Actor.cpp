@@ -5,5 +5,5 @@
 #include "3d/Actor.h"
 
 namespace glengine::world {
-    thread_local Engine* CURRENT_ENGINE_CONSTRUCTING = nullptr;
+    Engine* CURRENT_ENGINE_CONSTRUCTING = nullptr;
 }

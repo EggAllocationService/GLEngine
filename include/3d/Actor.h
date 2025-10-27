@@ -17,7 +17,7 @@ namespace glengine {
 /// Any object that can be represented in the 3D world.
 namespace glengine::world {
     /// Used to store a reference to the current engine, so that
-    extern thread_local GLENGINE_EXPORT Engine* CURRENT_ENGINE_CONSTRUCTING;
+    extern GLENGINE_EXPORT Engine* CURRENT_ENGINE_CONSTRUCTING;
 
     class GLENGINE_EXPORT Actor : public std::enable_shared_from_this<Actor> {
     public:
