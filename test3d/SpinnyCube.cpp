@@ -13,9 +13,13 @@
 using namespace glengine::world::mesh;
 SpinnyCube::SpinnyCube() {
     root = CreateComponent<glengine::world::ActorPrimitiveComponent>();
-    mesh = CreateComponent<StaticMeshComponent>();
     CreateComponent<CubeSceneComponent>();
-    auto x = GetEngine()->GetResourceManager()->GetResource<StaticMesh>("test3d/assets/enterprise.obj");
+
+    mesh = CreateComponent<StaticMeshComponent>();
+    auto model = GetEngine()
+        ->GetResourceManager()
+        ->GetResource<StaticMesh>("../test3d/assets/enterprise.obj");
+    mesh->SetMesh(model);
 
     auto smallerCube = CreateComponent<CubeSceneComponent>();
     smallerCube->SetupAttachment(root->GetTransform());
