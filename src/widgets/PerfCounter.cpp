@@ -35,8 +35,8 @@ void glengine::widgets::PerfCounter::Update(double deltaTime) {
 
 		total /= len;
 
-		sprintf(lastFPS, "%.2f ms", total * 1000.0);
-		sprintf(lastFrametime, "%.2f FPS", 1.0 / total);
+		snprintf(lastFPS, 20, "%.2f ms", total * 1000.0);
+		snprintf(lastFrametime, 20, "%.2f FPS", 1.0 / total);
 
 		counts.clear();
 	}
