@@ -16,6 +16,9 @@ namespace glengine {
 
 /// Any object that can be represented in the 3D world.
 namespace glengine::world {
+    /// Used to store a reference to the current engine, so that
+    extern thread_local GLENGINE_EXPORT Engine* CURRENT_ENGINE_CONSTRUCTING;
+
     class GLENGINE_EXPORT Actor : public std::enable_shared_from_this<Actor> {
     public:
         virtual ~Actor() = default;
@@ -41,8 +44,8 @@ namespace glengine::world {
             return {components_.begin(), components_.size()};
         }
 
-        Engine *GetEngine() {
-            return engine_;
+        Engine *GetEngine() const {
+            return engine_ == nullptr ? CURRENT_ENGINE_CONSTRUCTING : engine_;
         }
 
         void SetEngine(Engine *engine) {

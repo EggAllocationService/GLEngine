@@ -65,6 +65,9 @@ namespace glengine {
         template <typename T>
         std::shared_ptr<T> SpawnActor() {
             static_assert(std::is_base_of_v<world::Actor, T>, "T must be derived from Actor");
+            // set global engine reference
+            world::CURRENT_ENGINE_CONSTRUCTING = this;
+
             std::shared_ptr<T> actor = std::make_shared<T>();
             actor->SetEngine(this);
             actors.push_back(actor);
