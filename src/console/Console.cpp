@@ -6,8 +6,8 @@
 
 #include "Colors.h"
 #include "Engine.h"
-#include "MouseManager.h"
 #include <algorithm>
+#include <utility>
 
 using namespace glengine::console;
 
@@ -101,7 +101,7 @@ void Console::AddConsoleCommand(const char *name, std::function<void(std::string
         return;
     }
 
-    commands[ownedString] = func;
+    commands[ownedString] = std::move(func);
 }
 
 void Console::updateAutocompleteOptions() {
@@ -111,8 +111,7 @@ void Console::updateAutocompleteOptions() {
     if (_inputBuffer.find_first_of(' ') != std::string::npos) return;
 
     int found = 0;
-    for (const auto& cmd : commands) {
-        auto& name = cmd.first;
+    for (const auto& name: (commands | std::views::keys)) {
 
         if (name.starts_with(_inputBuffer)) {
             _autocompleteOptions += name;
