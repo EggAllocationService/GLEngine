@@ -14,6 +14,7 @@
 #include "3d/Pawn.h"
 #include "InputManager.h"
 #include "glengine_export.h"
+#include "ResourceManager.h"
 #include "console/Console.h"
 
 namespace glengine {
@@ -105,6 +106,10 @@ namespace glengine {
             return pawnInputManager;
         }
 
+        [[nodiscard]] ResourceManager* GetResourceManager() const {
+            return resourceManager;
+        }
+
         [[nodiscard]] world::Pawn* GetPossessedPawn() const {
             if (possessedPawn.expired()) {
                 return nullptr;
@@ -152,6 +157,8 @@ namespace glengine {
         // Two input managers are needed, one for global keybinds and one for the currently possessed pawn
         input::InputManager* inputManager;
         input::InputManager* pawnInputManager;
+
+        ResourceManager* resourceManager;
 
         std::vector<std::shared_ptr<Widget>> widgets;
         std::vector<std::shared_ptr<world::Actor>> actors;

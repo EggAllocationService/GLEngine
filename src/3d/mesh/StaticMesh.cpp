@@ -8,8 +8,9 @@
 #include "engine_GLUT.h"
 using namespace glengine::world::mesh;
 
-std::unique_ptr<StaticMesh> StaticMesh::FromOBJ(std::ifstream& file) {
-    auto result = new StaticMesh();
+void StaticMesh::LoadFromFile(std::ifstream &file) {
+    vertices_.clear();
+    faces_.clear();
 
     int vPos = 0, vtPos = 0, vnPos = 0;
 
@@ -20,33 +21,33 @@ std::unique_ptr<StaticMesh> StaticMesh::FromOBJ(std::ifstream& file) {
             float x, y, z;
             sscanf(line.c_str(), "v %f %f %f", &x, &y, &z);
 
-            if (vPos >= result->vertices_.size()) {
-                result->vertices_.resize(vPos + 1);
+            if (vPos >= vertices_.size()) {
+                vertices_.resize(vPos + 1);
             }
 
-            result->vertices_[vPos++].position = float3(x, y, z);
+            vertices_[vPos++].position = float3(x, y, z);
         } else if (line.starts_with("vt ")) {
             // vertex texture coordinate
             float x, y;
             sscanf(line.c_str(), "vt %f %f", &x, &y);
 
-            if (vtPos >= result->vertices_.size()) {
-                result->vertices_.resize(vtPos + 1);
+            if (vtPos >= vertices_.size()) {
+                vertices_.resize(vtPos + 1);
             }
 
-            result->vertices_[vtPos++].texCoord = float2(x, y);
-            result->hasTexCoords_ = true;
+            vertices_[vtPos++].texCoord = float2(x, y);
+            hasTexCoords_ = true;
         } else if (line.starts_with("vn ")) {
             // vertex normal
             float x, y, z;
             sscanf(line.c_str(), "vn %f %f %f", &x, &y, &z);
 
-            if (vnPos >= result->vertices_.size()) {
-                result->vertices_.resize(vnPos + 1);
+            if (vnPos >= vertices_.size()) {
+                vertices_.resize(vnPos + 1);
             }
 
-            result->vertices_[vnPos++].normal = float3(x, y, z);
-            result->hasNormals_ = true;
+            vertices_[vnPos++].normal = float3(x, y, z);
+            hasNormals_ = true;
         } else if (line.starts_with("f ")) {
             // face data
             if (line.find('/') != std::string::npos) {
@@ -57,21 +58,21 @@ std::unique_ptr<StaticMesh> StaticMesh::FromOBJ(std::ifstream& file) {
                 sscanf(line.c_str(), "f %d/%d/%d %d/%d/%d %d/%d/%d", &p1, &t1, &n1,
                                                                      &p2, &t2, &n2,
                                                                      &p3, &t3, &n3);
-                result->faces_.push_back(int3(p1 - 1, t1 - 1, n1 - 1));
-                result->faces_.push_back(int3(p2 - 1, t2 - 1, n2 - 1));
-                result->faces_.push_back(int3(p3 - 1, t3 - 1, n3 - 1));
+                faces_.push_back(int3(p1 - 1, t1 - 1, n1 - 1));
+                faces_.push_back(int3(p2 - 1, t2 - 1, n2 - 1));
+                faces_.push_back(int3(p3 - 1, t3 - 1, n3 - 1));
             } else {
                 // this OBJ file just specifies position
                 int p1, p2, p3;
 
                 sscanf(line.c_str(), "f %d %d %d", &p1, &p2, &p3);
 
-                result->faces_.push_back(int3(p1 - 1, p2 - 1, p3 - 1));
+                faces_.push_back(int3(p1 - 1, p2 - 1, p3 - 1));
             }
         }
     }
 
-    return std::unique_ptr<StaticMesh>(result);
+    Normalize();
 }
 
 float max(float a, float b, float c, float d) {

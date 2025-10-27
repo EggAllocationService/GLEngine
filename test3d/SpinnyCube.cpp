@@ -15,11 +15,7 @@ SpinnyCube::SpinnyCube() {
     root = CreateComponent<glengine::world::ActorPrimitiveComponent>();
     mesh = CreateComponent<StaticMeshComponent>();
     CreateComponent<CubeSceneComponent>();
-    auto file = std::ifstream();
-    file.open("/Users/kyle/Downloads/rat/rat.obj");
-    auto sMesh = StaticMesh::FromOBJ(file);
-    sMesh->Normalize();
-    mesh->SetMesh(sMesh.release());
+    auto x = GetEngine()->GetResourceManager()->GetResource<StaticMesh>("test3d/assets/enterprise.obj");
 
     auto smallerCube = CreateComponent<CubeSceneComponent>();
     smallerCube->SetupAttachment(root->GetTransform());

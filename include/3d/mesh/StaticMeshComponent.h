@@ -11,9 +11,9 @@ namespace glengine::world::mesh {
     public:
         void Render() override;
 
-        void SetMesh(StaticMesh *);
+        void SetMesh(std::shared_ptr<StaticMesh>);
 
     private:
-        std::unique_ptr<StaticMesh> mesh_;
+        std::shared_ptr<StaticMesh> mesh_;
     };
 }

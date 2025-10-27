@@ -9,6 +9,7 @@
 #include <fstream>
 
 #include "glengine_export.h"
+#include "Resource.h"
 #include "Vectors.h"
 
 namespace glengine::world::mesh {
@@ -18,9 +19,9 @@ namespace glengine::world::mesh {
         float2 texCoord;
     };
     /// A StaticMesh is a non-animated mesh
-    class GLENGINE_EXPORT StaticMesh {
+    class GLENGINE_EXPORT StaticMesh : public Resource {
     public:
-        static std::unique_ptr<StaticMesh> FromOBJ(std::ifstream& file);
+        void LoadFromFile(std::ifstream& file) override;
 
         /// Normalizes the mesh so all vertices are within (-1, -1, -1) to (1, 1, 1)
         void Normalize();

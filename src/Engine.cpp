@@ -84,6 +84,7 @@ namespace glengine {
         mouseManager = new input::MouseManager(this);
         inputManager = new input::InputManager(this);
         pawnInputManager = new input::InputManager(this);
+        resourceManager = new ResourceManager();
         
         windowSize = size;
         glutInitWindowSize(windowSize.x, windowSize.y);
@@ -122,6 +123,7 @@ namespace glengine {
         delete mouseManager;
         delete inputManager;
         delete pawnInputManager;
+        delete resourceManager;
     }
 
     void Engine::Update() {

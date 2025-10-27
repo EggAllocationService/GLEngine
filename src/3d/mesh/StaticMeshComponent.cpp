@@ -12,6 +12,6 @@ void StaticMeshComponent::Render() {
     mesh_->Render();
 }
 
-void StaticMeshComponent::SetMesh(StaticMesh *mesh) {
-    mesh_ = std::unique_ptr<StaticMesh>(mesh);
+void StaticMeshComponent::SetMesh(std::shared_ptr<StaticMesh> mesh) {
+    mesh_ = std::move(mesh);
 }
