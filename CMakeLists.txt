@@ -2,6 +2,7 @@ cmake_minimum_required(VERSION 3.3...4.0)
 project(GLEngine)
 
 set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_EXTENSIONS true)
 
 add_library(glengine SHARED
         "src/Engine.cpp"
@@ -21,9 +22,9 @@ add_library(glengine SHARED
         "src/3d/mesh/StaticMesh.cpp"
         "src/3d/mesh/StaticMeshComponent.cpp"
         "src/console/Console.cpp"
-        include/ResourceManager.h
-        include/Resource.h
-        src/3d/Actor.cpp
+        "include/ResourceManager.h"
+        "include/Resource.h"
+        "src/3d/Actor.cpp"
 )
 
 target_include_directories(glengine PUBLIC include)
@@ -43,11 +44,11 @@ target_sources(
 if (${CMAKE_BUILD_TYPE} MATCHES "Release")
     set_property(TARGET glengine
             PROPERTY INTERPROCEDURAL_OPTIMIZATION TRUE)
-    target_compile_options(glengine PRIVATE
-            $<$<CXX_COMPILER_ID:GNU>:-mavx>
-            $<$<CXX_COMPILER_ID:Clang>:-mavx>
-            $<$<CXX_COMPILER_ID:MSVC>:/arch:AVX>
-    )
+    #target_compile_options(glengine PRIVATE
+    #        $<$<CXX_COMPILER_ID:GNU>:-mavx>
+    #        $<$<CXX_COMPILER_ID:Clang>:-mavx>
+    #        $<$<CXX_COMPILER_ID:MSVC>:/arch:AVX>
+    #)
 endif()
 
 if (${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
