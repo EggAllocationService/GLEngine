@@ -125,6 +125,13 @@ namespace glengine {
             return console;
         }
 
+        /// <summary>
+        /// Returns the time (in milliseconds) the previous Update and Render functions took to run
+        /// </summary>
+        [[nodiscard]] struct { double update, render; } GetLastPerformanceTimes() {
+            return { lastUpdateTime, lastRenderTime };
+        }
+
     private:
         int2 windowSize;
         int windowHandle;
@@ -169,5 +176,8 @@ namespace glengine {
         std::weak_ptr<world::Pawn> possessedPawn;
         std::weak_ptr<Widget> focusedWidget;
         std::shared_ptr<console::Console> console;
+
+        double lastUpdateTime = 0.0;
+        double lastRenderTime = 0.0;
     };
 } // glengine

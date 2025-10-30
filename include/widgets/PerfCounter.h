@@ -24,6 +24,7 @@ namespace glengine::widgets {
 		/// Stores each deltaTime value, to average frametimes over a second
 		/// </summary>
 		std::vector<double> counts;
+		std::vector<std::pair<double, double>> times;
 
 		/// <summary>
 		/// time since last average
@@ -33,6 +34,7 @@ namespace glengine::widgets {
 		/// Cached formatted strings so we're not making unnecessary allocations every frame
 		char* lastFrametime;
 		char* lastFPS;
+		char* lastTimes;
 
 		/// <summary>
 		/// if true, shows FPS

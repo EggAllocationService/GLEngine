@@ -15,6 +15,12 @@
 
 using namespace glengine;
 
+float frand(float min, float max) {
+    float x = rand() / (float)RAND_MAX;
+
+    return min + (x * (max - min));
+}
+
 int main(int argc, char** argv) {
 #ifdef _WIN32
     // Hide the console window on Windows
@@ -47,6 +53,17 @@ int main(int argc, char** argv) {
 
     auto plane = engine->SpawnActor<PilotableCube>();
     engine->Possess(plane);
+
+    engine->GetConsole()->AddConsoleCommand("add", [=](std::string_view) {
+        for (int i = 0; i < 100; i++) {
+            auto actor = engine->SpawnActor<SpinnyCube>();
+            actor->GetTransform()->SetPosition(float3(
+                frand(-50, 50),
+                frand(-50, 50),
+                frand(-50, 50)
+            ));
+        }
+    });
     
     glutMainLoop();
 }

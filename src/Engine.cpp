@@ -129,6 +129,9 @@ namespace glengine {
     void Engine::Update() {
         // main update loop
 
+        // track Update time
+        auto start = std::chrono::steady_clock::now();
+
         // if game logic requested a quit on the previous frame, then do that now
         if (quitRequested) {
             glutDestroyWindow(windowHandle);
@@ -148,6 +151,12 @@ namespace glengine {
         setLastUpdate();
 
         glutPostRedisplay();
+
+        auto end = std::chrono::steady_clock::now();
+        auto timeMs = std::chrono::duration_cast<std::chrono::duration<double, std::milli>>(end - start);
+
+        lastUpdateTime = timeMs.count();
+
     }
 
     void Engine::KeyPressed(int keyCode) {
@@ -214,7 +223,15 @@ namespace glengine {
         // perform all rendering then swap the double-buffered view
         clearBuffers();
 
+        // track Update time
+        auto start = std::chrono::steady_clock::now();
+
         renderWorld();
+
+        auto end = std::chrono::steady_clock::now();
+        auto timeMs = std::chrono::duration_cast<std::chrono::duration<double, std::milli>>(end - start);
+
+        lastRenderTime = timeMs.count();
 
         renderWidgets();
 
@@ -223,7 +240,7 @@ namespace glengine {
 
     double Engine::calculateDeltaTime() const {
         auto now = std::chrono::steady_clock::now();
-        auto time = std::chrono::duration_cast<std::chrono::duration<double> >(now - lastUpdate);
+        auto time = std::chrono::duration_cast<std::chrono::duration<double>>(now - lastUpdate);
 
         return time.count();
     }
