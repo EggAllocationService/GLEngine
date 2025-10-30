@@ -18,6 +18,8 @@
 #include "console/Console.h"
 
 namespace glengine {
+    struct EnginePerformanceStats { double update, render; };
+
     class GLENGINE_EXPORT Engine {
     public:
         Engine(const std::string &windowName, int2 windowSize);
@@ -128,7 +130,7 @@ namespace glengine {
         /// <summary>
         /// Returns the time (in milliseconds) the previous Update and Render functions took to run
         /// </summary>
-        [[nodiscard]] struct { double update, render; } GetLastPerformanceTimes() {
+        [[nodiscard]] EnginePerformanceStats GetLastPerformanceTimes() {
             return { lastUpdateTime, lastRenderTime };
         }
 

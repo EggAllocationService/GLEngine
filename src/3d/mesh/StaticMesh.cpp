@@ -72,7 +72,8 @@ void StaticMesh::LoadFromFile(std::ifstream &file) {
         }
     }
 
-    Normalize();
+    normalize();
+    uploadToGPU();
 }
 
 float max(float a, float b, float c, float d) {
@@ -82,7 +83,8 @@ float max(float a, float b, float c, float d) {
 float3 abs(float3 a) {
     return {std::abs(a.x), std::abs(a.y), std::abs(a.z)};
 }
-void StaticMesh::Normalize() {
+
+void StaticMesh::normalize() {
     if (vertices_.empty()) {
         return;
     }
@@ -101,42 +103,71 @@ void StaticMesh::Normalize() {
     }
 }
 
-void StaticMesh::Render() const {
-    glBegin(GL_TRIANGLES);
-    float current = 0;
-    float max = 0;
+struct PackedVertex {
+    float3 position;
+    float3 normal;
+    float3 color;
 
-    if (hasTexCoords_ || hasNormals_) {
-        max = faces_.size();
-        // faces array is one vertex per index, with position index, texcoord index, and normal index in each int3
-        for (auto vertex : faces_) {
-            float color = current / max;
-            color *= 0.5;
-            color += 0.5;
-            glColor3f(color, color, color);
-            if (hasTexCoords_) {
-                glTexCoord2fv(vertices_[vertex.y].texCoord);
+    // this is a float3 for padding reasons
+    // only x and y are used
+    float3 texCoord;
+};
+
+void StaticMesh::uploadToGPU() {
+    // first, create a new verted buffer and index buffer
+    glGenBuffers(1, &vertexBuffer_);
+
+    // first lets pack all vertex data
+    std::vector<PackedVertex> vertices;
+    {
+        auto n = faces_.size();
+        if (!hasNormals_ && !hasTexCoords_) n *= 3;
+        vertices.reserve(n);
+
+        float i = 0;
+
+        for (const auto& face : faces_) {
+            PackedVertex vertex;
+            if (!hasNormals_ && !hasTexCoords_) {
+                // face is actually 3 position indices
+                vertex.color = float3(i / n, i / n, i / n);
+                vertex.position = vertices_[face.x].position;
+                vertices.push_back(vertex);
+
+                vertex.position = vertices_[face.y].position;
+                vertices.push_back(vertex);
+
+                vertex.position = vertices_[face.z].position;
+                vertices.push_back(vertex);
+
+                i += 3;
+            } else {
+                vertex.position = vertices_[face.x].position;
+                vertex.texCoord.xy = vertices_[face.y].texCoord;
+                vertex.normal = vertices_[face.z].normal;
+                vertex.color = float3(i / n, i / n, i / n);
+                vertices.push_back(vertex);
+                i += 1;
             }
-            if (hasNormals_) {
-                glNormal3fv(vertices_[vertex.z].normal);
-            }
-            glVertex3fv(vertices_[vertex.x].position);
-            current++;
-        }
-    } else {
-        max = faces_.size() / 3.0;
-        // faces array is one face per index, p1, p2, p3
-        for (auto face : faces_) {
-            float color = current / max;
-            color *= 0.5;
-            color += 0.5;
-            glColor3fv(float3(color, color, color));
-            glVertex3fv(vertices_[face.x].position);
-            glVertex3fv(vertices_[face.y].position);
-            glVertex3fv(vertices_[face.z].position);
-            current++;
         }
     }
 
-    glEnd();
+    // now upload to the GPU
+    glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer_);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(PackedVertex) * vertices.size(), vertices.data(), GL_STATIC_DRAW);
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+    uploadedCount = vertices.size();
+
+}
+
+void StaticMesh::Render() const {
+    // bind buffer and draw
+    glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer_);
+    glVertexPointer(3, GL_FLOAT, sizeof(PackedVertex), nullptr);
+    glColorPointer(3, GL_FLOAT, sizeof(PackedVertex), reinterpret_cast<void *>(sizeof(float3) * 2));
+
+    glEnableClientState(GL_VERTEX_ARRAY);
+    glEnableClientState(GL_COLOR_ARRAY);
+    glDrawArrays(GL_TRIANGLES, 0, uploadedCount);
 }
