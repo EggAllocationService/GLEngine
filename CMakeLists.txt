@@ -29,6 +29,7 @@ add_library(glengine SHARED
 )
 
 target_include_directories(glengine PUBLIC include)
+target_include_directories(glengine PUBLIC external/include)
 
 include(GenerateExportHeader)
 generate_export_header(glengine)
