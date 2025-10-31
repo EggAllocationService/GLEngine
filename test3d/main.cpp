@@ -63,6 +63,12 @@ int main(int argc, char** argv) {
             ));
         }
     });
+
+    engine->GetConsole()->AddConsoleCommand("clear", [=](std::string_view) {
+        for (const auto& i : engine->GetActorsOfType<SpinnyCube>()) {
+            i->Destroy();
+        }
+    });
     
     glutMainLoop();
 }
