@@ -67,6 +67,12 @@ void glengine::widgets::PerfCounter::Update(double deltaTime) {
 }
 
 void glengine::widgets::PerfCounter::Draw(MatrixStack2D &stack) {
+	glColor4f(0, 0, 0, 0.5);
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	stack.DrawRect(float2(0, 0), Bounds);
+	glDisable(GL_BLEND);
+
 	glColor4fv(TextColor);
 
 	stack.PrintText(float2(0, 13 * 2), (showInverse ? lastFPS : lastFrametime));
