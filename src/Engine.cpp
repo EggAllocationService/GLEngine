@@ -80,6 +80,8 @@ namespace glengine {
 
 #pragma endregion
 
+    static bool glewInitialized = false;
+
     Engine::Engine(const std::string &windowName, int2 size) {
         mouseManager = new input::MouseManager(this);
         inputManager = new input::InputManager(this);
@@ -92,6 +94,21 @@ namespace glengine {
 
         windowHandle = glutCreateWindow(windowName.c_str());
         Instances[windowHandle] = this;
+
+        // initialize GLEW if it hasn't been done already
+        if (!glewInitialized) {
+            GLenum err = glewInit();
+            if (GLEW_OK != err)
+            {
+                /* Problem: glewInit failed, something is seriously wrong. */
+                printf("Error: %s\n", glewGetErrorString(err));
+            }
+            else {
+                printf("Status: Using GLEW %s\n", glewGetString(GLEW_VERSION));
+            }
+
+            glewInitialized = true;
+        }
 
         glutIdleFunc(updateExec);
         glutDisplayFunc(renderExec);

@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.3...4.0)
-project(GLEngine)
+project(GLEngine C CXX)
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_EXTENSIONS true)
@@ -25,6 +25,7 @@ add_library(glengine SHARED
         "include/ResourceManager.h"
         "include/Resource.h"
         "src/3d/Actor.cpp"
+        "external/glew.c"
 )
 
 target_include_directories(glengine PUBLIC include)
@@ -69,6 +70,8 @@ elseif(${CMAKE_SYSTEM_NAME} MATCHES "Windows")
     endif()
 
     target_link_libraries(glengine ${FREEGLUT_LIB})
+
+    target_compile_definitions(glengine PRIVATE GLEW_BUILD)
 
     add_custom_command(TARGET glengine POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy_if_different ${FREEGLUT_DLL} $<TARGET_FILE_DIR:glengine>)
 elseif(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
