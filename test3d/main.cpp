@@ -34,12 +34,6 @@ int main(int argc, char** argv) {
     auto cube = engine->SpawnActor<SpinnyCube>();
 
     cube->GetTransform()->SetPosition(float3(0, 0, 4));
-
-    auto cube2 = engine->SpawnActor<SpinnyCube>();
-    cube2->GetTransform()->SetPosition(float3(1, 1, 4));
-    cube2->GetTransform()->SetScale(float3(0.5, 0.5, 0.5));
-    cube2->GetTransform()->SetRotation(float3(0, 0, -3.15159 / 8));
-
     auto counter = engine->AddOnscreenWidget<widgets::PerfCounter>();
     counter->Anchor = TOP_LEFT;
 
@@ -54,8 +48,13 @@ int main(int argc, char** argv) {
     auto plane = engine->SpawnActor<PilotableCube>();
     engine->Possess(plane);
 
-    engine->GetConsole()->AddConsoleCommand("add", [=](std::string_view) {
-        for (int i = 0; i < 100; i++) {
+    engine->GetConsole()->AddConsoleCommand("add", [=](std::string_view x) {
+        int amount = 100;
+        if (x.length() > 0) {
+            std::from_chars(x.data(), x.data() + x.length(), amount);
+        }
+
+        for (int i = 0; i < amount; i++) {
             auto actor = engine->SpawnActor<SpinnyCube>();
             actor->GetTransform()->SetPosition(float3(
                 frand(-50, 50),
