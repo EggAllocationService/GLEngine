@@ -348,6 +348,9 @@ namespace glengine {
                 component->Update(deltaTime);
             }
         }
+
+        std::erase_if(actors,
+            [](const auto& actor) { return actor->IsDestroyed(); });
     }
 
     void Engine::renderWorld() const {
