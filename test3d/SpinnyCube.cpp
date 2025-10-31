@@ -13,7 +13,7 @@
 using namespace glengine::world::mesh;
 SpinnyCube::SpinnyCube() {
     root = CreateComponent<glengine::world::ActorPrimitiveComponent>();
-    CreateComponent<CubeSceneComponent>();
+    //CreateComponent<CubeSceneComponent>();
 
     mesh = CreateComponent<StaticMeshComponent>();
     auto model = GetEngine()
@@ -21,9 +21,9 @@ SpinnyCube::SpinnyCube() {
         ->GetResource<StaticMesh>("../test3d/assets/enterprise.obj");
     mesh->SetMesh(model);
 
-    auto smallerCube = CreateComponent<CubeSceneComponent>();
+    auto smallerCube = CreateComponent<StaticMeshComponent>();
     smallerCube->SetupAttachment(root->GetTransform());
-    smallerCube->Color = Colors::GREEN;
+    smallerCube->SetMesh(model);
 
     smallerCube->GetTransform()->SetPosition(float3(0, 0, 3));
     smallerCube->GetTransform()->SetScale(float3(0.4, 0.4, 0.4));
@@ -32,9 +32,9 @@ SpinnyCube::SpinnyCube() {
     root2->SetupAttachment(smallerCube->GetTransform());
     root2->GetTransform()->SetRotation(float3(3.141 / 2.0, 0, 0));
 
-    auto evenSmallerCube = CreateComponent<CubeSceneComponent>();
+    auto evenSmallerCube = CreateComponent<StaticMeshComponent>();
     evenSmallerCube->SetupAttachment(root2->GetTransform());
-    evenSmallerCube->Color = float4(1, 1, 0, 1);
+    evenSmallerCube->SetMesh(model);
 
     evenSmallerCube->GetTransform()->SetPosition(float3(1.5, 0, 0));
     evenSmallerCube->GetTransform()->SetScale(float3(0.4, 0.4, 0.4));
