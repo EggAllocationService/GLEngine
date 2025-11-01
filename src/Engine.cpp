@@ -133,7 +133,7 @@ namespace glengine {
         auto start = std::chrono::steady_clock::now();
 
         // if game logic requested a quit on the previous frame, then do that now
-        if (quitRequested) {
+        if (flags.quitRequested) {
             glutDestroyWindow(windowHandle);
             exit(0);
         }
@@ -160,7 +160,7 @@ namespace glengine {
     }
 
     void Engine::KeyPressed(int keyCode) {
-        if (mouseManager->GetMouseMode() == input::CAPTIVE) {
+        if (mouseManager->GetMouseMode() == input::CAPTIVE || (flags.allowNonFocusedPawnInput && focusedWidget.expired())) {
             pawnInputManager->AcceptKeyInput(keyCode);
         }
 
