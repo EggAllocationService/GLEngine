@@ -16,6 +16,5 @@ public:
 private:
     float rotation = 0.0f;
     std::shared_ptr<glengine::world::ActorPrimitiveComponent> root;
-    std::shared_ptr<glengine::world::ActorPrimitiveComponent> root2;
-    std::shared_ptr<glengine::world::mesh::StaticMeshComponent> mesh;
+    std::shared_ptr<glengine::world::ActorPrimitiveComponent> light;
 };

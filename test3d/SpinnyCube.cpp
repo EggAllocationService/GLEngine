@@ -25,6 +25,9 @@ SpinnyCube::SpinnyCube() {
 
     light->SetupAttachment(root->GetTransform());
     light->GetTransform()->SetPosition(float3(0, 0, 5));
+    light->Intensity = 10;
+
+    this->light = light;
 
     auto cube2 = CreateComponent<CubeSceneComponent>();
 

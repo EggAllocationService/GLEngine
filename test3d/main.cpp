@@ -50,12 +50,12 @@ int main(int argc, char** argv) {
     engine->Possess(plane);
 
     engine->GetConsole()->AddConsoleCommand("add", [=](std::string_view) {
-        for (int i = 0; i < 100; i++) {
+        for (int i = 0; i < 5; i++) {
             auto actor = engine->SpawnActor<SpinnyCube>();
             actor->GetTransform()->SetPosition(float3(
-                frand(-50, 50),
-                frand(-50, 50),
-                frand(-50, 50)
+                frand(-10, 10),
+                frand(-10, 10),
+                frand(-10, 10)
             ));
         }
     });
