@@ -24,10 +24,16 @@ namespace glengine::rendering {
 	public:
 		RenderObjects();
 
+		/// Submits a light for rendering next frame
 		void PushLight(LightInfo l);
 
+		/// Sets up all gl light objects
 		void InitLights() const;
 
+		/// Disables all gl light objects
+		void DeInit() const;
+
+		/// Removes all entries from previous frame
 		void Reset();
 	private:
 		std::vector<LightInfo> lights_;

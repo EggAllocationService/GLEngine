@@ -40,12 +40,14 @@ void RenderObjects::InitLights() const {
 
 }
 
-void RenderObjects::Reset() {
+void RenderObjects::DeInit() const {
 	glDisable(GL_LIGHTING);
 	glDisable(GL_NORMALIZE);
 	for (int i = 0; i < lights_.size(); i++) {
 		glDisable(GL_LIGHT0 + i);
 	}
+}
 
+void RenderObjects::Reset() {
 	lights_.clear();
 }

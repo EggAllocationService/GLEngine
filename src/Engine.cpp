@@ -161,6 +161,8 @@ namespace glengine {
         inputManager->Update(delta);
         pawnInputManager->Update(delta);
 
+        renderObjectManager->Reset();
+
         updateWidgets(delta);
 
         updateActors(delta);
@@ -246,7 +248,7 @@ namespace glengine {
         renderWorld();
 
         // teardown render objects so we don't screw up widgets
-        renderObjectManager->Reset();
+        renderObjectManager->DeInit();
 
         auto end = std::chrono::steady_clock::now();
         auto timeMs = std::chrono::duration_cast<std::chrono::duration<double, std::milli>>(end - start);
