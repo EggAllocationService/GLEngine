@@ -6,7 +6,6 @@
 #include "Colors.h"
 #include <map>
 #include <algorithm>
-#include <stack>
 
 #include "GLMath.h"
 #include "3d/ActorSceneComponent.h"
