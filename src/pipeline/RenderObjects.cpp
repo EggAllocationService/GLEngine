@@ -31,6 +31,7 @@ void RenderObjects::InitLights() const {
 		glLightfv(GL_LIGHT0 + i, GL_POSITION, reinterpret_cast<const float*>(&lights_[i].position));
 		glLightfv(GL_LIGHT0 + i, GL_SPECULAR, reinterpret_cast<const float*>(&lights_[i].specular));
 		glLightfv(GL_LIGHT0 + i, GL_DIFFUSE, reinterpret_cast<const float*>(&lights_[i].diffuse));
+		glLightfv(GL_LIGHT0 + i, GL_AMBIENT, reinterpret_cast<const float*>(&lights_[i].ambient));
 
 		// if its a point light, setup attenuation
 		glLightf(GL_LIGHT0 + i, GL_LINEAR_ATTENUATION, 0.5);

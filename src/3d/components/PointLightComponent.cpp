@@ -16,6 +16,7 @@ void PointLightComponent::Update(double) {
 		.position = float4(pos, 1.0),
 		.diffuse = Diffuse * Intensity,
 		.specular = Specular * Intensity,
+		.ambient = Ambient * Intensity,
 	};
 
 	manager->PushLight(info);

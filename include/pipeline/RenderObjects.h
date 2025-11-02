@@ -12,6 +12,7 @@ namespace glengine::rendering {
 		float4 position;
 		float4 diffuse;
 		float4 specular;
+		float4 ambient;
 	};
 	
 	/// <summary>
