@@ -23,7 +23,8 @@ add_library(glengine SHARED
         "src/3d/mesh/StaticMeshComponent.cpp"
         "src/console/Console.cpp"
         "src/3d/Actor.cpp"
-)
+        "src/pipeline/RenderObjects.cpp"
+ "src/3d/components/PointLightComponent.cpp")
 
 target_include_directories(glengine PUBLIC include)
 

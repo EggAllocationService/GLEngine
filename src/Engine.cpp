@@ -11,7 +11,6 @@
 #include "3d/ActorSceneComponent.h"
 #include "3d/DefaultPawn.h"
 
-
 namespace glengine {
     // since GLUT doesn't let us store custom state on windows,
     // we need a static map to keep track of which Engine instance
@@ -85,6 +84,7 @@ namespace glengine {
         inputManager = new input::InputManager(this);
         pawnInputManager = new input::InputManager(this);
         resourceManager = new ResourceManager();
+        renderObjectManager = new rendering::RenderObjects();
         
         windowSize = size;
         glutInitWindowSize(windowSize.x, windowSize.y);
@@ -124,6 +124,7 @@ namespace glengine {
         delete inputManager;
         delete pawnInputManager;
         delete resourceManager;
+        delete renderObjectManager;
     }
 
     void Engine::Update() {
@@ -227,6 +228,9 @@ namespace glengine {
         auto start = std::chrono::steady_clock::now();
 
         renderWorld();
+
+        // teardown render objects so we don't screw up widgets
+        renderObjectManager->Reset();
 
         auto end = std::chrono::steady_clock::now();
         auto timeMs = std::chrono::duration_cast<std::chrono::duration<double, std::milli>>(end - start);
@@ -339,11 +343,10 @@ namespace glengine {
         }
 
         glEnable(GL_DEPTH_TEST);
-       // glEnable(GL_CULL_FACE);
-        glCullFace(GL_BACK);
 
         glMatrixMode(GL_MODELVIEW);
         glLoadIdentity();
+        glMultMatrixf(static_cast<const float*>(InvertXAxis));
 
         auto activeCamera = possessedPawn.lock()->GetActiveCamera();
         auto cameraPos = activeCamera->GetAbsolutePosition();
@@ -353,6 +356,10 @@ namespace glengine {
                 cameraCenter.x, cameraCenter.y, cameraCenter.z,
                 0.0f, 1.0f, 0.0f
             );
+        
+
+        // setup lights
+        renderObjectManager->InitLights();
 
         // render all scene components
         for (const auto& actor : actors) {

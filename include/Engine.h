@@ -16,6 +16,7 @@
 #include "glengine_export.h"
 #include "ResourceManager.h"
 #include "console/Console.h"
+#include "pipeline/RenderObjects.h"
 
 namespace glengine {
     struct EnginePerformanceStats { double update, render; };
@@ -121,6 +122,10 @@ namespace glengine {
             return resourceManager;
         }
 
+        [[nodiscard]] rendering::RenderObjects* GetRenderObjectsManager() const {
+            return renderObjectManager;
+        }
+
         [[nodiscard]] world::Pawn* GetPossessedPawn() const {
             if (possessedPawn.expired()) {
                 return nullptr;
@@ -175,6 +180,8 @@ namespace glengine {
         input::InputManager* pawnInputManager;
 
         ResourceManager* resourceManager;
+
+        rendering::RenderObjects* renderObjectManager;
 
         std::vector<std::shared_ptr<Widget>> widgets;
         std::vector<std::shared_ptr<world::Actor>> actors;

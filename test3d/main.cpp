@@ -35,11 +35,6 @@ int main(int argc, char** argv) {
 
     cube->GetTransform()->SetPosition(float3(0, 0, 4));
 
-    auto cube2 = engine->SpawnActor<SpinnyCube>();
-    cube2->GetTransform()->SetPosition(float3(1, 1, 4));
-    cube2->GetTransform()->SetScale(float3(0.5, 0.5, 0.5));
-    cube2->GetTransform()->SetRotation(float3(0, 0, -3.15159 / 8));
-
     auto counter = engine->AddOnscreenWidget<widgets::PerfCounter>();
     counter->Anchor = TOP_LEFT;
 

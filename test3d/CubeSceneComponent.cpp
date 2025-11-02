@@ -8,6 +8,6 @@
 #include "Colors.h"
 
 void CubeSceneComponent::Render() {
-    glColor4fv(Color);
-    glutWireCube(Scale);
+    glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, reinterpret_cast<float*>(&Color));
+    glutSolidSphere(Scale, 30, 30);
 }

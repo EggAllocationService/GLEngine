@@ -14,14 +14,6 @@
 /// Data is stored in column-major format, for efficiency when doing said multiplication
 template<typename T, int X, int Y>
 struct GLENGINE_EXPORT Matrix {
-    Matrix() = default;
-
-    explicit Matrix(T initialData[X * Y]) {
-        for (int i = 0; i < X * Y; i++) {
-            data[i] = initialData[i];
-        }
-    }
-
     // column-major
     T data[X * Y];
 
@@ -97,7 +89,7 @@ struct GLENGINE_EXPORT Matrix {
         return os;
     }
 
-    explicit operator const T*() {
+    explicit operator const T*() const {
         return &data[0];
     }
 
