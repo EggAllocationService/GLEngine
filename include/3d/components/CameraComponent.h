@@ -12,8 +12,8 @@ namespace glengine::world::components {
 
         void SetProjectionMatrix();
 
-        float FoV = 90.0;
-        float Near = 0.1;
-        float Far = 100.0;
+        float FoV = 90.0f;
+        float Near = 0.1f;
+        float Far = 100.0f;
     };
 }

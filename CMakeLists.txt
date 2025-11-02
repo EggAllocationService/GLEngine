@@ -69,6 +69,10 @@ elseif(${CMAKE_SYSTEM_NAME} MATCHES "Windows")
 
     target_link_libraries(glengine ${FREEGLUT_LIB})
 
+    # msvc gets confused about templates sometimes
+    # also narrowing conversion warnings for integers??? (double -> float)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /wd4251 /wd4244")
+
     add_custom_command(TARGET glengine POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy_if_different ${FREEGLUT_DLL} $<TARGET_FILE_DIR:glengine>)
 elseif(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
     target_link_libraries(glengine "glut")

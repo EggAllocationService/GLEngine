@@ -2,13 +2,14 @@
 // Created by Kyle Smith on 2025-10-17.
 //
 #pragma once
+#include "glengine_export.h"
 
 namespace glengine::world {
     class Actor;
 
     /// Base class for any component that can be placed onto an actor
     /// Basic components do not have a scene transform and are not rendered onscreen
-    class ActorComponent {
+    class GLENGINE_EXPORT ActorComponent {
     public:
         virtual ~ActorComponent() = default;
 
