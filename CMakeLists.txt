@@ -22,8 +22,6 @@ add_library(glengine SHARED
         "src/3d/mesh/StaticMesh.cpp"
         "src/3d/mesh/StaticMeshComponent.cpp"
         "src/console/Console.cpp"
-        "include/ResourceManager.h"
-        "include/Resource.h"
         "src/3d/Actor.cpp"
 )
 

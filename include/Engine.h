@@ -18,6 +18,8 @@
 #include "console/Console.h"
 
 namespace glengine {
+    struct EnginePerformanceStats { double update, render; };
+
     class GLENGINE_EXPORT Engine {
     public:
         Engine(const std::string &windowName, int2 windowSize);
@@ -31,7 +33,7 @@ namespace glengine {
         void Update();
 
         void Quit() {
-            quitRequested = true;
+            flags.quitRequested = true;
         }
 
         /// Call when a key has been pressed
@@ -85,6 +87,12 @@ namespace glengine {
                 | std::ranges::views::filter([](std::shared_ptr<T> transformed) {return transformed != nullptr; });
         }
 
+#pragma region Getters/Setters
+
+        void SetAllowNonFocusedPawnInput(bool value) {
+            flags.allowNonFocusedPawnInput = value;
+        }
+
         int2 GetWindowSize() const {
             return windowSize;
         }
@@ -128,9 +136,10 @@ namespace glengine {
         /// <summary>
         /// Returns the time (in milliseconds) the previous Update and Render functions took to run
         /// </summary>
-        [[nodiscard]] struct { double update, render; } GetLastPerformanceTimes() {
+        [[nodiscard]] EnginePerformanceStats GetLastPerformanceTimes() {
             return { lastUpdateTime, lastRenderTime };
         }
+#pragma endregion
 
     private:
         int2 windowSize;
@@ -138,9 +147,6 @@ namespace glengine {
 
         // used for tracking deltaTime
         std::chrono::steady_clock::time_point lastUpdate;
-
-        /// When true, causes the engine to destroy the window and exit on the next frame.
-        bool quitRequested = false;
 
         /// <summary>
         /// Gets the number of seconds since the last Update() call.
@@ -179,5 +185,13 @@ namespace glengine {
 
         double lastUpdateTime = 0.0;
         double lastRenderTime = 0.0;
+
+        struct {
+            /// When true, causes the engine to destroy the window and exit on the next frame.
+            bool quitRequested = false;
+
+            /// If true, keyboard input is directed to the possessed pawn even if the mouse mode is not `CAPTIVE`
+            bool allowNonFocusedPawnInput = false;
+        } flags;
     };
 } // glengine
