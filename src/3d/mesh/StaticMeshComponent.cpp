@@ -9,6 +9,8 @@ using namespace glengine::world::mesh;
 void StaticMeshComponent::Render() {
     if (mesh_ == nullptr) return;
 
+    material.Load();
+
     mesh_->Render();
 }
 

@@ -26,19 +26,10 @@ SpinnyCube::SpinnyCube() {
     light->SetupAttachment(root->GetTransform());
     light->GetTransform()->SetPosition(float3(0, 0, 5));
 
-    auto light2 = CreateComponent<glengine::world::components::PointLightComponent>();
-
-    light2->SetupAttachment(root->GetTransform());
-    light2->GetTransform()->SetPosition(float3(0, 0, -5));
-
     auto cube2 = CreateComponent<CubeSceneComponent>();
 
     cube2->Scale = 0.3;
     cube2->SetupAttachment(light->GetTransform());
-
-    cube2 = CreateComponent<CubeSceneComponent>();
-    cube2->Scale = 0.3;
-    cube2->SetupAttachment(light2->GetTransform());
 }
 
 void SpinnyCube::Update(double deltaTime) {
