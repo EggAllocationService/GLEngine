@@ -23,11 +23,14 @@ namespace glengine::world::mesh {
     public:
         void LoadFromFile(std::ifstream& file) override;
 
+        void Render() const;
+    private:
+
         /// Normalizes the mesh so all vertices are within (-1, -1, -1) to (1, 1, 1)
         void Normalize();
 
-        void Render() const;
-    private:
+        void CalculateNormals();
+
         std::vector<PackedVertexData> vertices_;
         std::vector<int3> faces_;
 
