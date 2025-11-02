@@ -37,6 +37,21 @@ void glengine::world::DefaultPawn::OnPossess(input::InputManager* manager)
 		this->GetTransform()->SetPosition(position);
 
 		});
+
+		
+	// look left/right with keyboard
+	manager->AddAxis(KEY_ARROW_RIGHT, KEY_ARROW_LEFT, [this](float amount) {
+		auto rotation = this->GetTransform()->GetRotation();
+		rotation.xy += float2(0, amount);
+		this->GetTransform()->SetRotation(rotation);
+	});
+
+	// look up/down with keyboard
+	manager->AddAxis(KEY_ARROW_UP, KEY_ARROW_DOWN, [this](float amount) {
+		auto rotation = this->GetTransform()->GetRotation();
+		rotation.xy += float2(-amount, 0);
+		this->GetTransform()->SetRotation(rotation);
+		});
 }
 
 void glengine::world::DefaultPawn::OnUnpossess()

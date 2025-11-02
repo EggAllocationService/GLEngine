@@ -63,6 +63,20 @@ namespace glengine {
         }
     }
 
+    static void specialExec(int keycode, int, int) {
+        int currentWindow = glutGetWindow();
+        if (Instances.contains(currentWindow)) {
+            Instances[currentWindow]->KeyPressed(keycode << 8);
+        }
+    }
+
+    static void specialUpExec(int keycode, int, int) {
+        int currentWindow = glutGetWindow();
+        if (Instances.contains(currentWindow)) {
+            Instances[currentWindow]->KeyReleased(keycode << 8);
+        }
+    }
+
     static void keyExec(unsigned char keycode, int, int) {
         int currentWindow = glutGetWindow();
         if (Instances.contains(currentWindow)) {
@@ -100,7 +114,9 @@ namespace glengine {
         glutPassiveMotionFunc(mouseMoveExec);
         glutMotionFunc(mouseMoveExec);
         glutKeyboardFunc(keyExec);
+        glutSpecialFunc(specialExec);
         glutKeyboardUpFunc(keyUpExec);
+        glutSpecialUpFunc(specialUpExec);
 
         setLastUpdate();
 
