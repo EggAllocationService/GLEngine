@@ -110,3 +110,47 @@ std::unique_ptr<std::vector<float3>> glengine::math::subdividePolygon(std::span<
 
     return newPolygon;
 }
+
+float dot(float3 a, float3 b) {
+    return a.x * b.x + a.y * b.y + a.z * b.z;
+}
+
+// these formulas are based on http://perry.cz/articles/ProjectionMatrix.xhtml
+
+mat4 glengine::math::viewMatrix(mat4 cameraTransformMatrix) {
+    float3 right = reinterpret_cast<float4*>(cameraTransformMatrix[0])->xyz;
+    float3 up = reinterpret_cast<float4*>(cameraTransformMatrix[1])->xyz;
+    float3 look = reinterpret_cast<float4*>(cameraTransformMatrix[2])->xyz;
+    float3 eye = reinterpret_cast<float4*>(cameraTransformMatrix[3])->xyz;
+
+    float A = -dot(right, eye);
+    float B = -dot(up, eye);
+    float C = -dot(look, eye);
+
+    return {
+        {
+            right.x, up.x, look.x, 0,
+            right.y, up.y, look.y, 0,
+            right.z, up.z, look.z, 0,
+            A,       B,    C,      1
+
+        }
+    };
+}
+
+mat4 glengine::math::perspectiveMatrix(float fov, float aspect, float near, float far) {
+    float A = (1.0 / tanf(fov * 0.5));
+    float B = aspect / tanf(fov * 0.5);
+    float C = (-(far + near)) / (far - near);
+    float D = 1.0;
+    float E = (2 * far * near) / (far - near);
+
+    return {
+        {
+            A, 0, 0, 0,
+            0, B, 0, 0,
+            0, 0, C, D,
+            0, 0, E, 0
+        }
+    };
+}

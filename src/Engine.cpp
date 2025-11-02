@@ -8,6 +8,7 @@
 #include <algorithm>
 #include <stack>
 
+#include "GLMath.h"
 #include "3d/ActorSceneComponent.h"
 #include "3d/DefaultPawn.h"
 
@@ -343,20 +344,18 @@ namespace glengine {
         }
 
         glEnable(GL_DEPTH_TEST);
+        glClearDepth(0.0f);
+        glFrontFace(GL_CW);
+        glDepthFunc(GL_GEQUAL);
 
         glMatrixMode(GL_MODELVIEW);
         glLoadIdentity();
-        glMultMatrixf(static_cast<const float*>(InvertXAxis));
 
-        auto activeCamera = possessedPawn.lock()->GetActiveCamera();
-        auto cameraPos = activeCamera->GetAbsolutePosition();
-        auto cameraCenter = cameraPos + activeCamera->GetForwardVector();
+        auto viewTarget = possessedPawn.lock();
+        auto cameraTransformMatrix = viewTarget->GetTransformMatrix() * viewTarget->GetActiveCamera()->GetTransformMatrix();
+        auto viewMatrix = math::viewMatrix(cameraTransformMatrix);
 
-        gluLookAt(cameraPos.x, cameraPos.y, cameraPos.z,
-                cameraCenter.x, cameraCenter.y, cameraCenter.z,
-                0.0f, 1.0f, 0.0f
-            );
-        
+        glLoadMatrixf(static_cast<const float *>(viewMatrix));
 
         // setup lights
         renderObjectManager->InitLights();

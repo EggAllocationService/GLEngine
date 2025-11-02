@@ -6,12 +6,17 @@
 
 #include "Engine.h"
 #include "3d/Actor.h"
+#include "GLMath.h"
+using namespace glengine;
 
-void glengine::world::components::CameraComponent::SetProjectionMatrix() {
+void world::components::CameraComponent::SetProjectionMatrix() {
     auto screenSize = float2(GetActor()->GetEngine()->GetWindowSize());
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
-    gluPerspective(FoV, screenSize.x / screenSize.y, Near, Far);
+
+    const auto m = math::perspectiveMatrix(FoV, screenSize.x / screenSize.y, Near, Far);
+
+    glLoadMatrixf(static_cast<const float*>(m));
 
     glMatrixMode(GL_MODELVIEW);
 }

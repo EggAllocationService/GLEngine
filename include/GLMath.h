@@ -43,4 +43,11 @@ namespace glengine::math {
     /// As the result will be larger, a newly allocated vector is returned.
     std::unique_ptr<std::vector<float3>> GLENGINE_EXPORT subdividePolygon(std::span<const float3> polygon, int additionalVertices);
 
+    /// Creates a world -> eye matrix from the absolute
+    /// transform matrix of a camera component
+    mat4 GLENGINE_EXPORT viewMatrix(mat4 cameraComponentMatrix);
+
+    /// Creates a perspective projection matrix for a left-handed
+    /// coordinate system (+z is into screen, +x is right, +y is up)
+    mat4 GLENGINE_EXPORT perspectiveMatrix(float fov, float aspect, float near, float far);
 }
