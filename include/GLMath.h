@@ -9,6 +9,8 @@
 #include <span>
 #include <memory>
 
+#define PI 3.14159265358979323846
+
 namespace glengine::math {
     /// Creates a 2d clockwise rotation matrix:
     /// cos theta, -sin theta, 0

@@ -14,7 +14,9 @@ void world::components::CameraComponent::SetProjectionMatrix() {
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
 
-    const auto m = math::perspectiveMatrix(FoV, screenSize.x / screenSize.y, Near, Far);
+    float fovRad = FoV * (PI / 180.0);
+
+    const auto m = math::perspectiveMatrix(fovRad, screenSize.x / screenSize.y, Near, Far);
 
     glLoadMatrixf(static_cast<const float*>(m));
 
