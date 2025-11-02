@@ -9,6 +9,6 @@ namespace glengine::world::components {
         void Update(double) override;
 
         float4 Diffuse = float4(0.3, 0.3, 0.3, 1);
-        float4 Specular = float4(1, 0, 0, 1);
+        float4 Specular = float4(1, 1, 1, 1);
     };
 }

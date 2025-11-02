@@ -15,18 +15,30 @@ using namespace glengine::world::mesh;
 SpinnyCube::SpinnyCube() {
     root = CreateComponent<glengine::world::ActorPrimitiveComponent>();
 
-    auto cube = CreateComponent<CubeSceneComponent>();
-    cube->Color = float4(1, 1, 0, 1);
+    auto model = CreateComponent<StaticMeshComponent>();
+    auto mesh = GetEngine()
+        ->GetResourceManager()
+        ->GetResource<StaticMesh>("../test3d/assets/enterprise.obj");
+    model->SetMesh(mesh);
 
     auto light = CreateComponent<glengine::world::components::PointLightComponent>();
 
     light->SetupAttachment(root->GetTransform());
     light->GetTransform()->SetPosition(float3(0, 0, 5));
 
+    auto light2 = CreateComponent<glengine::world::components::PointLightComponent>();
+
+    light2->SetupAttachment(root->GetTransform());
+    light2->GetTransform()->SetPosition(float3(0, 0, -5));
+
     auto cube2 = CreateComponent<CubeSceneComponent>();
 
     cube2->Scale = 0.3;
     cube2->SetupAttachment(light->GetTransform());
+
+    cube2 = CreateComponent<CubeSceneComponent>();
+    cube2->Scale = 0.3;
+    cube2->SetupAttachment(light2->GetTransform());
 }
 
 void SpinnyCube::Update(double deltaTime) {

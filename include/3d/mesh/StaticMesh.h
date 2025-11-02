@@ -24,12 +24,14 @@ namespace glengine::world::mesh {
         void LoadFromFile(std::ifstream& file) override;
 
         void Render() const;
+
+        /// Recalculates all normal vectors for the mesh
+        void RecalculateNormals();
     private:
 
         /// Normalizes the mesh so all vertices are within (-1, -1, -1) to (1, 1, 1)
-        void Normalize();
-
-        void CalculateNormals();
+        /// This is to ensure meshes aren't gigantic or tiny for no reason
+        void normalize();
 
         std::vector<PackedVertexData> vertices_;
         std::vector<int3> faces_;

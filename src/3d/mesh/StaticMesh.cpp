@@ -53,7 +53,13 @@ void StaticMesh::LoadFromFile(std::ifstream &file) {
             int p1, p2, p3;
             int t1, t2, t3;
             int n1, n2, n3;
-            if (line.find('/') != std::string::npos) {
+
+            if (line.find("//") != std::string::npos) {
+                // specifying position and normnal, but no u
+                sscanf(line.c_str(), "f %d//%d %d//%d %d//%d", &p1, &n1, &p2, &n2, &p3, &n3);
+
+                t1 = t2 = t3 = 0;
+            } else if (line.find('/') != std::string::npos) {
                 // this OBJ file is specifying pos, normal, and uv
                 sscanf(line.c_str(), "f %d/%d/%d %d/%d/%d %d/%d/%d", &p1, &t1, &n1,
                                                                      &p2, &t2, &n2,
@@ -82,9 +88,9 @@ void StaticMesh::LoadFromFile(std::ifstream &file) {
         }
     }
 
-    Normalize();
+    normalize();
     if (!hasNormals_) {
-        CalculateNormals();
+        RecalculateNormals();
     }
 }
 
@@ -95,7 +101,7 @@ float max(float a, float b, float c, float d) {
 float3 abs(float3 a) {
     return {std::abs(a.x), std::abs(a.y), std::abs(a.z)};
 }
-void StaticMesh::Normalize() {
+void StaticMesh::normalize() {
     if (vertices_.empty()) {
         return;
     }
@@ -119,7 +125,7 @@ struct AvgNormal {
     float totalLen = 0.0;
 };
 
-void glengine::world::mesh::StaticMesh::CalculateNormals()
+void glengine::world::mesh::StaticMesh::RecalculateNormals()
 {
     // absolutely horrible
     // however, any algorithm that works is a good algorithm
@@ -140,7 +146,7 @@ void glengine::world::mesh::StaticMesh::CalculateNormals()
         auto p3 = vertices_[v3.x].position;
 
         // calculate normal from vertex positions
-        auto normal = (p1 - p2).cross(p3 - p2);
+        auto normal = (p1 - p2).cross(p3 - p2) * -1;
 
         // add normal to each vertex's average, along with its length
         auto len = normal.len();
@@ -175,24 +181,16 @@ void glengine::world::mesh::StaticMesh::CalculateNormals()
 
 void StaticMesh::Render() const {
     glBegin(GL_TRIANGLES);
-    float current = 0;
-    float max = 0;
 
-    max = faces_.size();
     // faces array is one vertex per index, with position index, texcoord index, and normal index in each int3
     for (auto vertex : faces_) {
-        float color = current / max;
-        color *= 0.5;
-        color += 0.5;
-        glColor3f(color, color, color);
         if (hasTexCoords_) {
             glTexCoord2fv(vertices_[vertex.y].texCoord);
         }
-        if (hasNormals_) {
-            glNormal3fv(vertices_[vertex.z].normal);
-        }
+
+        // guarenteed to have normals, since we calculate if they weren't in the file
+        glNormal3fv(vertices_[vertex.z].normal);
         glVertex3fv(vertices_[vertex.x].position);
-        current++;
     }
 
     glEnd();

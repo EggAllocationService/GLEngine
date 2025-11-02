@@ -8,6 +8,6 @@
 #include "Colors.h"
 
 void CubeSceneComponent::Render() {
-    glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, reinterpret_cast<float*>(&Color));
+    //glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, reinterpret_cast<float*>(&Color));
     glutSolidSphere(Scale, 30, 30);
 }
