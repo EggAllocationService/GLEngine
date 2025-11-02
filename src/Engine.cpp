@@ -251,6 +251,8 @@ namespace glengine {
 
     void Engine::clearBuffers() {
         glClearColor(0, 0, 0, 1);
+        glClearDepth(0.0f); // using LH coordinate system
+        glDepthFunc(GL_GEQUAL);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
     }
 
@@ -343,9 +345,7 @@ namespace glengine {
         }
 
         glEnable(GL_DEPTH_TEST);
-        glClearDepth(0.0f);
         glFrontFace(GL_CW);
-        glDepthFunc(GL_GEQUAL);
 
         glMatrixMode(GL_MODELVIEW);
         glLoadIdentity();
