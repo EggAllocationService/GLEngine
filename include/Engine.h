@@ -88,6 +88,15 @@ namespace glengine {
                 | std::ranges::views::filter([](std::shared_ptr<T> transformed) {return transformed != nullptr; });
         }
 
+        /// Helper function to find all actors of a given type
+        template <typename T>
+        auto GetActorsOfType() {
+            static_assert(std::is_base_of_v<world::Actor, T>, "T must be derive from Actor");
+
+            return std::ranges::views::transform(actors, [](std::shared_ptr<world::Actor> actor) {return dynamic_pointer_cast<T>(actor); })
+                | std::ranges::views::filter([](std::shared_ptr<T> transformed) {return transformed != nullptr; });
+        }
+
 #pragma region Getters/Setters
 
         void SetAllowNonFocusedPawnInput(bool value) {
