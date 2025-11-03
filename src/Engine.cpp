@@ -391,7 +391,7 @@ namespace glengine {
             }
 
             glPushMatrix();
-            auto actorTransform = actor->GetTransformMatrix();
+            auto actorTransform = actor->GetTransform()->GetAbsoluteMatrix();
             glMultMatrixf(static_cast<const float *>(actorTransform));
 
             for (const auto& component : actor->GetComponents()) {
