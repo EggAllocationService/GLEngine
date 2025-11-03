@@ -355,6 +355,11 @@ namespace glengine {
                 component->Update(deltaTime);
             }
         }
+
+        // cleanup dead actors
+        std::erase_if(actors,
+            [](const std::shared_ptr<world::Actor>& actor) { return actor->IsDestroyed(); }
+        );
     }
 
     void Engine::renderWorld() const {
