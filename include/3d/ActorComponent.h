@@ -19,8 +19,7 @@ namespace glengine::world {
             actor_ = actor;
         }
 
-    protected:
-        Actor *GetActor() const {
+        Actor* GetActor() const {
             return actor_;
         }
 

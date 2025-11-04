@@ -89,7 +89,7 @@ void Transform::RecalculateMatrix() {
     row2->set(2, (cx * cy) * scale.z);
 
     auto row3 = cachedMatrix[3];
-    row3->set(0, position.x);
-    row3->set(1, position.y);
-    row3->set(2, position.z);
+    row3->set(0, position.x / scale.x);
+    row3->set(1, position.y / scale.y);
+    row3->set(2, position.z / scale.z);
 }

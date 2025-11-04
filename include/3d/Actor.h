@@ -7,6 +7,7 @@
 #include <memory>
 
 #include "ActorComponent.h"
+#include "ActorPrimitiveComponent.h"
 #include "Transform.h"
 #include "glengine_export.h"
 
@@ -16,6 +17,7 @@ namespace glengine {
 
 /// Any object that can be represented in the 3D world.
 namespace glengine::world {
+
     /// Used to store a reference to the current engine, so that
     extern GLENGINE_EXPORT Engine* CURRENT_ENGINE_CONSTRUCTING;
 
@@ -25,9 +27,7 @@ namespace glengine::world {
 
         virtual void Update(double deltaTime) = 0;
 
-        mat4 GetTransformMatrix() const {
-            return transform_.GetMatrix();
-        }
+        mat4 GetTransformMatrix() const;
 
         /// Returns a reference to the first component of type T
         template <typename T>
@@ -56,6 +56,10 @@ namespace glengine::world {
             destroyed_ = true;
         }
 
+        void SetParent(std::shared_ptr<ActorPrimitiveComponent> component) {
+            this->parent = component;
+        }
+
         [[nodiscard]] bool IsDestroyed() const {
             return destroyed_;
         }
@@ -77,6 +81,7 @@ namespace glengine::world {
     private:
         Transform transform_;
         std::vector<std::shared_ptr<ActorComponent>> components_;
+        std::weak_ptr<ActorPrimitiveComponent> parent;
         Engine *engine_= nullptr;
 
         bool destroyed_ = false;
