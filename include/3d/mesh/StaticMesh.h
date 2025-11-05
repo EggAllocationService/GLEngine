@@ -33,10 +33,17 @@ namespace glengine::world::mesh {
         /// This is to ensure meshes aren't gigantic or tiny for no reason
         void normalize();
 
+        /// <summary>
+        ///  Compiles a command list to accelerate rendering 
+        /// </summary>
+        void generateCommandList();
+
         std::vector<PackedVertexData> vertices_;
         std::vector<int3> faces_;
 
         bool hasNormals_ = false;
         bool hasTexCoords_ = false;
+
+        unsigned int commandList = 0;
     };
 }
