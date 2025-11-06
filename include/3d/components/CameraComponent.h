@@ -2,11 +2,12 @@
 // Created by Kyle Smith on 2025-10-18.
 //
 #pragma once
+#include "glengine_export.h"
 #include "3d/ActorPrimitiveComponent.h"
 
 namespace glengine::world::components {
     /// Represents a viewpoint into the world
-    class CameraComponent : public ActorPrimitiveComponent {
+    class GLENGINE_EXPORT CameraComponent : public ActorPrimitiveComponent {
     public:
         void Update(double) override;
 
