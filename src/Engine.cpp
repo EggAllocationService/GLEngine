@@ -179,10 +179,12 @@ namespace glengine {
     }
 
     void Engine::KeyPressed(int keyCode) {
+        // direct keyboard input to possessed pawn if the mouse is captured, or we're allowing non-captured input AND there's no focused widget
         if (mouseManager->GetMouseMode() == input::CAPTIVE || (flags.allowNonFocusedPawnInput && focusedWidget.expired())) {
             pawnInputManager->AcceptKeyInput(keyCode);
         }
 
+        // direct input to focused widget, or global input binds otherwise
         if (focusedWidget.expired()) {
             inputManager->AcceptKeyInput(keyCode);
         } else {
@@ -197,7 +199,7 @@ namespace glengine {
 
     void Engine::FocusWidget(std::shared_ptr<Widget> widget) {
         if (mouseManager->GetMouseMode() == input::CAPTIVE) {
-            return;
+            return; // can't focus widgets while the mouse is captured
         }
 
         if (!focusedWidget.expired()) {
@@ -220,41 +222,45 @@ namespace glengine {
     }
 
     void Engine::Possess(const std::shared_ptr<world::Pawn>& target) {
+        // clear existing input bindings
         pawnInputManager->Reset();
+
+        // if we're already possessing a pawn, call UnPossess
         if (const auto realPossessed = possessedPawn.lock()) {
             realPossessed->OnUnpossess();
         }
+
+        // update stored pawn and call OnPossess
         possessedPawn = target;
-        target->GetActiveCamera()->SetProjectionMatrix();
         target->OnPossess(pawnInputManager);
     }
 
     void Engine::SetWindowSize(int2 size) {
+        // update stored size and viewport
         windowSize = size;
         glViewport(0, 0, windowSize.x, windowSize.y);
-
-        if (auto pawn = possessedPawn.lock()) {
-            pawn->GetActiveCamera()->SetProjectionMatrix();
-        }
     }
 
     void Engine::Render() {
         // perform all rendering then swap the double-buffered view
         clearBuffers();
 
-        // track Update time
+        // track Render time
         auto start = std::chrono::steady_clock::now();
 
+        // render 3d world
         renderWorld();
 
         // teardown render objects so we don't screw up widgets
         renderObjectManager->DeInit();
 
+        // update last render time variable
+        // we don't include widgets
         auto end = std::chrono::steady_clock::now();
         auto timeMs = std::chrono::duration_cast<std::chrono::duration<double, std::milli>>(end - start);
-
         lastRenderTime = timeMs.count();
 
+        // render UI
         renderWidgets();
 
         glutSwapBuffers();
@@ -269,7 +275,7 @@ namespace glengine {
 
     void Engine::clearBuffers() {
         glClearColor(0, 0, 0, 1);
-        glClearDepth(0.0f); // using LH coordinate system
+        glClearDepth(0.0f); // using LH coordinate system, so 0 depth = far plane
         glDepthFunc(GL_GEQUAL);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
     }
@@ -281,8 +287,6 @@ namespace glengine {
     void Engine::renderWidgets() {
         // reset opengl matrices
         glMatrixMode(GL_PROJECTION);
-        float savedProj[16];
-        glGetFloatv(GL_PROJECTION_MATRIX, savedProj);
         glLoadIdentity();
 
         glMatrixMode(GL_MODELVIEW);
@@ -315,11 +319,6 @@ namespace glengine {
         }
 
         glFlush();
-
-        // reload projection matrix
-        glMatrixMode(GL_PROJECTION);
-        glLoadIdentity();
-        glLoadMatrixf(savedProj);
     }
 
     void Engine::updateWidgets(double deltaTime) {
@@ -348,8 +347,11 @@ namespace glengine {
             Possess(pawn);
         }
 
+        // for each actor
         for (const auto& actor : actors) {
+            // update actor
             actor->Update(deltaTime);
+            
             // update components
             for (const auto& component : actor->GetComponents()) {
                 component->Update(deltaTime);
@@ -370,13 +372,17 @@ namespace glengine {
         glEnable(GL_DEPTH_TEST);
         glFrontFace(GL_CW);
 
-        glMatrixMode(GL_MODELVIEW);
-        glLoadIdentity();
-
         auto viewTarget = possessedPawn.lock();
-        auto cameraTransformMatrix = viewTarget->GetTransformMatrix() * viewTarget->GetActiveCamera()->GetTransformMatrix();
+        auto viewCamera = viewTarget->GetActiveCamera();
+        auto cameraTransformMatrix = viewTarget->GetTransformMatrix() * viewCamera->GetTransformMatrix();
         auto viewMatrix = math::viewMatrix(cameraTransformMatrix);
 
+        // first load the camera's projection matrix
+        viewCamera->SetProjectionMatrix();
+
+        // next load the view matrix
+        glMatrixMode(GL_MODELVIEW);
+        glLoadIdentity();
         glLoadMatrixf(static_cast<const float *>(viewMatrix));
 
         // setup lights
@@ -390,14 +396,16 @@ namespace glengine {
                 continue;
             }
 
+            // push actor transform matrix
             glPushMatrix();
             auto actorTransform = actor->GetTransformMatrix();
             glMultMatrixf(static_cast<const float *>(actorTransform));
 
+            // render actor scene components
             for (const auto& component : actor->GetComponents()) {
                 if (auto sceneComponent = std::dynamic_pointer_cast<world::ActorSceneComponent>(component)) {
+                    // push component transform matrix
                     auto componentTransform = sceneComponent->GetTransformMatrix();
-
                     glPushMatrix();
                     glMultMatrixf(static_cast<const float *>(componentTransform));
 
