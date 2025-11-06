@@ -6,13 +6,17 @@
 using namespace glengine::rendering;
 
 RenderObjects::RenderObjects() {
-	lights_.reserve(GL_MAX_LIGHTS);
+	// find max lights
+	int lights = 0;
+	glGetIntegerv(GL_MAX_LIGHTS, &lights);
+
+	lights_.reserve(lights);
 }
 
 void RenderObjects::PushLight(LightInfo l)
 {
 	// only add if the driver supports that many lights
-	if (lights_.size() < GL_MAX_LIGHTS) {
+	if (lights_.size() < lights_.capacity()) {
 		lights_.push_back(l);
 	}
 }

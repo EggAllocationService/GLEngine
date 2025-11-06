@@ -98,7 +98,6 @@ namespace glengine {
         inputManager = new input::InputManager(this);
         pawnInputManager = new input::InputManager(this);
         resourceManager = new ResourceManager();
-        renderObjectManager = new rendering::RenderObjects();
         
         windowSize = size;
         glutInitWindowSize(windowSize.x, windowSize.y);
@@ -123,6 +122,9 @@ namespace glengine {
         console = AddOnscreenWidget<console::Console>();
 
         addDefaultCommands();
+
+        // this has to be initialized at the end as its constructor requires an opengl context
+        renderObjectManager = new rendering::RenderObjects();
     }
 
     Engine::~Engine() {
