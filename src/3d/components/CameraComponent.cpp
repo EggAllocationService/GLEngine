@@ -9,6 +9,11 @@
 #include "GLMath.h"
 using namespace glengine;
 
+void glengine::world::components::CameraComponent::Update(double)
+{
+    // no updates
+}
+
 void world::components::CameraComponent::SetProjectionMatrix() {
     auto screenSize = float2(GetActor()->GetEngine()->GetWindowSize());
     glMatrixMode(GL_PROJECTION);
