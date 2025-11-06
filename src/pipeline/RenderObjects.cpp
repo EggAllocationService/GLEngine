@@ -22,6 +22,7 @@ void RenderObjects::InitLights() const {
 	glEnable(GL_LIGHTING);
 	glEnable(GL_NORMALIZE);
 	glLightModeli(GL_LIGHT_MODEL_TWO_SIDE, GL_TRUE);
+	
 
 	for (int i = 0; i < lights_.size(); i++) {
 		glEnable(GL_LIGHT0 + i);
@@ -33,7 +34,7 @@ void RenderObjects::InitLights() const {
 		glLightfv(GL_LIGHT0 + i, GL_DIFFUSE, reinterpret_cast<const float*>(&lights_[i].diffuse));
 		glLightfv(GL_LIGHT0 + i, GL_AMBIENT, reinterpret_cast<const float*>(&lights_[i].ambient));
 
-		// if its a point light, setup attenuation
+		// setup attenuation, since we only support point lights at the moment
 		glLightf(GL_LIGHT0 + i, GL_LINEAR_ATTENUATION, 0.5);
 		glLightf(GL_LIGHT0 + i, GL_QUADRATIC_ATTENUATION, 1);
 	}
@@ -43,6 +44,8 @@ void RenderObjects::InitLights() const {
 void RenderObjects::DeInit() const {
 	glDisable(GL_LIGHTING);
 	glDisable(GL_NORMALIZE);
+
+	// disable lights
 	for (int i = 0; i < lights_.size(); i++) {
 		glDisable(GL_LIGHT0 + i);
 	}

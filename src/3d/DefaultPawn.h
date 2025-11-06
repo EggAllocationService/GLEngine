@@ -8,6 +8,7 @@ namespace glengine::world {
     /// Default flying-controlled pawn so we have something to spawn & possess as a fallback
     /// Just a flying camera, basically.
     /// WASD movement controls, mouse look controls
+    /// Also supports looking around with the arrow keys, in case the mouse isn't captured
     class DefaultPawn : public Pawn {
     public:
         void Update(double deltaTime) override {};
@@ -16,5 +17,4 @@ namespace glengine::world {
 
         void OnUnpossess() override;
     };
-
 }

@@ -7,5 +7,6 @@
 #include "Engine.h"
 
 glengine::world::Pawn::Pawn() {
+    // have a camera centered on the origin just in case
     activeCamera = CreateComponent<components::CameraComponent>();
 }

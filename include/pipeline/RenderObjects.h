@@ -16,7 +16,7 @@ namespace glengine::rendering {
 	};
 	
 	/// <summary>
-	/// RenderObjects is a container to track objects that require special handling during rendering, for example lights
+	/// RenderObjects is a container to track objects that require special handling during rendering, for example lights.
 	/// The intent is that Light components (or similar) can submit information to RenderObjects during the Update phase, and then
 	/// dedicated code paths in the engine's rendering functions will setup the appropriate state prior to rendering any scene components. 
 	/// </summary>

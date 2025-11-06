@@ -54,8 +54,9 @@ void StaticMesh::LoadFromFile(std::ifstream &file) {
             int t1, t2, t3;
             int n1, n2, n3;
 
+            // figure out what kind of vertex this obj file specifies
             if (line.find("//") != std::string::npos) {
-                // specifying position and normnal, but no u
+                // specifying position and normnal, but no uv
                 sscanf(line.c_str(), "f %d//%d %d//%d %d//%d", &p1, &n1, &p2, &n2, &p3, &n3);
 
                 t1 = t2 = t3 = 0;
@@ -66,7 +67,6 @@ void StaticMesh::LoadFromFile(std::ifstream &file) {
                                                                      &p3, &t3, &n3);
             } else {
                 // this OBJ file just specifies position
-
                 sscanf(line.c_str(), "f %d %d %d", &p1, &p2, &p3);
 
                 // we'll say that the normal for vertex n is also stored with the position in this case
@@ -78,8 +78,7 @@ void StaticMesh::LoadFromFile(std::ifstream &file) {
                 // just say all the texCoords are at vertex 0 (1-indexed :why:)
                 t1 = 1;
                 t2 = 1;
-                t3 = 1;
-               
+                t3 = 1;   
             }
 
             faces_.push_back(int3(p1 - 1, t1 - 1, n1 - 1));
@@ -89,9 +88,11 @@ void StaticMesh::LoadFromFile(std::ifstream &file) {
     }
 
     normalize();
+
     if (!hasNormals_) {
         RecalculateNormals();
     }
+
     generateCommandList();
 }
 
@@ -153,11 +154,10 @@ struct AvgNormal {
 
 void glengine::world::mesh::StaticMesh::RecalculateNormals()
 {
-    // absolutely horrible
+    // absolutely horrible way to calculate this i think
     // however, any algorithm that works is a good algorithm
-    // if it completes before the heat death of the universe then it's a great algorithm
+    // if it completes within your lifetime then it's a great algorithm
     auto newNormals = new AvgNormal[vertices_.size()];
-
 
     // loop through all faces, calculate the normal, then add to the average for each owning vertex
     // faces are packed in the faces_ array, three entries in a row make a face
@@ -172,6 +172,7 @@ void glengine::world::mesh::StaticMesh::RecalculateNormals()
         auto p3 = vertices_[v3.x].position;
 
         // calculate normal from vertex positions
+        // multiply by -1 since our front faces are wound opposite to OpenGL conventions
         auto normal = (p1 - p2).cross(p3 - p2) * -1;
 
         // add normal to each vertex's average, along with its length
