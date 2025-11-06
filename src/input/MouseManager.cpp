@@ -81,14 +81,15 @@ namespace glengine::input {
     }
 
     void MouseManager::SetMouseMode(MouseMode mode) {
-        // TODO: update this when implementing 3d control
-        // not needed at the moment
         mouseMode = mode;
         if (mode == FREE) {
             glutSetCursor(GLUT_CURSOR_INHERIT);
         } else {
+            // hide the cursor and center it
             glutSetCursor(GLUT_CURSOR_NONE);
             centerCursor();
+
+            // reset state
             hoveredWidget = std::weak_ptr<Widget>();
             mousePosition = float2(0, 0);
         }
