@@ -7,5 +7,5 @@
 #include "Engine.h"
 
 glengine::world::Pawn::Pawn() {
-    defaultCamera = CreateComponent<components::CameraComponent>();
+    activeCamera = CreateComponent<components::CameraComponent>();
 }

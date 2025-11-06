@@ -22,11 +22,16 @@ namespace glengine::world {
         /// </summary>
         virtual void OnUnpossess() {};
 
-        virtual components::CameraComponent *GetActiveCamera() {
-            return defaultCamera.get();
+        components::CameraComponent* GetActiveCamera() {
+            return activeCamera.get();
         }
     protected:
-        std::shared_ptr<components::CameraComponent> defaultCamera;
+        void SetActiveCamera(std::shared_ptr<components::CameraComponent> camera) {
+            activeCamera = camera;
+        }
+
+    private:
+        std::shared_ptr<components::CameraComponent> activeCamera;
     };
 
 }
