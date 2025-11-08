@@ -261,14 +261,13 @@ namespace glengine {
         // teardown render objects so we don't screw up widgets
         renderObjectManager->DeInit();
 
+        // render UI
+        renderWidgets();
+
         // update last render time variable
-        // we don't include widgets
         auto end = std::chrono::steady_clock::now();
         auto timeMs = std::chrono::duration_cast<std::chrono::duration<double, std::milli>>(end - start);
         lastRenderTime = timeMs.count();
-
-        // render UI
-        renderWidgets();
 
         glutSwapBuffers();
     }
@@ -324,8 +323,6 @@ namespace glengine {
             widget->Draw(stack);
             stack.Pop();
         }
-
-        glFlush();
     }
 
     void Engine::updateWidgets(double deltaTime) {
