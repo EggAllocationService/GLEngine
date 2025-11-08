@@ -21,7 +21,7 @@ void glengine::input::InputManager::Update(double deltaTime)
 	}
 }
 
-void glengine::input::InputManager::AcceptKeyInput(int key)
+bool glengine::input::InputManager::AcceptKeyInput(int key)
 {
 	if (key >= 'A' && key <= 'Z') {
 		// convert capitals to lowercase
@@ -34,6 +34,8 @@ void glengine::input::InputManager::AcceptKeyInput(int key)
 	else {
 		pressedKeys_.insert(key);
 	}
+
+	return keyHandlers_.contains(key) || axisHandlers.contains(key);
 }
 
 void glengine::input::InputManager::KeyReleased(int key)

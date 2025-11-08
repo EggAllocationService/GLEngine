@@ -181,17 +181,22 @@ namespace glengine {
     }
 
     void Engine::KeyPressed(int keyCode) {
-        // direct keyboard input to possessed pawn if the mouse is captured, or we're allowing non-captured input AND there's no focused widget
-        if (mouseManager->GetMouseMode() == input::CAPTIVE || (flags.allowNonFocusedPawnInput && focusedWidget.expired())) {
-            pawnInputManager->AcceptKeyInput(keyCode);
+        // first priority: send input to the focused widget if there is one
+        if (!focusedWidget.expired()) {
+            focusedWidget.lock()->KeyPressed(keyCode);
+            return; // focused widgets override all other handlers
         }
 
-        // direct input to focused widget, or global input binds otherwise
-        if (focusedWidget.expired()) {
-            inputManager->AcceptKeyInput(keyCode);
-        } else {
-            focusedWidget.lock()->KeyPressed(keyCode);
+        // second priority: send input to possessed pawn if mouse is captured or we're allowing non-captured input
+        if (mouseManager->GetMouseMode() == input::CAPTIVE || flags.allowNonFocusedPawnInput) {
+            if (pawnInputManager->AcceptKeyInput(keyCode)) {
+                // input was consumed by the pawn, so don't forward to global handlers
+                return;
+            }
         }
+
+        // finally, send input to global handlers
+        inputManager->AcceptKeyInput(keyCode);
     }
 
     void Engine::KeyReleased(int keyCode) {

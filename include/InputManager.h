@@ -31,8 +31,10 @@ namespace glengine::input {
 
 		/// <summary>
 		/// Call when a key has been pressed
+		/// 
+		/// Returns true if the key has been "consumed", i.e. if an action or axis responded to the input
 		/// </summary>
-		void AcceptKeyInput(int key);
+		bool AcceptKeyInput(int key);
 
 		/// <summary>
 		/// Call when a key has been released
