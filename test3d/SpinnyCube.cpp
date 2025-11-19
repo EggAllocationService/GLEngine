@@ -25,13 +25,13 @@ SpinnyCube::SpinnyCube() {
 
     auto mesh = GetEngine()
         ->GetResourceManager()
-        ->GetResource<StaticMesh>("../test3d/assets/enterprise.obj");
+        ->GetResource<StaticMesh>("../test3d/assets/cube-tex.obj");
     model->SetMesh(mesh);
 
     auto light = CreateComponent<glengine::world::components::PointLightComponent>();
 
     light->SetupAttachment(root->GetTransform());
-    light->GetTransform()->SetPosition(float3(0, 0, 5));
+    light->GetTransform()->SetPosition(float3(0, 0, 3));
     light->Intensity = 10;
 
     this->light = light;
