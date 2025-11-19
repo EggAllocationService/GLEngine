@@ -11,11 +11,18 @@
 #include "Engine.h"
 #include "3d/mesh/StaticMeshComponent.h"
 #include "3d/components/PointLightComponent.h"
+#include "3d/texture/StaticTexture2D.h"
 using namespace glengine::world::mesh;
+using namespace glengine::world::texture;
+
 SpinnyCube::SpinnyCube() {
     root = CreateComponent<glengine::world::ActorPrimitiveComponent>();
 
     auto model = CreateComponent<StaticMeshComponent>();
+    auto texture = GetEngine()
+        ->GetResourceManager()
+        ->GetResource<StaticTexture2D>("/Users/kyle/Downloads/assignment_files_updated/sand.jpg");
+
     auto mesh = GetEngine()
         ->GetResourceManager()
         ->GetResource<StaticMesh>("../test3d/assets/enterprise.obj");

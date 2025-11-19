@@ -25,7 +25,9 @@ add_library(glengine SHARED
         "src/3d/Actor.cpp"
         "src/pipeline/RenderObjects.cpp"
  "src/3d/components/PointLightComponent.cpp"
-        external/stb_image.cpp)
+        external/stb_image.cpp
+        include/3d/texture/StaticTexture2D.h
+        src/3d/texture/StaticTexture2D.cpp)
 
 target_include_directories(glengine PUBLIC include external/include)
 
