@@ -24,9 +24,10 @@ add_library(glengine SHARED
         "src/console/Console.cpp"
         "src/3d/Actor.cpp"
         "src/pipeline/RenderObjects.cpp"
- "src/3d/components/PointLightComponent.cpp")
+ "src/3d/components/PointLightComponent.cpp"
+        external/stb_image.cpp)
 
-target_include_directories(glengine PUBLIC include)
+target_include_directories(glengine PUBLIC include external/include)
 
 include(GenerateExportHeader)
 generate_export_header(glengine)
