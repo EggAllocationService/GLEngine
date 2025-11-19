@@ -27,6 +27,7 @@ SpinnyCube::SpinnyCube() {
         ->GetResourceManager()
         ->GetResource<StaticMesh>("../test3d/assets/cube-tex.obj");
     model->SetMesh(mesh);
+    model->SetTexture(texture);
 
     auto light = CreateComponent<glengine::world::components::PointLightComponent>();
 

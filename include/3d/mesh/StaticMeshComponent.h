@@ -6,6 +6,7 @@
 #include "StaticMesh.h"
 #include "3d/ActorSceneComponent.h"
 #include "engine_GLUT.h"
+#include "3d/texture/StaticTexture2D.h"
 
 namespace glengine::world::mesh {
     struct GLENGINE_EXPORT Material {
@@ -28,9 +29,11 @@ namespace glengine::world::mesh {
         void Render() override;
 
         void SetMesh(std::shared_ptr<StaticMesh>);
+        void SetTexture(std::shared_ptr<texture::StaticTexture2D>);
 
         Material material;
     private:
         std::shared_ptr<StaticMesh> mesh_;
+        std::shared_ptr<texture::StaticTexture2D> texture_;
     };
 }
