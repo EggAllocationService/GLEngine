@@ -9,6 +9,7 @@
 #include "CubeSceneComponent.h"
 #include "Colors.h"
 #include "Engine.h"
+#include "3d/components/DirectionalLightComponent.h"
 #include "3d/mesh/StaticMeshComponent.h"
 #include "3d/components/PointLightComponent.h"
 #include "3d/texture/StaticTexture2D.h"
@@ -25,7 +26,7 @@ SpinnyCube::SpinnyCube() {
 
     auto mesh = GetEngine()
         ->GetResourceManager()
-        ->GetResource<StaticMesh>("../test3d/assets/cube-tex.obj");
+        ->GetResource<StaticMesh>("/Users/kyle/Downloads/assignment_files_updated/submarine - updated.obj");
     model->SetMesh(mesh);
     model->SetTexture(texture);
 
