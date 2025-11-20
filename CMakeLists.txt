@@ -117,3 +117,21 @@ if (${PROJECT_IS_TOP_LEVEL})
 
     target_link_libraries(test3d PRIVATE glengine)
 endif()
+
+function(copy_assets TARGET_NAME SOURCE_DIR)
+    if(NOT TARGET_NAME OR NOT SOURCE_DIR)
+        message(FATAL_ERROR "copy_assets requires a target name and a directory path.")
+    endif()
+
+    get_filename_component(SOURCE_DIR "${SOURCE_DIR}" ABSOLUTE)
+
+    add_custom_command(
+            TARGET ${TARGET_NAME}
+            POST_BUILD
+            COMMAND ${CMAKE_COMMAND} -E copy_directory
+            "${SOURCE_DIR}"
+            "$<TARGET_FILE_DIR:${TARGET_NAME}>"
+            COMMENT "Copying assets from ${SOURCE_DIR} to target ${TARGET_NAME}"
+            VERBATIM
+    )
+endfunction()
