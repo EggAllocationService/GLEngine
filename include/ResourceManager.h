@@ -23,7 +23,7 @@ namespace glengine {
                 resources[name] = resource;
 
                 std::ifstream file;
-                file.open(name.c_str());
+                file.open(name.c_str(), std::ios::binary);
 
                 resource->LoadFromFile(file);
 
