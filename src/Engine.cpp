@@ -392,6 +392,9 @@ namespace glengine {
         // setup lights
         renderObjectManager->InitLights();
 
+        // setup fog
+        renderObjectManager->InitFog();
+
         // render all scene components
         for (const auto& actor : actors) {
             // check if actor has any renderable components

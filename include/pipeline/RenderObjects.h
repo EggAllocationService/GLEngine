@@ -1,5 +1,7 @@
 #pragma once
 
+#include <optional>
+
 #include "Vectors.h"
 
 #include "glengine_export.h"
@@ -14,6 +16,11 @@ namespace glengine::rendering {
 		float4 specular;
 		float4 ambient;
 	};
+
+	struct GLENGINE_EXPORT FogSettings {
+		float4 color;
+		float density;
+	};
 	
 	/// <summary>
 	/// RenderObjects is a container to track objects that require special handling during rendering, for example lights.
@@ -27,16 +34,24 @@ namespace glengine::rendering {
 		/// Submits a light for rendering next frame
 		void PushLight(LightInfo l);
 
+		void SetFog(FogSettings a) {
+			fog_ = a;
+		}
+
 		/// Sets up all gl light objects
 		void InitLights() const;
 
-		/// Disables all gl light objects
+		/// Sets up fog
+		void InitFog() const;
+
+		/// Disables all objects
 		void DeInit() const;
 
 		/// Removes all entries from previous frame
 		void Reset();
 	private:
 		std::vector<LightInfo> lights_;
+		std::optional<FogSettings> fog_;
 
 	};
 }

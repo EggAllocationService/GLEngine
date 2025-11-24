@@ -45,6 +45,17 @@ void RenderObjects::InitLights() const {
 
 }
 
+void RenderObjects::InitFog() const {
+	if (fog_.has_value()) {
+		const auto value = fog_.value();
+
+		glEnable(GL_FOG);
+		glFogfv(GL_FOG_COLOR, reinterpret_cast<const float*>(&value.color));
+		glFogf(GL_FOG_DENSITY, value.density);
+		glFogi(GL_FOG_MODE, GL_EXP);
+	}
+}
+
 void RenderObjects::DeInit() const {
 	glDisable(GL_LIGHTING);
 	glDisable(GL_NORMALIZE);
@@ -53,8 +64,11 @@ void RenderObjects::DeInit() const {
 	for (int i = 0; i < lights_.size(); i++) {
 		glDisable(GL_LIGHT0 + i);
 	}
+
+	glDisable(GL_FOG);
 }
 
 void RenderObjects::Reset() {
 	lights_.clear();
+	fog_.reset();
 }
