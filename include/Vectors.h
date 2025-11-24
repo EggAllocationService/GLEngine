@@ -304,6 +304,8 @@ struct vec3 {
         vec_swizzle<vec3, T, 3, 2, 1, 0> zyx, bgr;
         vec_swizzle<vec2<T>, T, 3, 0, 1> xy, rg;
         vec_swizzle<vec2<T>, T, 3, 1, 0> yx, gr;
+        vec_swizzle<vec2<T>, T, 3, 0, 2> xz, rb;
+        vec_swizzle<vec2<T>, T, 3, 2, 0> zx, br;
     };
 
     operator T *() {
