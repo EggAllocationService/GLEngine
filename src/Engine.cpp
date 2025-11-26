@@ -58,8 +58,10 @@ namespace glengine {
         }
     }
 
-    static void keyExec(GLFWwindow* window, int key, int action, int scan, int flags) {
+    static void keyExec(GLFWwindow* window, int key, int scancode, int action, int flags) {
         auto engine = (Engine*)glfwGetWindowUserPointer(window);
+
+
         if (action == GLFW_PRESS) {
             engine->KeyPressed(key);
         } else {
@@ -70,15 +72,13 @@ namespace glengine {
 #pragma endregion
 
     Engine::Engine(const std::string &windowName, int2 size) {
+        windowSize = size;
+        window = glfwCreateWindow(windowSize.x, windowSize.y, windowName.c_str(), nullptr, nullptr);
+        glfwMakeContextCurrent(window);
         mouseManager = new input::MouseManager(this);
         inputManager = new input::InputManager(this);
         pawnInputManager = new input::InputManager(this);
         resourceManager = new ResourceManager();
-        
-        windowSize = size;
-        glfwWindowHint(GLFW_VERSION_MAJOR, 1);
-        glfwWindowHint(GLFW_VERSION_MINOR, 4);
-        window = glfwCreateWindow(windowSize.x, windowSize.y, windowName.c_str(), nullptr, nullptr);
 
         glfwSetWindowUserPointer(window, this);
 

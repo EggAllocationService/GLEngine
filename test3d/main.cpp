@@ -35,6 +35,7 @@ int main(int argc, char** argv) {
     glfwInit();
 
     auto engine = new Engine("3D Test", int2(1280, 720));
+    engine->SetAllowNonFocusedPawnInput(true);
 
     auto cube = engine->SpawnActor<SpinnyCube>();
 

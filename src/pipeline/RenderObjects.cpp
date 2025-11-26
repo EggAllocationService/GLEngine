@@ -23,7 +23,9 @@ void RenderObjects::PushLight(LightInfo l)
 
 
 void RenderObjects::InitLights() const {
+	glGetError();
 	glEnable(GL_LIGHTING);
+	auto err = glGetError();
 	glEnable(GL_NORMALIZE);
 	glLightModeli(GL_LIGHT_MODEL_TWO_SIDE, GL_TRUE);
 	

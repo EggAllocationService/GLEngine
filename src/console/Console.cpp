@@ -3,7 +3,7 @@
 //
 
 #include "console/Console.h"
-
+#include "GLFW/glfw3.h"
 #include "Colors.h"
 #include "Engine.h"
 #include <algorithm>
@@ -74,13 +74,13 @@ void Console::FocusStateChanged(bool focused) {
 }
 
 void Console::KeyPressed(int keyCode) {
-    if (keyCode == 127 || keyCode == 8) {
+    if (keyCode == GLFW_KEY_BACKSPACE) {
         // backspace
         if (!_inputBuffer.empty()) {
             _inputBuffer.pop_back();
         }
         updateAutocompleteOptions();
-    } else if (keyCode == 13) {
+    } else if (keyCode == GLFW_KEY_ENTER) {
         // enter
         execute();
 
@@ -89,7 +89,7 @@ void Console::KeyPressed(int keyCode) {
     } else if (keyCode >= 32 && keyCode <= 126) {
         _inputBuffer.push_back(keyCode);
         updateAutocompleteOptions();
-    } else if (keyCode == 27) {
+    } else if (keyCode == GLFW_KEY_ESCAPE) {
         // escape
         GetEngine()->FocusWidget(nullptr);
     }
