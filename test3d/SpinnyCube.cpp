@@ -38,10 +38,11 @@ SpinnyCube::SpinnyCube() {
 
     this->light = light;
 
-    auto cube2 = CreateComponent<CubeSceneComponent>();
-
-    cube2->Scale = 0.3;
+    auto cube2 = CreateComponent<StaticMeshComponent>();
+    cube2->SetMesh(mesh);
+    cube2->material.Emissive = float4(1, 1, 1 , 1);
     cube2->SetupAttachment(light->GetTransform());
+    cube2->GetTransform()->SetScale(float3(0.2, 0.2, 0.2));
 }
 
 void SpinnyCube::Update(double deltaTime) {

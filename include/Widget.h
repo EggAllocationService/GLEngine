@@ -92,7 +92,7 @@ namespace glengine {
 		 *
 		 * Must be a GLUT cursor constant. Defaults to `GLUT_CURSOR_INHERIT`
 		 */
-    	int Cursor = GLUT_CURSOR_INHERIT;
+    	int Cursor = GLFW_CURSOR_NORMAL;
 
         /**
          * Updates this widget and all children

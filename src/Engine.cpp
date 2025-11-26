@@ -13,10 +13,6 @@
 #include "3d/DefaultPawn.h"
 
 namespace glengine {
-    // since GLUT doesn't let us store custom state on windows,
-    // we need a static map to keep track of which Engine instance
-    // owns which window
-    static std::map<int, Engine *> Instances;
 
 #pragma region event handlers
     /// These event handlers are needed because we can't pass state-owning functions (i.e. lambdas) to C as
@@ -28,34 +24,9 @@ namespace glengine {
         engine->SetWindowSize(int2(x, y));
     }
 
-    static void clickExec(int button, int state, int x, int y) {
-        int currentWindow = glutGetWindow();
-        if (Instances.contains(currentWindow)) {
-            // have to invert y-axis
-            float2 pos = float2(x, y);
-            pos.y = Instances[currentWindow]->GetWindowSize().y - pos.y;
-
-            Instances[currentWindow]->GetMouseManager()->Click(button, state, pos);
-        }
-    }
-
     static void mouseMoveExec(GLFWwindow* window, double x, double y) {
         auto engine = (Engine*)glfwGetWindowUserPointer(window);
         engine->GetMouseManager()->HandleMotion(float2(x, y));
-    }
-
-    static void specialExec(int keycode, int, int) {
-        int currentWindow = glutGetWindow();
-        if (Instances.contains(currentWindow)) {
-            Instances[currentWindow]->KeyPressed(keycode << 8);
-        }
-    }
-
-    static void specialUpExec(int keycode, int, int) {
-        int currentWindow = glutGetWindow();
-        if (Instances.contains(currentWindow)) {
-            Instances[currentWindow]->KeyReleased(keycode << 8);
-        }
     }
 
     static void keyExec(GLFWwindow* window, int key, int scancode, int action, int flags) {

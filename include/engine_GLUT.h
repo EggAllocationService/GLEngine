@@ -3,8 +3,6 @@
 #pragma once
 
 #define GL_SILENCE_DEPRECATION
-#if defined(__APPLE__) && defined(__MACH__)
-# include <GLUT/glut.h>
-#else
-# include <GL/freeglut.h>
-#endif
+#include <OpenGL/gl.h>
+#include <OpenGL/glu.h>
+#include <GLFW/glfw3.h>

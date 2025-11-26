@@ -66,14 +66,15 @@ namespace glengine::input {
                 hoveredWidget.lock()->HoverStateChanged(false);
             }
 
+            // TODO: cursors
             if (newHovered != nullptr) {
                 // new widget hovered
                 newHovered->HoverStateChanged(true);
-                glutSetCursor(newHovered->Cursor);
+                //glutSetCursor(newHovered->Cursor);
             }
             else {
                 // was hovering something, now hovering nothing
-                glutSetCursor(GLUT_CURSOR_INHERIT);
+                //glutSetCursor(GLUT_CURSOR_INHERIT);
             }
 
             hoveredWidget = newHovered;
@@ -83,10 +84,9 @@ namespace glengine::input {
     void MouseManager::SetMouseMode(MouseMode mode) {
         mouseMode = mode;
         if (mode == FREE) {
-            glutSetCursor(GLUT_CURSOR_INHERIT);
+            // do thing
         } else {
             // hide the cursor and center it
-            glutSetCursor(GLUT_CURSOR_NONE);
             centerCursor();
 
             // reset state
@@ -98,7 +98,7 @@ namespace glengine::input {
     void MouseManager::centerCursor() const {
         // teleport the cursor to the center of the window
         int2 windowMiddle = engine->GetWindowSize() / 2;
-        glutWarpPointer(windowMiddle.x, windowMiddle.y);
+        // TODO: implement proper captive cursor
     }
 
     inline bool internal_isPointInside(float2 point, float2 a, float2 b) {

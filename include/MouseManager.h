@@ -7,7 +7,11 @@
 #include "glengine_export.h"
 
 // for mouse drag events
-#define GLUT_DRAG 2
+#define GLUT_UP 1
+#define GLUT_DOWN 2
+#define GLUT_DRAG 3
+#define GLUT_LEFT_BUTTON 4
+#define GLUT_RIGHT_BUTTON 5
 
 namespace glengine {
     class Engine;

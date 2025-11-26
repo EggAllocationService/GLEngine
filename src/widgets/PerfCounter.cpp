@@ -4,7 +4,6 @@
 #include "Engine.h"
 
 glengine::widgets::PerfCounter::PerfCounter() {
-	Cursor = GLUT_CURSOR_INFO;
 
 	// 8 wide characters, room for 20 chars
 	// 3 lines of text @ 13px/line

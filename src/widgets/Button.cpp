@@ -10,7 +10,7 @@ glengine::widgets::Button::Button() {
 
 	// very annoying... GLUT on Windows doesn't let you use the default "click" cursor.
 	// this works correct on macOS, but can't find any constant that looks right for Windows
-	Cursor = GLUT_CURSOR_INFO;
+	Cursor = 0;
 }
 
 void glengine::widgets::Button::Update(double deltaTime) {
