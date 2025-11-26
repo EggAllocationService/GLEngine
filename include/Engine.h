@@ -208,6 +208,9 @@ namespace glengine {
 
             /// If true, keyboard input is directed to the possessed pawn even if the mouse mode is not `CAPTIVE`
             bool allowNonFocusedPawnInput = false;
+
+            /// Makes sure we don't Render() before Update() has been called at least once
+            bool didUpdate = false;
         } flags;
     };
 } // glengine

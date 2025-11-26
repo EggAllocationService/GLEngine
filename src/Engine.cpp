@@ -147,6 +147,7 @@ namespace glengine {
 
     void Engine::Update() {
         // main update loop
+        flags.didUpdate = true;
 
         // track Update time
         auto start = std::chrono::steady_clock::now();
@@ -249,6 +250,9 @@ namespace glengine {
     }
 
     void Engine::Render() {
+        // dont' render before at least one update call
+        if (!flags.didUpdate) return;
+
         // perform all rendering then swap the double-buffered view
         clearBuffers();
 
