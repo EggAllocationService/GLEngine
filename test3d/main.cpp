@@ -52,9 +52,6 @@ int main(int argc, char** argv) {
             engine->GetMouseManager()->SetMouseMode(glengine::input::MouseMode::CAPTIVE);
         });
 
-    auto plane = engine->SpawnActor<PilotableCube>();
-    engine->Possess(plane);
-
     engine->GetConsole()->AddConsoleCommand("add", [=](std::string_view) {
         for (int i = 0; i < 5; i++) {
             auto actor = engine->SpawnActor<SpinnyCube>();

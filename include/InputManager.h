@@ -6,15 +6,16 @@
 #include "engine_GLUT.h"
 #include "Vectors.h"
 #include "glengine_export.h"
+#include "GLFW/glfw3.h"
 
 // define our own special keys which are offset so we can use the same input functions for all
-#define KEY_ARROW_RIGHT GLUT_KEY_RIGHT << 8
-#define KEY_ARROW_LEFT GLUT_KEY_LEFT << 8
-#define KEY_ARROW_UP GLUT_KEY_UP << 8
-#define KEY_ARROW_DOWN GLUT_KEY_DOWN << 8
+#define KEY_ARROW_RIGHT GLFW_KEY_RIGHT
+#define KEY_ARROW_LEFT GLFW_KEY_LEFT
+#define KEY_ARROW_UP GLFW_KEY_UP
+#define KEY_ARROW_DOWN GLFW_KEY_DOWN
 
-#define KEY_PAGE_UP GLUT_KEY_PAGE_UP << 8
-#define KEY_PAGE_DOWN GLUT_KEY_PAGE_DOWN << 8
+#define KEY_PAGE_UP GLFW_KEY_PAGE_UP
+#define KEY_PAGE_DOWN GLFW_KEY_PAGE_DOWN
 
 
 

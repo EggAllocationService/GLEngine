@@ -61,8 +61,7 @@ namespace glengine {
     static void keyExec(GLFWwindow* window, int key, int scancode, int action, int flags) {
         auto engine = (Engine*)glfwGetWindowUserPointer(window);
 
-
-        if (action == GLFW_PRESS) {
+        if (action == GLFW_PRESS || action == GLFW_REPEAT) {
             engine->KeyPressed(key);
         } else {
             engine->KeyReleased(key);
