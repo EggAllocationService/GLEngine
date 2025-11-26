@@ -27,12 +27,11 @@ add_library(glengine SHARED
         "src/console/Console.cpp"
         "src/3d/Actor.cpp"
         "src/pipeline/RenderObjects.cpp"
- "src/3d/components/PointLightComponent.cpp"
+        "src/3d/components/PointLightComponent.cpp"
         external/stb_image.cpp
-        include/3d/texture/StaticTexture2D.h
+        src/pipeline/gl/GLRenderer.cpp
         src/3d/texture/StaticTexture2D.cpp
-        src/3d/components/DirectionalLightComponent.cpp
-        include/3d/components/DirectionalLightComponent.h)
+        src/3d/components/DirectionalLightComponent.cpp)
 
 target_include_directories(glengine PUBLIC include external/include)
 

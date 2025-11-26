@@ -18,6 +18,7 @@
 #include "console/Console.h"
 #include "pipeline/RenderObjects.h"
 #include "GLFW/glfw3.h"
+#include "pipeline/Renderer.h"
 
 namespace glengine {
     struct EnginePerformanceStats { double update, render; };
@@ -194,6 +195,7 @@ namespace glengine {
         ResourceManager* resourceManager;
 
         rendering::RenderObjects* renderObjectManager;
+        Renderer* renderer;
 
         std::vector<std::shared_ptr<Widget>> widgets;
         std::vector<std::shared_ptr<world::Actor>> actors;

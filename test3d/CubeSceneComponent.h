@@ -7,7 +7,7 @@
 
 class CubeSceneComponent : public glengine::world::ActorSceneComponent {
 public:
-    void Render() override;
+    void Render(Renderer*, glengine::MatrixStack&) override;
     void Update(double deltaTime) override {};
 
     float4 Color = float4(1, 0, 0, 1);

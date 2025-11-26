@@ -65,3 +65,22 @@ void glengine::MatrixStack2D::DrawRect(const float2 a, const float2 b) {
 void glengine::MatrixStack2D::PrintText(const float2 position, const char *text) {
     // TODO: immedate mode text display
 }
+
+glengine::MatrixStack::MatrixStack() {
+    stack.push_back(mat4::identity());
+}
+
+void glengine::MatrixStack::Push(const mat4 &matrix) {
+    auto current = stack.back();
+    stack.push_back(current * matrix);
+}
+
+void glengine::MatrixStack::Pop() {
+    if (stack.size() > 1) {
+        stack.pop_back();
+    }
+}
+
+glengine::MatrixStack::operator mat4() {
+    return stack.back();
+}

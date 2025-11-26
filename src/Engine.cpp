@@ -11,6 +11,7 @@
 #include "GLMath.h"
 #include "3d/ActorSceneComponent.h"
 #include "3d/DefaultPawn.h"
+#include "pipeline/gl/GLRenderer.h"
 
 namespace glengine {
 
@@ -49,6 +50,7 @@ namespace glengine {
         inputManager = new input::InputManager(this);
         pawnInputManager = new input::InputManager(this);
         resourceManager = new ResourceManager();
+        renderer = new pipeline::gl::GLRenderer();
 
         glfwSetWindowUserPointer(window, this);
 
@@ -335,18 +337,18 @@ namespace glengine {
         auto viewMatrix = math::viewMatrix(cameraTransformMatrix);
 
         // first load the camera's projection matrix
-        viewCamera->SetProjectionMatrix();
+        auto projectionMatrix = viewCamera->GetProjectionMatrix();
 
-        // next load the view matrix
-        glMatrixMode(GL_MODELVIEW);
-        glLoadIdentity();
-        glLoadMatrixf(static_cast<const float *>(viewMatrix));
+        // set matrices
+        renderer->SetMatrices(viewMatrix, projectionMatrix);
 
         // setup lights
         renderObjectManager->InitLights();
 
         // setup fog
         renderObjectManager->InitFog();
+
+        auto stack = MatrixStack();
 
         // render all scene components
         for (const auto& actor : actors) {
@@ -357,24 +359,20 @@ namespace glengine {
             }
 
             // push actor transform matrix
-            glPushMatrix();
-            auto actorTransform = actor->GetTransformMatrix();
-            glMultMatrixf(static_cast<const float *>(actorTransform));
+            stack.Push(actor->GetTransformMatrix());
 
             // render actor scene components
             for (const auto& component : actor->GetComponents()) {
                 if (auto sceneComponent = std::dynamic_pointer_cast<world::ActorSceneComponent>(component)) {
                     // push component transform matrix
-                    auto componentTransform = sceneComponent->GetTransformMatrix();
-                    glPushMatrix();
-                    glMultMatrixf(static_cast<const float *>(componentTransform));
+                    stack.Push(sceneComponent->GetTransformMatrix());
 
-                    sceneComponent->Render();
+                    sceneComponent->Render(renderer, stack);
 
-                    glPopMatrix();
+                    stack.Pop();
                 }
             }
-            glPopMatrix();
+            stack.Pop();
         }
 
         glFlush();

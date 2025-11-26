@@ -54,4 +54,15 @@ namespace glengine {
     private:
         std::vector<mat3> stack;
     };
+
+	class GLENGINE_EXPORT MatrixStack {
+	public:
+		MatrixStack();
+		void Push(const mat4 &matrix);
+		void Pop();
+
+		operator mat4();
+	private:
+		std::vector<mat4> stack;
+	};
 }

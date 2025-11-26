@@ -12,7 +12,7 @@ namespace glengine::world::components {
         void Update(double) override;
 
         // Sets the GL_PROJECTION matrix
-        void SetProjectionMatrix();
+        mat4 GetProjectionMatrix();
 
         // Field of View in degrees
         float FoV = 90.0f;

@@ -6,7 +6,7 @@
 
 using namespace glengine::world::mesh;
 
-void StaticMeshComponent::Render() {
+void StaticMeshComponent::Render(Renderer *renderer, MatrixStack& stack) {
     if (mesh_ == nullptr) return;
 
     material.Load();
@@ -15,7 +15,8 @@ void StaticMeshComponent::Render() {
         texture_->Bind();
     }
 
-    mesh_->Render();
+    renderer->RenderMesh(mesh_.get(), material, stack);
+
 
     glBindTexture(GL_TEXTURE_2D, 0);
     glDisable(GL_TEXTURE_2D);

@@ -5,14 +5,28 @@
 
 #include <fstream>
 #include <vector>
-#include <memory>
-#include <fstream>
+#include "engine_GLUT.h"
 
 #include "glengine_export.h"
 #include "Resource.h"
 #include "Vectors.h"
 
 namespace glengine::world::mesh {
+    struct GLENGINE_EXPORT Material {
+        float4 Diffuse = float4(1.0f, 1.0f, 1.0f, 1.0f);
+        float4 Specular = float4(0, 0, 0, 1.0f);
+        float4 Emissive = float4(0, 0, 0, 1);
+        float Shininess = 0.0f;
+
+        /// Sets GL material properties for front and back according to current values
+        void Load() const {
+            glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, reinterpret_cast<const float *>(&Diffuse));
+            glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, reinterpret_cast<const float *>(&Specular));
+            glMaterialfv(GL_FRONT_AND_BACK, GL_EMISSION, reinterpret_cast<const float *>(&Emissive));
+            glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, Shininess);
+        }
+    };
+
     struct GLENGINE_EXPORT PackedVertexData {
         float3 position;
         float3 normal;
@@ -23,27 +37,18 @@ namespace glengine::world::mesh {
     public:
         void LoadFromFile(std::ifstream& file) override;
 
-        void Render() const;
+        std::vector<PackedVertexData> vertices_;
+        std::vector<int3> faces_;
+        bool hasTexCoords_ = false;
 
+    private:
         /// Recalculates all normal vectors for the mesh
         void RecalculateNormals();
-    private:
 
         /// Normalizes the mesh so all vertices are within (-1, -1, -1) to (1, 1, 1)
         /// This is to ensure meshes aren't gigantic or tiny for no reason
         void normalize();
 
-        /// <summary>
-        ///  Compiles a command list to accelerate rendering 
-        /// </summary>
-        void generateCommandList();
-
-        std::vector<PackedVertexData> vertices_;
-        std::vector<int3> faces_;
-
         bool hasNormals_ = false;
-        bool hasTexCoords_ = false;
-
-        unsigned int commandList = 0;
     };
 }

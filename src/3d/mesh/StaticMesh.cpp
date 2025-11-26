@@ -92,8 +92,6 @@ void StaticMesh::LoadFromFile(std::ifstream &file) {
     if (!hasNormals_) {
         RecalculateNormals();
     }
-
-    generateCommandList();
 }
 
 float max(float a, float b, float c, float d) {
@@ -122,37 +120,12 @@ void StaticMesh::normalize() {
     }
 }
 
-void glengine::world::mesh::StaticMesh::generateCommandList()
-{
-    if (commandList != 0) {
-        glDeleteLists(commandList, 1);
-    }
-    commandList = glGenLists(1);
-
-    glNewList(commandList, GL_COMPILE);
-    glBegin(GL_TRIANGLES);
-
-    // faces array is one vertex per index, with position index, texcoord index, and normal index in each int3
-    for (auto vertex : faces_) {
-        if (hasTexCoords_) {
-            glTexCoord2fv(vertices_[vertex.y].texCoord);
-        }
-
-        // guarenteed to have normals, since we calculate if they weren't in the file
-        glNormal3fv(vertices_[vertex.z].normal);
-        glVertex3fv(vertices_[vertex.x].position);
-    }
-
-    glEnd();
-    glEndList();
-}
-
 struct AvgNormal {
     float3 accumulator = float3(0, 0, 0);
     float totalLen = 0.0;
 };
 
-void glengine::world::mesh::StaticMesh::RecalculateNormals()
+void StaticMesh::RecalculateNormals()
 {
     // absolutely horrible way to calculate this i think
     // however, any algorithm that works is a good algorithm
@@ -204,8 +177,4 @@ void glengine::world::mesh::StaticMesh::RecalculateNormals()
 
     // cleanup
     delete[] newNormals;
-}
-
-void StaticMesh::Render() const {
-    glCallList(commandList);
 }

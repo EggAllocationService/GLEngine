@@ -7,6 +7,6 @@
 
 #include "Colors.h"
 
-void CubeSceneComponent::Render() {
+void CubeSceneComponent::Render(Renderer*, glengine::MatrixStack&) {
     //glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, reinterpret_cast<float*>(&Color));
 }

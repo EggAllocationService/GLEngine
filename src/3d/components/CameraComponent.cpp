@@ -7,23 +7,16 @@
 #include "Engine.h"
 #include "3d/Actor.h"
 #include "GLMath.h"
-using namespace glengine;
+using namespace glengine::world::components;
 
-void glengine::world::components::CameraComponent::Update(double)
+void CameraComponent::Update(double)
 {
     // no updates
 }
 
-void world::components::CameraComponent::SetProjectionMatrix() {
+mat4 CameraComponent::GetProjectionMatrix() {
     auto screenSize = float2(GetActor()->GetEngine()->GetWindowSize());
-    glMatrixMode(GL_PROJECTION);
-    glLoadIdentity();
-
     float fovRad = FoV * (PI / 180.0);
 
-    const auto m = math::perspectiveMatrix(fovRad, screenSize.x / screenSize.y, Near, Far);
-
-    glLoadMatrixf(static_cast<const float*>(m));
-
-    glMatrixMode(GL_MODELVIEW);
+    return math::perspectiveMatrix(fovRad, screenSize.x / screenSize.y, Near, Far);
 }
