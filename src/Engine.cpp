@@ -5,6 +5,7 @@
 #include "engine_GLUT.h"
 #include "Colors.h"
 #include <map>
+#include "unistd.h"
 #include <algorithm>
 
 #include "GLMath.h"
@@ -21,25 +22,10 @@ namespace glengine {
     /// These event handlers are needed because we can't pass state-owning functions (i.e. lambdas) to C as
     /// raw function pointers. These will find the Engine instance that owns the active window ID and
     /// call the appropriate instance function
-    static void renderExec() {
-        int currentWindow = glutGetWindow();
-        if (Instances.contains(currentWindow)) {
-            Instances[currentWindow]->Render();
-        }
-    }
 
-    static void updateExec() {
-        int currentWindow = glutGetWindow();
-        if (Instances.contains(currentWindow)) {
-            Instances[currentWindow]->Update();
-        }
-    }
-
-    static void reshapeExec(int x, int y) {
-        int currentWindow = glutGetWindow();
-        if (Instances.contains(currentWindow)) {
-            Instances[currentWindow]->SetWindowSize(int2(x, y));
-        }
+    static void reshapeExec(GLFWwindow* window, int x, int y) {
+        Engine* engine = (Engine*)glfwGetWindowUserPointer(window);
+        engine->SetWindowSize(int2(x, y));
     }
 
     static void clickExec(int button, int state, int x, int y) {
@@ -53,14 +39,9 @@ namespace glengine {
         }
     }
 
-    static void mouseMoveExec(int x, int y) {
-        int currentWindow = glutGetWindow();
-        if (Instances.contains(currentWindow)) {
-            // invert y coordinate
-            float2 pos = float2(x, Instances[currentWindow]->GetWindowSize().y - y);
-
-            Instances[currentWindow]->GetMouseManager()->HandleMotion(pos);
-        }
+    static void mouseMoveExec(GLFWwindow* window, double x, double y) {
+        auto engine = (Engine*)glfwGetWindowUserPointer(window);
+        engine->GetMouseManager()->HandleMotion(float2(x, y));
     }
 
     static void specialExec(int keycode, int, int) {
@@ -77,17 +58,12 @@ namespace glengine {
         }
     }
 
-    static void keyExec(unsigned char keycode, int, int) {
-        int currentWindow = glutGetWindow();
-        if (Instances.contains(currentWindow)) {
-            Instances[currentWindow]->KeyPressed(keycode);
-        }
-    }
-
-    static void keyUpExec(unsigned char keycode, int, int) {
-        int currentWindow = glutGetWindow();
-        if (Instances.contains(currentWindow)) {
-            Instances[currentWindow]->KeyReleased(keycode);
+    static void keyExec(GLFWwindow* window, int key, int action, int scan, int flags) {
+        auto engine = (Engine*)glfwGetWindowUserPointer(window);
+        if (action == GLFW_PRESS) {
+            engine->KeyPressed(key);
+        } else {
+            engine->KeyReleased(key);
         }
     }
 
@@ -100,22 +76,21 @@ namespace glengine {
         resourceManager = new ResourceManager();
         
         windowSize = size;
-        glutInitWindowSize(windowSize.x, windowSize.y);
-        glutInitDisplayMode(GLUT_RGBA | GLUT_DOUBLE | GLUT_DEPTH | GLUT_STENCIL);
+        glfwWindowHint(GLFW_VERSION_MAJOR, 1);
+        glfwWindowHint(GLFW_VERSION_MINOR, 4);
+        window = glfwCreateWindow(windowSize.x, windowSize.y, windowName.c_str(), nullptr, nullptr);
 
-        windowHandle = glutCreateWindow(windowName.c_str());
-        Instances[windowHandle] = this;
+        glfwSetWindowUserPointer(window, this);
 
-        glutIdleFunc(updateExec);
-        glutDisplayFunc(renderExec);
-        glutReshapeFunc(reshapeExec);
-        glutMouseFunc(clickExec);
-        glutPassiveMotionFunc(mouseMoveExec);
-        glutMotionFunc(mouseMoveExec);
-        glutKeyboardFunc(keyExec);
-        glutSpecialFunc(specialExec);
-        glutKeyboardUpFunc(keyUpExec);
-        glutSpecialUpFunc(specialUpExec);
+        //glutIdleFunc(updateExec);
+        //glutDisplayFunc(renderExec);
+        glfwSetFramebufferSizeCallback(window, reshapeExec);
+        //glutMouseFunc(clickExec);
+
+        glfwSetCursorPosCallback(window, mouseMoveExec);
+        //glutPassiveMotionFunc(mouseMoveExec);
+        //glutMotionFunc(mouseMoveExec);
+        glfwSetKeyCallback(window, keyExec);
 
         setLastUpdate();
 
@@ -125,24 +100,29 @@ namespace glengine {
 
         // this has to be initialized at the end as its constructor requires an opengl context
         renderObjectManager = new rendering::RenderObjects();
+
+        glfwMakeContextCurrent(window);
     }
 
     Engine::~Engine() {
-        // destroy window
-        glutDestroyWindow(windowHandle);
-
-        // remove from global instances table
-        auto iter = Instances.find(windowHandle);
-        if (iter != Instances.end()) {
-            Instances.erase(iter);
-        }
-
         // destroy owned objects
         delete mouseManager;
         delete inputManager;
         delete pawnInputManager;
         delete resourceManager;
         delete renderObjectManager;
+    }
+
+    void Engine::MainLoop() {
+        glfwSwapInterval(1);
+        SetWindowSize(windowSize);
+        while (!glfwWindowShouldClose(window)) {
+            glfwPollEvents();
+
+            Update();
+
+            Render();
+        }
     }
 
     void Engine::Update() {
@@ -154,7 +134,6 @@ namespace glengine {
 
         // if game logic requested a quit on the previous frame, then do that now
         if (flags.quitRequested) {
-            glutDestroyWindow(windowHandle);
             exit(0);
         }
 
@@ -171,8 +150,6 @@ namespace glengine {
         updateActors(delta);
 
         setLastUpdate();
-
-        glutPostRedisplay();
 
         auto end = std::chrono::steady_clock::now();
         auto timeMs = std::chrono::duration_cast<std::chrono::duration<double, std::milli>>(end - start);
@@ -246,7 +223,9 @@ namespace glengine {
     void Engine::SetWindowSize(int2 size) {
         // update stored size and viewport
         windowSize = size;
-        glViewport(0, 0, windowSize.x, windowSize.y);
+        int x, y;
+        glfwGetFramebufferSize(window, &x, &y);
+        glViewport(0, 0, x, y);
     }
 
     void Engine::Render() {
@@ -273,7 +252,7 @@ namespace glengine {
         auto timeMs = std::chrono::duration_cast<std::chrono::duration<double, std::milli>>(end - start);
         lastRenderTime = timeMs.count();
 
-        glutSwapBuffers();
+        glfwSwapBuffers(window);
     }
 
     double Engine::calculateDeltaTime() const {

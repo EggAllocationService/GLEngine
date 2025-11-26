@@ -17,6 +17,7 @@
 #include "ResourceManager.h"
 #include "console/Console.h"
 #include "pipeline/RenderObjects.h"
+#include "GLFW/glfw3.h"
 
 namespace glengine {
     struct EnginePerformanceStats { double update, render; };
@@ -26,6 +27,8 @@ namespace glengine {
         Engine(const std::string &windowName, int2 windowSize);
 
         ~Engine();
+
+        void MainLoop();
 
         /// Renders all renderable objects to the screen
         void Render();
@@ -157,7 +160,7 @@ namespace glengine {
 
     private:
         int2 windowSize;
-        int windowHandle;
+        GLFWwindow* window;
 
         // used for tracking deltaTime
         std::chrono::steady_clock::time_point lastUpdate;

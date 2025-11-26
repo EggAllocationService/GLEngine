@@ -21,13 +21,18 @@ float frand(float min, float max) {
     return min + (x * (max - min));
 }
 
+static void error_callback(int error, const char* description)
+{
+    fprintf(stderr, "Error: %s\n", description);
+}
+
 int main(int argc, char** argv) {
 #ifdef _WIN32
     // Hide the console window on Windows
     FreeConsole();
 #endif
-
-    glutInit(&argc, argv);
+    glfwSetErrorCallback(error_callback);
+    glfwInit();
 
     auto engine = new Engine("3D Test", int2(1280, 720));
 
@@ -60,5 +65,5 @@ int main(int argc, char** argv) {
         }
     });
     
-    glutMainLoop();
+    engine->MainLoop();
 }
