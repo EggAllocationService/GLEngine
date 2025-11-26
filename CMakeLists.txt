@@ -2,7 +2,10 @@ cmake_minimum_required(VERSION 3.3...4.0)
 project(GLEngine)
 
 set(CMAKE_CXX_STANDARD 20)
-set(CMAKE_CXX_EXTENSIONS true)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS ON)
+
+add_subdirectory(external/glfw)
 
 add_library(glengine SHARED
         "src/Engine.cpp"
@@ -84,6 +87,8 @@ elseif(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
     target_link_libraries(glengine "OpenGL")
     target_link_libraries(glengine "GLU")
 endif()
+
+target_link_libraries(glengine glfw)
 
 function(engine_copy_freeglut_if_needed TARGETNAME)
     if (${CMAKE_SYSTEM_NAME} MATCHES "Windows")
