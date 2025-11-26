@@ -52,4 +52,10 @@ namespace glengine::math {
     /// Creates a perspective projection matrix for a left-handed
     /// coordinate system (+z is into screen, +x is right, +y is up)
     mat4 GLENGINE_EXPORT perspectiveMatrix(float fov, float aspect, float near, float far);
+
+    /// Random floating-point number in range
+    float GLENGINE_EXPORT frand(float min, float max);
+
+    /// Random floating-point number in [0, 1]
+    float GLENGINE_EXPORT frand();
 }

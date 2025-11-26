@@ -154,3 +154,12 @@ mat4 glengine::math::perspectiveMatrix(float fov, float aspect, float near, floa
         }
     };
 }
+
+float glengine::math::frand(float min, float max) {
+    float factor = rand() / (float) RAND_MAX;
+    return min + factor * (max - min);
+}
+
+float glengine::math::frand() {
+    return rand() / (float) RAND_MAX;
+}
