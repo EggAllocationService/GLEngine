@@ -35,7 +35,7 @@ void StaticMesh::LoadFromFile(std::ifstream &file) {
                 vertices_.resize((vtPos + 1) * 2);
             }
 
-            vertices_[vtPos++].texCoord = float2(x, y);
+            vertices_[vtPos++].texCoord = float2(x, -y);
             hasTexCoords_ = true;
         } else if (line.starts_with("vn ")) {
             // vertex normal
