@@ -4,6 +4,7 @@
 #include "3d/texture/StaticTexture2D.h"
 #include <util/stb_image.h>
 #include "engine_GLUT.h"
+#include <memory>
 
 using namespace glengine::world::texture;
 
