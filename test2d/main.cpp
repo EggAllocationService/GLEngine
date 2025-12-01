@@ -16,7 +16,7 @@ static int highZ = 10;
 using namespace glengine;
 
 int main(int argc, char **argv) {
-    glutInit(&argc, argv);
+    glfwInit();
 
     auto inst = new Engine("Hello World!", int2(1200, 600));
 
@@ -83,6 +83,6 @@ int main(int argc, char **argv) {
         }
     });
 
-    glutMainLoop();
+    inst->MainLoop();
     delete inst;
 }
