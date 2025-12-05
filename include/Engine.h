@@ -8,14 +8,12 @@
 #include <ranges>
 #include <chrono>
 #include "Vectors.h"
-#include "Widget.h"
 #include "MouseManager.h"
 #include "3d/Actor.h"
 #include "3d/Pawn.h"
 #include "InputManager.h"
 #include "glengine_export.h"
 #include "ResourceManager.h"
-#include "console/Console.h"
 #include "pipeline/RenderObjects.h"
 #include "GLFW/glfw3.h"
 #include "pipeline/Renderer.h"
@@ -47,27 +45,8 @@ namespace glengine {
         /// Call when a key has been released
         void KeyReleased(int keyCode);
 
-        /// call to focus this widget
-        /// only works when mouse mode is FREE
-        void FocusWidget(std::shared_ptr<Widget> widget);
-
         /// Sets the current mouse mode to `mode`
         void SetMouseMode(input::MouseMode mode);
-
-        void ShowConsole() {
-            FocusWidget(console);
-        }
-
-        /// Creates a new widget of type T and adds it to the viewport
-        /// Returns a shared reference to the created widget
-        template <typename T>
-        std::shared_ptr<T> AddOnscreenWidget() {
-            static_assert(std::is_base_of_v<Widget, T>, "T must be derived from Widget");
-
-            std::shared_ptr<T> widget = Widget::New<T>(this);
-            widgets.push_back(widget);
-            return widget;
-        }
 
         template <typename T>
         std::shared_ptr<T> SpawnActor() {
@@ -82,15 +61,6 @@ namespace glengine {
         }
 
         void Possess(const std::shared_ptr<world::Pawn>& target);
-
-        /// Helper function to find all widgets of a given type
-        template <typename T>
-        auto GetWidgetsOfType() {
-            static_assert(std::is_base_of_v<Widget, T>, "T must be derive from Widget");
-
-            return std::ranges::views::transform(widgets, [](std::shared_ptr<Widget> widget) {return dynamic_pointer_cast<T>(widget); })
-                | std::ranges::views::filter([](std::shared_ptr<T> transformed) {return transformed != nullptr; });
-        }
 
         /// Helper function to find all actors of a given type
         template <typename T>
@@ -113,11 +83,6 @@ namespace glengine {
 
         /// Call to update internal states whenever the window size changes
         void SetWindowSize(int2 size);
-
-        /// Get a reference to the list of active widgets
-        std::vector<std::shared_ptr<Widget>>& GetWidgets() {
-            return widgets;
-        }
 
         [[nodiscard]] input::MouseManager* GetMouseManager() const {
             return mouseManager;
@@ -147,10 +112,6 @@ namespace glengine {
             return possessedPawn.lock().get();
         }
 
-        [[nodiscard]] std::shared_ptr<console::Console> GetConsole() const {
-            return console;
-        }
-
         /// <summary>
         /// Returns the time (in milliseconds) the previous Update and Render functions took to run
         /// </summary>
@@ -176,15 +137,9 @@ namespace glengine {
 
         void setLastUpdate();
 
-        void renderWidgets();
-
-        void updateWidgets(double deltaTime);
-
         void updateActors(double deltaTime);
 
         void renderWorld() const;
-
-        void addDefaultCommands();
 
         input::MouseManager* mouseManager;
 
@@ -197,12 +152,9 @@ namespace glengine {
         rendering::RenderObjects* renderObjectManager;
         Renderer* renderer;
 
-        std::vector<std::shared_ptr<Widget>> widgets;
         std::vector<std::shared_ptr<world::Actor>> actors;
 
         std::weak_ptr<world::Pawn> possessedPawn;
-        std::weak_ptr<Widget> focusedWidget;
-        std::shared_ptr<console::Console> console;
 
         double lastUpdateTime = 0.0;
         double lastRenderTime = 0.0;

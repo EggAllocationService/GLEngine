@@ -6,10 +6,8 @@
 
 #include "Engine.h"
 #include "SpinnyCube.h"
-#include "widgets/PerfCounter.h"
 #include "PilotableCube.h"
 #include "3d/mesh/StaticMesh.h"
-#include "widgets/Button.h"
 
 #define KEY_ESCAPE 27
 
@@ -41,8 +39,6 @@ int main(int argc, char** argv) {
 
     cube->GetTransform()->SetPosition(float3(0, 0, 4));
 
-    auto counter = engine->AddOnscreenWidget<widgets::PerfCounter>();
-    counter->Anchor = TOP_LEFT;
 
     engine->GetInputManager()->AddAction(KEY_ESCAPE, [=]() {
             engine->GetMouseManager()->SetMouseMode(glengine::input::MouseMode::FREE);
@@ -51,17 +47,6 @@ int main(int argc, char** argv) {
     engine->GetInputManager()->AddAction('v', [=]() {
             engine->GetMouseManager()->SetMouseMode(glengine::input::MouseMode::CAPTIVE);
         });
-
-    engine->GetConsole()->AddConsoleCommand("add", [=](std::string_view) {
-        for (int i = 0; i < 5; i++) {
-            auto actor = engine->SpawnActor<SpinnyCube>();
-            actor->GetTransform()->SetPosition(float3(
-                frand(-10, 10),
-                frand(-10, 10),
-                frand(-10, 10)
-            ));
-        }
-    });
     
     engine->MainLoop();
 }

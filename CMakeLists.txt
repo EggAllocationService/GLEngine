@@ -9,12 +9,9 @@ add_subdirectory(external/glfw)
 
 add_library(glengine SHARED
         "src/Engine.cpp"
-        "src/Widget.cpp"
-        "src/Colors.cpp" 
+        "src/Colors.cpp"
         "src/MatrixStack.cpp"
         "src/GLMath.cpp"
-        "src/widgets/Button.cpp" 
-        "src/widgets/PerfCounter.cpp"
         "src/input/MouseManager.cpp"
         "src/3d/Transform.cpp"
         "src/3d/ActorPrimitiveComponent.cpp"
@@ -24,7 +21,6 @@ add_library(glengine SHARED
         "src/input/InputManager.cpp"
         "src/3d/mesh/StaticMesh.cpp"
         "src/3d/mesh/StaticMeshComponent.cpp"
-        "src/console/Console.cpp"
         "src/3d/Actor.cpp"
         "src/pipeline/RenderObjects.cpp"
         "src/3d/components/PointLightComponent.cpp"
@@ -105,12 +101,6 @@ function(engine_copy_freeglut_if_needed TARGETNAME)
 endfunction()
 
 if (${PROJECT_IS_TOP_LEVEL})
-    add_executable(test2d test2d/main.cpp "test2d/RgbTriangle.cpp")
-    target_link_libraries(test2d PRIVATE glengine)
-
-    if (MSVC AND ${CMAKE_BUILD_TYPE} STREQUAL "Debug")
-        set_target_properties(test2d PROPERTIES LINK_FLAGS "/PROFILE")
-    endif()
 
     add_executable(test3d test3d/main.cpp
             test3d/SpinnyCube.cpp

@@ -66,10 +66,6 @@ namespace glengine {
 
         setLastUpdate();
 
-        console = AddOnscreenWidget<console::Console>();
-
-        addDefaultCommands();
-
         // this has to be initialized at the end as its constructor requires an opengl context
         renderObjectManager = new rendering::RenderObjects();
 
@@ -111,13 +107,10 @@ namespace glengine {
 
         double delta = calculateDeltaTime();
 
-        mouseManager->Update();
         inputManager->Update(delta);
         pawnInputManager->Update(delta);
 
         renderObjectManager->Reset();
-
-        updateWidgets(delta);
 
         updateActors(delta);
 
@@ -131,11 +124,6 @@ namespace glengine {
     }
 
     void Engine::KeyPressed(int keyCode) {
-        // first priority: send input to the focused widget if there is one
-        if (!focusedWidget.expired()) {
-            focusedWidget.lock()->KeyPressed(keyCode);
-            return; // focused widgets override all other handlers
-        }
 
         // second priority: send input to possessed pawn if mouse is captured or we're allowing non-captured input
         if (mouseManager->GetMouseMode() == input::CAPTIVE || flags.allowNonFocusedPawnInput) {
@@ -154,26 +142,7 @@ namespace glengine {
         inputManager->KeyReleased(keyCode);
     }
 
-    void Engine::FocusWidget(std::shared_ptr<Widget> widget) {
-        if (mouseManager->GetMouseMode() == input::CAPTIVE) {
-            return; // can't focus widgets while the mouse is captured
-        }
-
-        if (!focusedWidget.expired()) {
-            focusedWidget.lock()->FocusStateChanged(false);
-        }
-        focusedWidget = widget;
-
-        if (widget != nullptr) {
-            widget->FocusStateChanged(true);
-        }
-    }
-
     void Engine::SetMouseMode(const input::MouseMode mode) {
-        if (mode == input::CAPTIVE && !focusedWidget.expired()) {
-            focusedWidget.lock()->FocusStateChanged(false);
-            focusedWidget = std::weak_ptr<Widget>();
-        }
 
         mouseManager->SetMouseMode(mode);
     }
@@ -216,9 +185,6 @@ namespace glengine {
         // teardown render objects so we don't screw up widgets
         renderObjectManager->DeInit();
 
-        // render UI
-        renderWidgets();
-
         // update last render time variable
         auto end = std::chrono::steady_clock::now();
         auto timeMs = std::chrono::duration_cast<std::chrono::duration<double, std::milli>>(end - start);
@@ -243,59 +209,6 @@ namespace glengine {
 
     void Engine::setLastUpdate() {
         lastUpdate = std::chrono::steady_clock::now();
-    }
-
-    void Engine::renderWidgets() {
-        // reset opengl matrices
-        glMatrixMode(GL_PROJECTION);
-        glLoadIdentity();
-
-        glMatrixMode(GL_MODELVIEW);
-        glLoadIdentity();
-        glDisable(GL_DEPTH_TEST);
-        glDisable(GL_CULL_FACE);
-
-        // a matrix stack lets us render nested widgets very conveniently
-        // also provides valuable tools for widgets to render parent-child objects
-        MatrixStack2D stack = MatrixStack2D();
-
-        // generate screen pixel coord -> gl coord matrix
-        // this matrix scales pixel coordinates by 2.0 / (window size), giving us coords in the range
-        // 0 to 2. it then translates by -1 on both axis to fit into the OpenGL coordinate space of -1 to 1
-        mat3 screenTransform = mat3::identity();
-        screenTransform[0]->set(0, 2.0f / windowSize.x);
-        screenTransform[1]->set(1, 2.0f / windowSize.y);
-        screenTransform[2]->set(0, -1.0f);
-        screenTransform[2]->set(1, -1.0f);
-
-        stack.Push(screenTransform);
-
-        // render each widget one by one
-        // the `widgets` array was sorted back-to-front by z-index at the end of updateWidgets(), so we don't
-        // need to worry about that here.
-        for (const auto& widget: widgets) {
-            stack.Push(widget->GetTransformMatrix());
-            widget->Draw(stack);
-            stack.Pop();
-        }
-    }
-
-    void Engine::updateWidgets(double deltaTime) {
-        // call UpdateAll on each widget to automatically update it and its children recursively
-        for (const auto& widget: widgets) {
-            widget->UpdateAll(deltaTime);
-        }
-
-        // cleanup widgets that need to be destroyed
-        std::erase_if(widgets,
-                      [](const std::shared_ptr<Widget> &widget) { return widget->IsDestroyed(); }
-        );
-
-        // sort widgets back-to-front, in case an Update implementation changed a Z-Index
-        std::ranges::sort(widgets,
-                          [](const std::shared_ptr<Widget> &a, const std::shared_ptr<Widget> &b) {
-                              return a->ZIndex < b->ZIndex;
-                          });
     }
 
     void Engine::updateActors(double deltaTime) {
@@ -376,24 +289,5 @@ namespace glengine {
         }
 
         glFlush();
-    }
-
-    void Engine::addDefaultCommands() {
-        console->AddConsoleCommand("quit", [this](std::string_view) {
-           this->Quit();
-        });
-
-        console->AddConsoleCommand("detach", [this](std::string_view) {
-            const auto newPawn = this->SpawnActor<world::DefaultPawn>();
-            const auto currentPawn = this->GetPossessedPawn();
-            newPawn->GetTransform()->SetPosition(currentPawn->GetTransform()->GetPosition());
-
-            this->Possess(newPawn);
-        });
-
-        // Setup console keybind
-        this->GetInputManager()->AddAction('`', [this] {
-            this->ShowConsole();
-        });
     }
 } // glengine

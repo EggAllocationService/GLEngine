@@ -40,16 +40,8 @@ namespace glengine::input {
         /// GLUT click callback
         void Click(int button, int action, float2 pos);
 
-        /// Called every frame to send hover and drag events
-        void Update();
-
         /// Sets the active mouse mode
         void SetMouseMode(MouseMode mode);
-
-        /// Gets the currently hovered widget, which may be null
-        [[nodiscard]] std::shared_ptr<Widget> GetHoveredWidget() const {
-            return hoveredWidget.lock();
-        }
 
         /// Gets the last reported mouse position, in window x/y coordinates
         [[nodiscard]] float2 GetMousePosition() const {
@@ -62,7 +54,6 @@ namespace glengine::input {
 
     private:
         Engine* engine;
-        std::weak_ptr<Widget> hoveredWidget;
 
         float2 mousePosition;
 
@@ -75,7 +66,5 @@ namespace glengine::input {
 
         // teleport the cursor to the center of the window
         void centerCursor() const;
-
-        [[nodiscard]] std::shared_ptr<Widget> hitTestWidgets(float2 position) const;
     };
 }
