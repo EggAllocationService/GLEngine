@@ -29,6 +29,10 @@ add_library(glengine SHARED
         src/3d/texture/StaticTexture2D.cpp
         src/3d/components/DirectionalLightComponent.cpp)
 
+add_library(webgpu SHARED IMPORTED)
+set_target_properties(webgpu PROPERTIES IMPORTED_LOCATION ${CMAKE_CURRENT_SOURCE_DIR}/external/wgpu-mac/lib/libwgpu_native.dylib)
+target_include_directories(webgpu INTERFACE external/wgpu-mac/include)
+
 target_include_directories(glengine PUBLIC include external/include)
 
 include(GenerateExportHeader)
@@ -83,7 +87,7 @@ elseif(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
     target_link_libraries(glengine "GLU")
 endif()
 
-target_link_libraries(glengine glfw)
+target_link_libraries(glengine glfw webgpu)
 
 function(engine_copy_freeglut_if_needed TARGETNAME)
     if (${CMAKE_SYSTEM_NAME} MATCHES "Windows")
