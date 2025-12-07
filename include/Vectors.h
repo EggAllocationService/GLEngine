@@ -36,48 +36,55 @@ struct vec_swizzle {
     /********
     * Vector assignment operations
     *********/
-    vector operator=(vector rhs) {
-        int i = 0;
-        ((data[indices] = rhs[i++]), ...);
-        return vector(data[indices]...);
+#define SWIZVASSIGNOP(op) vector operator op (vector rhs) { \
+        int i = 0; \
+        ((data[indices] op rhs[i++]), ...); \
+        return vector(data[indices]...); \
+    }
+    SWIZVASSIGNOP(=)
+    SWIZVASSIGNOP(+=)
+    SWIZVASSIGNOP(-=)
+    SWIZVASSIGNOP(/=)
+    SWIZVASSIGNOP(*=)
+
+    /********
+    * Vector arithmatic operations
+    *********/
+#define SWIZVARITHMATICOP(op) vector operator op (vector rhs) { \
+        vector result; \
+        int i = 0; \
+        ((result.data[indices] = data[indices] op rhs[i++]), ...); \
+        return result; \
     }
 
-    vector operator +=(vector rhs) {
-        int i = 0;
-        ((data[indices] += rhs[i++]), ...);
-        return vector(data[indices]...);
-    }
-
-    vector operator -=(vector rhs) {
-        int i = 0;
-        ((data[indices] -= rhs[i++]), ...);
-        return vector(data[indices]...);
-    }
-
-    vector operator *=(vector rhs) {
-        int i = 0;
-        ((data[indices] *= rhs[i++]), ...);
-        return vector(data[indices]...);
-    }
+    SWIZVARITHMATICOP(+)
+    SWIZVARITHMATICOP(-)
+    SWIZVARITHMATICOP(/)
+    SWIZVARITHMATICOP(*)
 
     /********
     * Scalar assignment operations
     *********/
-    vector operator=(primitive rhs) {
-        return vector((data[indices] = rhs)...);
+#define SWIZSCALAROP(op) vector operator op (primitive rhs) { \
+        return vector((data[indices] op rhs)...); \
     }
 
-    vector operator+=(primitive rhs) {
-        return vector((data[indices] += rhs)...);
+    vec_swizzle& operator=(primitive rhs) {
+        vector((data[indices] = rhs)...);
+        return *this;
     }
+    SWIZSCALAROP(+=)
+    SWIZSCALAROP(-=)
+    SWIZSCALAROP(/=)
+    SWIZSCALAROP(*=)
 
-    vector operator-=(primitive rhs) {
-        return vector((data[indices] -= rhs)...);
-    }
-
-    vector operator*=(primitive rhs) {
-        return vector((data[indices] *= rhs)...);
-    }
+    /********
+    * Scalar arithmatic operations
+    *********/
+    SWIZSCALAROP(+)
+    SWIZSCALAROP(-)
+    SWIZSCALAROP(*)
+    SWIZSCALAROP(/)
 
     /// <summary>
     /// Converts this swizzled view to a vector
