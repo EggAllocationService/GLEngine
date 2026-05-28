@@ -72,6 +72,8 @@ namespace glengine::world {
         template <typename T>
         std::shared_ptr<T> CreateComponent() {
             static_assert(std::is_base_of_v<ActorComponent, T>, "T must derive from ActorComponent");
+            ActorComponent::CURRENT_ACTOR_CONSTRUCTING = this;
+            ActorComponent::CURRENT_ENGINE_CONSTRUCTING = GetEngine();
             auto x = std::make_shared<T>();
             x->SetActor(this);
             components_.push_back(x);

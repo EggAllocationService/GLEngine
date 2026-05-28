@@ -39,7 +39,8 @@ add_library(glengine SHARED
         src/pipeline/wgpu/RenderPipeline.cpp
         include/pipeline/wgpu/RenderPipeline.h
         src/pipeline/wgpu/GPUMesh.cpp
-        include/pipeline/wgpu/GPUMesh.h)
+        include/pipeline/wgpu/GPUMesh.h
+        src/3d/ActorComponent.cpp)
 
 target_include_directories(glengine PUBLIC include external/include)
 

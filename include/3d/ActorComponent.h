@@ -4,13 +4,21 @@
 #pragma once
 #include "glengine_export.h"
 
+namespace glengine {
+    class Engine;
+}
+
 namespace glengine::world {
     class Actor;
+
 
     /// Base class for any component that can be placed onto an actor
     /// Basic components do not have a scene transform and are not rendered onscreen
     class GLENGINE_EXPORT ActorComponent {
     public:
+        static GLENGINE_EXPORT Engine* CURRENT_ENGINE_CONSTRUCTING;
+        static GLENGINE_EXPORT Actor* CURRENT_ACTOR_CONSTRUCTING;
+
         virtual ~ActorComponent() = default;
 
         virtual void Update(double deltaTime) = 0;
@@ -19,9 +27,14 @@ namespace glengine::world {
             actor_ = actor;
         }
 
-        Actor* GetActor() const {
+        [[nodiscard]] Actor* GetActor() const {
+            if (actor_ == nullptr) {
+                return CURRENT_ACTOR_CONSTRUCTING;
+            }
             return actor_;
         }
+
+        [[nodiscard]] Engine* GetEngine() const;
 
     private:
         /// Reference to the owning actor for this component

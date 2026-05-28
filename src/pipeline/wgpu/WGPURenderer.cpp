@@ -78,6 +78,7 @@ glengine::pipeline::wgpu::WGPURenderer::WGPURenderer(GLFWwindow *window) {
                                .userdata1 = &device
                            });
     assert(device);
+    queue = wgpuDeviceGetQueue(device);
 
     delete[] features;
 
@@ -90,6 +91,7 @@ glengine::pipeline::wgpu::WGPURenderer::WGPURenderer(GLFWwindow *window) {
     surfConfig.format = caps.formats[0]; // set preferred format
     surfConfig.presentMode = WGPUPresentMode_Fifo;
     surfConfig.alphaMode = WGPUCompositeAlphaMode_Auto;
+    surfConfig.device = device;
 
     // create universal bind group layout descriptor
     WGPUBindGroupLayoutEntry entry0Desc = {
