@@ -8,7 +8,6 @@ using namespace glengine::rendering;
 RenderObjects::RenderObjects() {
 	// find max lights
 	int lights = 0;
-	glGetIntegerv(GL_MAX_LIGHTS, &lights);
 
 	lights_.reserve(lights);
 }

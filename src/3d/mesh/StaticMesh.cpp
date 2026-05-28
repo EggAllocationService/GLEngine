@@ -93,7 +93,16 @@ void StaticMesh::LoadFromFile(std::ifstream &file, pipeline::wgpu::WGPURenderer*
         RecalculateNormals();
     }
 
-    mesh = renderer->UploadMesh(vertices_);
+    std::vector<pipeline::wgpu::Vertex> flattened(faces_.size() * 3);
+    int i = 0;
+    for (auto vertex : faces_) {
+        flattened[i].position = vertices_[vertex.x].position;
+        flattened[i].normal = vertices_[vertex.z].normal;
+        flattened[i].uv = hasTexCoords_ ? vertices_[vertex.y].uv : float2(0, 0);
+        i++;
+    }
+
+    mesh = renderer->UploadMesh(flattened);
 }
 
 float max(float a, float b, float c, float d) {

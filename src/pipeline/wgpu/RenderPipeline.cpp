@@ -27,7 +27,7 @@ void glengine::pipeline::wgpu::RenderPipeline::DrawMesh(const RenderBundle &bund
         wgpuRenderPassEncoderSetImmediates(pass, 0, _immediateDataSize, immediateData);
     }
 
-    wgpuRenderPassEncoderDraw(pass, mesh.GetVertexCount(), 0, 0, 0);
+    wgpuRenderPassEncoderDraw(pass, mesh.GetVertexCount(), 1, 0, 0);
     wgpuRenderPassEncoderEnd(pass);
 }
 
@@ -82,7 +82,7 @@ WGPURenderPassEncoder glengine::pipeline::wgpu::RenderPipeline::createPass(const
         .resolveTarget = nullptr,
         .loadOp = WGPULoadOp_Load,
         .storeOp = WGPUStoreOp_Store,
-        .clearValue = {}
+        .clearValue = WGPUColor(1, 1, 1, 1)
     };
     auto depthAttachment = WGPURenderPassDepthStencilAttachment {
         .nextInChain = nullptr,

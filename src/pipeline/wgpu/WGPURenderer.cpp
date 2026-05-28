@@ -272,7 +272,7 @@ std::shared_ptr<glengine::pipeline::wgpu::RenderPipeline> glengine::pipeline::wg
         .nextInChain = nullptr,
         .format = WGPUTextureFormat_Depth24Plus,
         .depthWriteEnabled = WGPUOptionalBool_True,
-        .depthCompare = WGPUCompareFunction_GreaterEqual,
+        .depthCompare = WGPUCompareFunction_LessEqual,
         .stencilFront = {},
         .stencilBack = {},
         .stencilReadMask = 0,
@@ -306,7 +306,7 @@ std::shared_ptr<glengine::pipeline::wgpu::RenderPipeline> glengine::pipeline::wg
             .nextInChain = nullptr,
             .topology = WGPUPrimitiveTopology_TriangleList,
             .stripIndexFormat = WGPUIndexFormat_Undefined,
-            .frontFace = WGPUFrontFace_CW,
+            .frontFace = WGPUFrontFace_CCW,
             .cullMode = WGPUCullMode_Back,
             .unclippedDepth = false
         },
@@ -388,6 +388,7 @@ glengine::pipeline::wgpu::RenderBundle glengine::pipeline::wgpu::WGPURenderer::B
         .encoder = encoder,
         .targetTexture = textureView,
         .depthTexture = depthTextureView,
+        .surfaceTexture = texture.texture,
         .valid = true
     };
 }
@@ -399,6 +400,9 @@ void glengine::pipeline::wgpu::WGPURenderer::FinishRendering(RenderBundle bundle
 
     wgpuTextureViewRelease(bundle.targetTexture);
     wgpuSurfacePresent(surface);
+    wgpuTextureRelease(bundle.surfaceTexture);
+
+    wgpuDevicePoll(device, true, nullptr);
 }
 
 void glengine::pipeline::wgpu::WGPURenderer::Resize(int2 size) {

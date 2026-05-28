@@ -18,5 +18,5 @@ mat4 CameraComponent::GetProjectionMatrix() {
     auto screenSize = float2(GetActor()->GetEngine()->GetWindowSize());
     float fovRad = FoV * (PI / 180.0);
 
-    return math::perspectiveMatrix(fovRad, screenSize.x / screenSize.y, Near, Far);
+    return math::perspectiveMatrix(fovRad, screenSize.y / screenSize.x, Near, Far);
 }

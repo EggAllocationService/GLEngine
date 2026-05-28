@@ -29,6 +29,7 @@ namespace glengine::pipeline::wgpu {
         WGPUCommandEncoder encoder;
         WGPUTextureView targetTexture;
         WGPUTextureView depthTexture;
+        WGPUTexture surfaceTexture;
         bool valid;
     };
 

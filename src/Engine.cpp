@@ -44,8 +44,8 @@ namespace glengine {
 
     Engine::Engine(const std::string &windowName, int2 size) {
         windowSize = size;
+        glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
         window = glfwCreateWindow(windowSize.x, windowSize.y, windowName.c_str(), nullptr, nullptr);
-        glfwMakeContextCurrent(window);
         mouseManager = new input::MouseManager(this);
         inputManager = new input::InputManager(this);
         pawnInputManager = new input::InputManager(this);
@@ -68,8 +68,6 @@ namespace glengine {
 
         // this has to be initialized at the end as its constructor requires an opengl context
         renderObjectManager = new rendering::RenderObjects();
-
-        glfwMakeContextCurrent(window);
     }
 
     Engine::~Engine() {
@@ -83,7 +81,6 @@ namespace glengine {
     }
 
     void Engine::MainLoop() {
-        glfwSwapInterval(1);
         SetWindowSize(windowSize);
         while (!glfwWindowShouldClose(window)) {
             glfwPollEvents();
@@ -110,8 +107,6 @@ namespace glengine {
 
         inputManager->Update(delta);
         pawnInputManager->Update(delta);
-
-        renderObjectManager->Reset();
 
         updateActors(delta);
 
@@ -181,15 +176,11 @@ namespace glengine {
         // render 3d world
         renderWorld();
 
-        // teardown render objects so we don't screw up widgets
-        renderObjectManager->DeInit();
 
         // update last render time variable
         auto end = std::chrono::steady_clock::now();
         auto timeMs = std::chrono::duration_cast<std::chrono::duration<double, std::milli>>(end - start);
         lastRenderTime = timeMs.count();
-
-        glfwSwapBuffers(window);
     }
 
     double Engine::calculateDeltaTime() const {
@@ -257,6 +248,10 @@ namespace glengine {
         };
         // set matrices
         auto bundle = renderer->BeginRendering(uniforms);
+        if (!bundle.valid) {
+            printf("Invalid bundle! \n");
+            return;
+        }
 
         auto stack = MatrixStack();
 

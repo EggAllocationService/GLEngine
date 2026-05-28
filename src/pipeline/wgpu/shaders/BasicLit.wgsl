@@ -27,7 +27,7 @@ struct VertexOut {
 @vertex
 fn vs(i: VertexIn) -> VertexOut {
     var result: VertexOut;
-    result.pos = m.m * camera.projectionViewMatrix * vec4f(i.pos, 1.0);
+    result.pos = (camera.projectionViewMatrix * m.m) * vec4f(i.pos, 1.0);
     return result;
 }
 

@@ -128,32 +128,33 @@ mat4 glengine::math::viewMatrix(mat4 cameraTransformMatrix) {
     float C = -dot(look, eye);
 
     return {
-        {
-            right.x, up.x, look.x, 0,
-            right.y, up.y, look.y, 0,
-            right.z, up.z, look.z, 0,
-            A,       B,    C,      1
+            {
+                right.x, up.x, look.x, 0,
+                right.y, up.y, look.y, 0,
+                right.z, up.z, look.z, 0,
+                A,       B,    C,      1
 
-        }
+            }
     };
 }
 
 mat4 glengine::math::perspectiveMatrix(float fov, float aspect, float near, float far) {
-    float A = (1.0 / tanf(fov * 0.5));
-    float B = aspect / tanf(fov * 0.5);
-    float C = (-(far + near)) / (far - near);
+    float A = aspect * (1.0 / tanf(fov * 0.5));
+    float B = 1.0 / tanf(fov * 0.5);
+    float C = far / (far - near);
     float D = 1.0;
-    float E = (2 * far * near) / (far - near);
+    float E = -near * (far / (far - near));
 
     return {
-        {
-            A, 0, 0, 0,
-            0, B, 0, 0,
-            0, 0, C, D,
-            0, 0, E, 0
-        }
+            {
+                A, 0, 0, 0,
+                0, B, 0, 0,
+                0, 0, C, D,
+                0, 0, E, 0
+            }
     };
 }
+
 
 float glengine::math::frand(float min, float max) {
     float factor = rand() / (float) RAND_MAX;
