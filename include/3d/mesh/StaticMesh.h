@@ -10,6 +10,7 @@
 #include "glengine_export.h"
 #include "Resource.h"
 #include "Vectors.h"
+#include "pipeline/wgpu/WGPURenderer.h"
 
 namespace glengine::world::mesh {
     struct GLENGINE_EXPORT Material {
@@ -26,20 +27,16 @@ namespace glengine::world::mesh {
             glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, Shininess);
         }
     };
-
-    struct GLENGINE_EXPORT PackedVertexData {
-        float3 position;
-        float3 normal;
-        float2 texCoord;
-    };
     /// A StaticMesh is a non-animated mesh
     class GLENGINE_EXPORT StaticMesh : public Resource {
     public:
-        void LoadFromFile(std::ifstream& file) override;
+        void LoadFromFile(std::ifstream& file, pipeline::wgpu::WGPURenderer* renderer) override;
 
-        std::vector<PackedVertexData> vertices_;
+        std::vector<pipeline::wgpu::Vertex> vertices_;
         std::vector<int3> faces_;
         bool hasTexCoords_ = false;
+
+        std::shared_ptr<pipeline::wgpu::GPUMesh> mesh;
 
     private:
         /// Recalculates all normal vectors for the mesh

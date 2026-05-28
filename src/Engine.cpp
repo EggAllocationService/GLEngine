@@ -49,8 +49,8 @@ namespace glengine {
         mouseManager = new input::MouseManager(this);
         inputManager = new input::InputManager(this);
         pawnInputManager = new input::InputManager(this);
-        resourceManager = new ResourceManager();
         renderer = new pipeline::wgpu::WGPURenderer(window);
+        resourceManager = new ResourceManager(renderer);
 
         glfwSetWindowUserPointer(window, this);
 

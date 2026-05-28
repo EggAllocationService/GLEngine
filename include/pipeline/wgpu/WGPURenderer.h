@@ -38,6 +38,7 @@ namespace glengine::pipeline::wgpu {
         WGPUShaderModule CompileShader(const char* shaders);
         std::shared_ptr<GPUMesh> UploadMesh(const std::vector<Vertex>& vertices);
 
+        std::shared_ptr<RenderPipeline> GetRenderPipelineByName(const std::string& name);
         std::shared_ptr<RenderPipeline> BuildRenderPipeline(std::string name, WGPUShaderModule shaders, std::span<WGPUBindGroupLayoutDescriptor> bindGroups, int immediateDataBytes);
 
         RenderBundle BeginRendering(RenderUniforms& uniforms);

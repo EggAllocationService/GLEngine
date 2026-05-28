@@ -117,9 +117,7 @@ if (${PROJECT_IS_TOP_LEVEL})
     add_executable(test3d test3d/main.cpp
             test3d/SpinnyCube.cpp
             test3d/SpinnyCube.h
-            test3d/CubeSceneComponent.cpp
-            test3d/CubeSceneComponent.h
-            "test3d/PilotableCube.cpp")
+    )
 
     target_link_libraries(test3d PRIVATE glengine)
 endif()

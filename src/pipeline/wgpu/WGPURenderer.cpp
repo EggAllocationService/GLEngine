@@ -176,8 +176,17 @@ std::shared_ptr<glengine::pipeline::wgpu::GPUMesh> glengine::pipeline::wgpu::WGP
     return std::make_shared<GPUMesh>(buffer, vertices.size());
 }
 
+std::shared_ptr<glengine::pipeline::wgpu::RenderPipeline> glengine::pipeline::wgpu::WGPURenderer::
+GetRenderPipelineByName(const std::string &name) {
+    if (pipelines.contains(name)) {
+        return pipelines[name];
+    }
+
+    return nullptr;
+}
+
 std::shared_ptr<glengine::pipeline::wgpu::RenderPipeline> glengine::pipeline::wgpu::WGPURenderer::BuildRenderPipeline(std::string name,
-    WGPUShaderModule shaders, std::span<WGPUBindGroupLayoutDescriptor> bindGroups, int immediateDataBytes) {
+                                                                                                                      WGPUShaderModule shaders, std::span<WGPUBindGroupLayoutDescriptor> bindGroups, int immediateDataBytes) {
 
     // manually build pipeline layout
     std::vector<WGPUBindGroupLayout> bindGroupLayouts(bindGroups.size() + 1);
@@ -298,7 +307,10 @@ std::shared_ptr<glengine::pipeline::wgpu::RenderPipeline> glengine::pipeline::wg
 
     auto pipeline = wgpuDeviceCreateRenderPipeline(device, &desc);
 
-    return std::make_shared<RenderPipeline>(device, pipeline, std::move(bindGroupLayouts), universalBindGroup, immediateDataBytes);
+    auto built = std::make_shared<RenderPipeline>(device, pipeline, std::move(bindGroupLayouts), universalBindGroup, immediateDataBytes);
+    pipelines.insert_or_assign(name, built);
+
+    return built;
 }
 
 glengine::pipeline::wgpu::RenderBundle glengine::pipeline::wgpu::WGPURenderer::BeginRendering(RenderUniforms& uniforms) {

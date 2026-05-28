@@ -9,7 +9,7 @@
 namespace glengine::world::texture {
     class GLENGINE_EXPORT StaticTexture2D : public Resource {
     public:
-        void LoadFromFile(std::ifstream &) override;
+        void LoadFromFile(std::ifstream &, pipeline::wgpu::WGPURenderer*) override;
         void Bind() const;
         void SetParameter(int param, int value);
     private:

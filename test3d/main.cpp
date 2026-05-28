@@ -6,7 +6,6 @@
 
 #include "Engine.h"
 #include "SpinnyCube.h"
-#include "PilotableCube.h"
 #include "3d/mesh/StaticMesh.h"
 
 #define KEY_ESCAPE 27

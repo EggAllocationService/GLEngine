@@ -4,22 +4,20 @@
 
 #include "3d/mesh/StaticMeshComponent.h"
 
+#include "Engine.h"
+#include "3d/Actor.h"
+
 using namespace glengine::world::mesh;
 
-void StaticMeshComponent::Render(Renderer *renderer, MatrixStack& stack) {
+StaticMeshComponent::StaticMeshComponent() {
+    pipeline_ = GetActor()->GetEngine()->GetRenderer()->GetRenderPipelineByName("BasicLit");
+}
+
+void StaticMeshComponent::Render(const pipeline::wgpu::RenderBundle& bundle, MatrixStack& stack) {
     if (mesh_ == nullptr) return;
 
-    material.Load();
-    if (texture_ != nullptr) {
-        glEnable(GL_TEXTURE_2D);
-        texture_->Bind();
-    }
-
-    renderer->RenderMesh(mesh_.get(), material, stack);
-
-
-    glBindTexture(GL_TEXTURE_2D, 0);
-    glDisable(GL_TEXTURE_2D);
+    auto matrix = static_cast<mat4>(stack);
+    pipeline_->DrawMesh(bundle, *mesh_->mesh, &matrix);
 }
 
 void StaticMeshComponent::SetMesh(std::shared_ptr<StaticMesh> mesh) {

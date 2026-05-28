@@ -26,7 +26,7 @@ void GLRenderer::RenderMesh(const StaticMesh *mesh, Material material, mat4 tran
 
     glBegin(GL_TRIANGLES);
     for (const auto face : mesh->faces_) {
-        glTexCoord2fv(mesh->vertices_[face.y].texCoord);
+        glTexCoord2fv(mesh->vertices_[face.y].uv);
         glNormal3fv(mesh->vertices_[face.y].normal);
         glVertex3fv(mesh->vertices_[face.x].position);
     }

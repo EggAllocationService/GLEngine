@@ -10,7 +10,8 @@
 namespace glengine::world::mesh {
     class GLENGINE_EXPORT StaticMeshComponent : public ActorSceneComponent {
     public:
-        void Render(Renderer *, MatrixStack&) override;
+        StaticMeshComponent();
+        void Render(const pipeline::wgpu::RenderBundle&, MatrixStack&) override;
 
         void SetMesh(std::shared_ptr<StaticMesh>);
         void SetTexture(std::shared_ptr<texture::StaticTexture2D>);
@@ -19,5 +20,6 @@ namespace glengine::world::mesh {
     private:
         std::shared_ptr<StaticMesh> mesh_;
         std::shared_ptr<texture::StaticTexture2D> texture_;
+        std::shared_ptr<pipeline::wgpu::RenderPipeline> pipeline_;
     };
 }

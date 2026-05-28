@@ -5,12 +5,13 @@
 #include <fstream>
 
 #include "glengine_export.h"
+#include "pipeline/wgpu/WGPURenderer.h"
 
 namespace glengine {
     class GLENGINE_EXPORT Resource {
     public:
         virtual ~Resource() = default;
 
-        virtual void LoadFromFile(std::ifstream&) = 0;
+        virtual void LoadFromFile(std::ifstream&, pipeline::wgpu::WGPURenderer* renderer) = 0;
     };
 }

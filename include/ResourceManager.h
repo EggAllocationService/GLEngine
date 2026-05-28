@@ -10,6 +10,10 @@
 namespace glengine {
     class GLENGINE_EXPORT ResourceManager {
     public:
+        ResourceManager(pipeline::wgpu::WGPURenderer* renderer) {
+            this->renderer = renderer;
+        }
+
         /// Gets or loads a resource from the given file name
         template <typename T>
         std::shared_ptr<T> GetResource(std::string_view path) {
@@ -25,7 +29,7 @@ namespace glengine {
                 std::ifstream file;
                 file.open(name.c_str(), std::ios::binary);
 
-                resource->LoadFromFile(file);
+                resource->LoadFromFile(file, renderer);
 
                 return resource;
             }
@@ -33,6 +37,7 @@ namespace glengine {
             return std::dynamic_pointer_cast<T>(found->second);
         }
     private:
+        pipeline::wgpu::WGPURenderer *renderer;
         std::unordered_map<std::string, std::shared_ptr<Resource>> resources;
     };
 }

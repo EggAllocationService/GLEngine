@@ -8,7 +8,7 @@
 #include "engine_GLUT.h"
 using namespace glengine::world::mesh;
 
-void StaticMesh::LoadFromFile(std::ifstream &file) {
+void StaticMesh::LoadFromFile(std::ifstream &file, pipeline::wgpu::WGPURenderer* renderer) {
     vertices_.clear();
     faces_.clear();
 
@@ -35,7 +35,7 @@ void StaticMesh::LoadFromFile(std::ifstream &file) {
                 vertices_.resize((vtPos + 1) * 2);
             }
 
-            vertices_[vtPos++].texCoord = float2(x, -y);
+            vertices_[vtPos++].uv = float2(x, -y);
             hasTexCoords_ = true;
         } else if (line.starts_with("vn ")) {
             // vertex normal
@@ -78,7 +78,7 @@ void StaticMesh::LoadFromFile(std::ifstream &file) {
                 // just say all the texCoords are at vertex 0 (1-indexed :why:)
                 t1 = 1;
                 t2 = 1;
-                t3 = 1;   
+                t3 = 1;
             }
 
             faces_.push_back(int3(p1 - 1, t1 - 1, n1 - 1));
@@ -92,6 +92,8 @@ void StaticMesh::LoadFromFile(std::ifstream &file) {
     if (!hasNormals_) {
         RecalculateNormals();
     }
+
+    mesh = renderer->UploadMesh(vertices_);
 }
 
 float max(float a, float b, float c, float d) {

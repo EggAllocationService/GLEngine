@@ -8,7 +8,7 @@
 
 using namespace glengine::world::texture;
 
-void StaticTexture2D::LoadFromFile(std::ifstream &stream) {
+void StaticTexture2D::LoadFromFile(std::ifstream &stream, pipeline::wgpu::WGPURenderer*) {
     // figure out how big the image file is
     stream.seekg(0, std::ios::end);
     auto size = stream.tellg();
