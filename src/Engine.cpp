@@ -50,7 +50,7 @@ namespace glengine {
         inputManager = new input::InputManager(this);
         pawnInputManager = new input::InputManager(this);
         resourceManager = new ResourceManager();
-        renderer = new pipeline::gl::GLRenderer();
+        renderer = new pipeline::wgpu::WGPURenderer(window);
 
         glfwSetWindowUserPointer(window, this);
 
@@ -79,6 +79,7 @@ namespace glengine {
         delete pawnInputManager;
         delete resourceManager;
         delete renderObjectManager;
+        delete renderer;
     }
 
     void Engine::MainLoop() {
@@ -164,9 +165,7 @@ namespace glengine {
     void Engine::SetWindowSize(int2 size) {
         // update stored size and viewport
         windowSize = size;
-        int x, y;
-        glfwGetFramebufferSize(window, &x, &y);
-        glViewport(0, 0, x, y);
+        renderer->Resize(size);
     }
 
     void Engine::Render() {
@@ -174,7 +173,7 @@ namespace glengine {
         if (!flags.didUpdate) return;
 
         // perform all rendering then swap the double-buffered view
-        clearBuffers();
+        // clearBuffers();
 
         // track Render time
         auto start = std::chrono::steady_clock::now();
@@ -241,8 +240,6 @@ namespace glengine {
             return; // before first update
         }
 
-        glEnable(GL_DEPTH_TEST);
-        glFrontFace(GL_CW);
 
         auto viewTarget = possessedPawn.lock();
         auto viewCamera = viewTarget->GetActiveCamera();
@@ -252,14 +249,14 @@ namespace glengine {
         // first load the camera's projection matrix
         auto projectionMatrix = viewCamera->GetProjectionMatrix();
 
+        pipeline::wgpu::RenderUniforms uniforms = {
+            .projectionViewMatrix = projectionMatrix * viewMatrix,
+            .projectionMatrix = projectionMatrix,
+            .viewMatrix = viewMatrix,
+            .lightCount = 0
+        };
         // set matrices
-        renderer->SetMatrices(viewMatrix, projectionMatrix);
-
-        // setup lights
-        renderObjectManager->InitLights();
-
-        // setup fog
-        renderObjectManager->InitFog();
+        auto bundle = renderer->BeginRendering(uniforms);
 
         auto stack = MatrixStack();
 
@@ -280,7 +277,7 @@ namespace glengine {
                     // push component transform matrix
                     stack.Push(sceneComponent->GetTransformMatrix());
 
-                    sceneComponent->Render(renderer, stack);
+                    sceneComponent->Render(bundle, stack);
 
                     stack.Pop();
                 }
@@ -288,6 +285,6 @@ namespace glengine {
             stack.Pop();
         }
 
-        glFlush();
+       renderer->FinishRendering(bundle);
     }
 } // glengine

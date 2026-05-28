@@ -1,11 +1,17 @@
 cmake_minimum_required(VERSION 3.3...4.0)
 project(GLEngine)
 
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
+include(wgpu-native)
+
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS ON)
 
+provide_wgpu_native("29.0.0.0")
+
 add_subdirectory(external/glfw)
+add_subdirectory(external/glfw3webgpu)
 
 add_library(glengine SHARED
         "src/Engine.cpp"
@@ -27,11 +33,13 @@ add_library(glengine SHARED
         external/stb_image.cpp
         src/pipeline/gl/GLRenderer.cpp
         src/3d/texture/StaticTexture2D.cpp
-        src/3d/components/DirectionalLightComponent.cpp)
-
-add_library(webgpu SHARED IMPORTED)
-set_target_properties(webgpu PROPERTIES IMPORTED_LOCATION ${CMAKE_CURRENT_SOURCE_DIR}/external/wgpu-mac/lib/libwgpu_native.dylib)
-target_include_directories(webgpu INTERFACE external/wgpu-mac/include)
+        src/3d/components/DirectionalLightComponent.cpp
+        src/pipeline/wgpu/WGPURenderer.cpp
+        include/pipeline/wgpu/WGPURenderer.h
+        src/pipeline/wgpu/RenderPipeline.cpp
+        include/pipeline/wgpu/RenderPipeline.h
+        src/pipeline/wgpu/GPUMesh.cpp
+        include/pipeline/wgpu/GPUMesh.h)
 
 target_include_directories(glengine PUBLIC include external/include)
 
@@ -87,7 +95,7 @@ elseif(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
     target_link_libraries(glengine "GLU")
 endif()
 
-target_link_libraries(glengine glfw webgpu)
+target_link_libraries(glengine glfw webgpu glfw3webgpu)
 
 function(engine_copy_freeglut_if_needed TARGETNAME)
     if (${CMAKE_SYSTEM_NAME} MATCHES "Windows")

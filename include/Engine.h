@@ -16,7 +16,7 @@
 #include "ResourceManager.h"
 #include "pipeline/RenderObjects.h"
 #include "GLFW/glfw3.h"
-#include "pipeline/Renderer.h"
+#include "pipeline/wgpu/WGPURenderer.h"
 
 namespace glengine {
     struct EnginePerformanceStats { double update, render; };
@@ -104,6 +104,10 @@ namespace glengine {
             return renderObjectManager;
         }
 
+        [[nodiscard]] pipeline::wgpu::WGPURenderer* GetRenderer() const {
+            return renderer;
+        }
+
         [[nodiscard]] world::Pawn* GetPossessedPawn() const {
             if (possessedPawn.expired()) {
                 return nullptr;
@@ -150,7 +154,7 @@ namespace glengine {
         ResourceManager* resourceManager;
 
         rendering::RenderObjects* renderObjectManager;
-        Renderer* renderer;
+        pipeline::wgpu::WGPURenderer* renderer;
 
         std::vector<std::shared_ptr<world::Actor>> actors;
 

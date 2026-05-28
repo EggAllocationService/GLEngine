@@ -1,0 +1,62 @@
+//
+// Created by Kyle Smith on 2026-05-28.
+//
+
+#pragma once
+#include "Matrix.h"
+#include "RenderPipeline.h"
+#include "webgpu/wgpu.h"
+#include <span>
+
+#include "GLFW/glfw3.h"
+
+
+namespace glengine::pipeline::wgpu {
+    struct RenderUniforms {
+        mat4 projectionViewMatrix;
+        mat4 projectionMatrix;
+        mat4 viewMatrix;
+        int lightCount;
+    };
+
+    struct Vertex {
+        float3 position;
+        float3 normal;
+        float2 uv;
+    };
+
+    struct RenderBundle {
+        WGPUCommandEncoder encoder;
+        WGPUTextureView targetTexture;
+        WGPUTextureView depthTexture;
+        bool valid;
+    };
+
+    class WGPURenderer {
+    public:
+        WGPURenderer(GLFWwindow* window);
+        WGPUShaderModule CompileShader(const char* shaders);
+        std::shared_ptr<GPUMesh> UploadMesh(const std::vector<Vertex>& vertices);
+
+        std::shared_ptr<RenderPipeline> BuildRenderPipeline(std::string name, WGPUShaderModule shaders, std::span<WGPUBindGroupLayoutDescriptor> bindGroups, int immediateDataBytes);
+
+        RenderBundle BeginRendering(RenderUniforms& uniforms);
+        void FinishRendering(RenderBundle bundle);
+
+        void Resize(int2 size);
+    private:
+
+        WGPUSurfaceConfiguration surfConfig;
+        std::unordered_map<std::string, std::shared_ptr<RenderPipeline>> pipelines;
+        WGPUDevice device;
+        WGPUQueue queue;
+        WGPUSurface surface;
+
+        WGPUTexture depthTexture;
+        WGPUTextureView depthTextureView;
+
+        WGPUBindGroupLayout universalBindGroupLayout;
+        WGPUBindGroup universalBindGroup;
+        WGPUBuffer renderUniformsBuffer;
+    };
+}
