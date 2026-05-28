@@ -12,9 +12,9 @@ glengine::pipeline::wgpu::RenderPipeline::RenderPipeline(WGPUDevice device, WGPU
     _pipeline = pipeline;
     _immediateDataSize = dataSize;
     _layouts = std::move(layouts);
-    _dirty = std::vector(layouts.size(), false);
-    _groups = std::vector<WGPUBindGroup>(layouts.size(), nullptr);
-    _entries.resize(layouts.size());
+    _dirty = std::vector(_layouts.size(), false);
+    _groups = std::vector<WGPUBindGroup>(_layouts.size(), nullptr);
+    _entries.resize(_layouts.size());
     _groups[0] = universalGroup;
 }
 

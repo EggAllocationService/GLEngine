@@ -12,7 +12,7 @@
 
 
 namespace glengine::pipeline::wgpu {
-    struct RenderUniforms {
+    struct alignas(16) RenderUniforms {
         mat4 projectionViewMatrix;
         mat4 projectionMatrix;
         mat4 viewMatrix;
@@ -46,6 +46,7 @@ namespace glengine::pipeline::wgpu {
 
         void Resize(int2 size);
     private:
+        void buildBuiltinPipelines();
 
         WGPUSurfaceConfiguration surfConfig;
         std::unordered_map<std::string, std::shared_ptr<RenderPipeline>> pipelines;

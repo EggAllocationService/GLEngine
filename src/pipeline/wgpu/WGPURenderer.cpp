@@ -89,6 +89,7 @@ glengine::pipeline::wgpu::WGPURenderer::WGPURenderer(GLFWwindow *window) {
     wgpuSurfaceGetCapabilities(surface, adapter, &caps);
 
     surfConfig.format = caps.formats[0]; // set preferred format
+    surfConfig.usage = WGPUTextureUsage_RenderAttachment;
     surfConfig.presentMode = WGPUPresentMode_Fifo;
     surfConfig.alphaMode = WGPUCompositeAlphaMode_Auto;
     surfConfig.device = device;
@@ -144,6 +145,8 @@ glengine::pipeline::wgpu::WGPURenderer::WGPURenderer(GLFWwindow *window) {
     int2 size;
     glfwGetWindowSize(window, &size.x, &size.y);
     Resize(size);
+
+    buildBuiltinPipelines();
 }
 
 WGPUShaderModule glengine::pipeline::wgpu::WGPURenderer::CompileShader(const char* shaders) {
@@ -154,7 +157,7 @@ WGPUShaderModule glengine::pipeline::wgpu::WGPURenderer::CompileShader(const cha
         },
         .code = {
             .data = shaders,
-            .length = WGPU_STRLEN
+            .length = strlen(shaders)
         }
     };
     WGPUShaderModuleDescriptor desc = {
@@ -198,8 +201,16 @@ std::shared_ptr<glengine::pipeline::wgpu::RenderPipeline> glengine::pipeline::wg
         bindGroupLayouts[i + 1] = wgpuDeviceCreateBindGroupLayout(device, &bindGroups[i]);
     }
 
+    WGPUPipelineLayoutExtras extras = {
+        .chain = {
+            .next = nullptr,
+            .sType = static_cast<WGPUSType>(WGPUSType_PipelineLayoutExtras),
+        },
+        .immediateDataSize = static_cast<uint32_t>(immediateDataBytes),
+    };
+
     auto layoutDesc = WGPUPipelineLayoutDescriptor {
-        .nextInChain = nullptr,
+        .nextInChain = &extras.chain,
         .label = {
            .data = name.data(),
            .length = name.length(),
@@ -270,6 +281,8 @@ std::shared_ptr<glengine::pipeline::wgpu::RenderPipeline> glengine::pipeline::wg
         .depthBiasSlopeScale = 0,
         .depthBiasClamp = 0
     };
+
+
     auto desc = WGPURenderPipelineDescriptor {
         .nextInChain = nullptr,
         .label = {
@@ -421,4 +434,14 @@ void glengine::pipeline::wgpu::WGPURenderer::Resize(int2 size) {
 
     depthTexture = wgpuDeviceCreateTexture(device, &desc);
     depthTextureView = wgpuTextureCreateView(depthTexture, nullptr);
+}
+
+const char BasicLit[] = {
+#embed "shaders/BasicLit.wgsl"
+    ,0
+};
+
+void glengine::pipeline::wgpu::WGPURenderer::buildBuiltinPipelines() {
+    auto basicLitShaders = CompileShader(BasicLit);
+    BuildRenderPipeline("BasicLit", basicLitShaders, {} , sizeof(mat4));
 }
