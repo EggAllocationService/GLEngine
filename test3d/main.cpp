@@ -34,9 +34,12 @@ int main(int argc, char** argv) {
     auto engine = new Engine("3D Test", int2(1280, 720));
     engine->SetAllowNonFocusedPawnInput(true);
 
-    auto cube = engine->SpawnActor<SpinnyCube>();
+    for (int i = 0; i < 1000; i++) {
+        auto cube = engine->SpawnActor<SpinnyCube>();
 
-    cube->GetTransform()->SetPosition(float3(0, 0, 4));
+        cube->GetTransform()->SetPosition(float3(frand(-10, 10), 0, frand(-4, 4)));
+    }
+
 
 
     engine->GetInputManager()->AddAction(KEY_ESCAPE, [=]() {

@@ -4,9 +4,10 @@
 
 #include "pipeline/wgpu/GPUMesh.h"
 
-glengine::pipeline::wgpu::GPUMesh::GPUMesh(WGPUBuffer buffer, int vertexCount) {
+glengine::pipeline::wgpu::GPUMesh::GPUMesh(WGPUBuffer buffer, int vertexCount, int id) {
     this->buffer = buffer;
     this->vertexCount = vertexCount;
+    this->id = id;
 }
 
 glengine::pipeline::wgpu::GPUMesh::~GPUMesh() {

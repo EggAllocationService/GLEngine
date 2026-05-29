@@ -167,6 +167,8 @@ WGPUShaderModule glengine::pipeline::wgpu::WGPURenderer::CompileShader(const cha
     return wgpuDeviceCreateShaderModule(device, &desc);
 }
 
+static std::atomic<int> meshIdTracker = 0;
+
 std::shared_ptr<glengine::pipeline::wgpu::GPUMesh> glengine::pipeline::wgpu::WGPURenderer::UploadMesh(const std::vector<Vertex>& vertices) {
     auto bufferDesc = WGPUBufferDescriptor {
         .nextInChain = nullptr,
@@ -178,7 +180,7 @@ std::shared_ptr<glengine::pipeline::wgpu::GPUMesh> glengine::pipeline::wgpu::WGP
     auto buffer = wgpuDeviceCreateBuffer(device, &bufferDesc);
     wgpuQueueWriteBuffer(queue, buffer, 0, vertices.data(), vertices.size() * sizeof(Vertex));
 
-    return std::make_shared<GPUMesh>(buffer, vertices.size());
+    return std::make_shared<GPUMesh>(buffer, vertices.size(), meshIdTracker++);
 }
 
 std::shared_ptr<glengine::pipeline::wgpu::RenderPipeline> glengine::pipeline::wgpu::WGPURenderer::

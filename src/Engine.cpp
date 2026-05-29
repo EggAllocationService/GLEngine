@@ -11,6 +11,7 @@
 #include "GLMath.h"
 #include "3d/ActorSceneComponent.h"
 #include "3d/DefaultPawn.h"
+#include "3d/objects/InstancedDrawTracker.h"
 #include "pipeline/gl/GLRenderer.h"
 
 namespace glengine {
@@ -67,7 +68,8 @@ namespace glengine {
         setLastUpdate();
 
         // this has to be initialized at the end as its constructor requires an opengl context
-        renderObjectManager = new rendering::RenderObjects();
+        renderObjectManager = new rendering::RenderObjects(renderer);
+        renderObjectManager->Create<world::objects::InstancedDrawTracker>();
     }
 
     Engine::~Engine() {

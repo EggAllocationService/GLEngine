@@ -10,9 +10,9 @@
 
 namespace glengine::pipeline::wgpu {
     template<typename T>
-    class TypedGPUBUffer {
+    class TypedGPUBuffer {
     public:
-        TypedGPUBUffer(std::string name, WGPUDevice device, WGPUBufferUsage usage, int initialCapacity) {
+        TypedGPUBuffer(std::string name, WGPUDevice device, WGPUBufferUsage usage, int initialCapacity) {
             static_assert(std::is_standard_layout_v<T>, "T must be standard layout");
             static_assert(std::is_trivial_v<T>, "T must be a trivial type");
             this->device = device;
@@ -20,13 +20,13 @@ namespace glengine::pipeline::wgpu {
             this->queue = wgpuDeviceGetQueue(device);
             this->buffer = nullptr;
             this->bufferCapacity = 0;
-            this->usage = usage;
+            this->usage = usage | WGPUBufferUsage_CopyDst | WGPUBufferUsage_CopySrc;
             this->grow(initialCapacity);
             this->storage.resize(initialCapacity);
             this->dirty = false;
         }
 
-        ~TypedGPUBUffer() {
+        ~TypedGPUBuffer() {
             wgpuBufferRelease(buffer);
         }
 
@@ -49,11 +49,12 @@ namespace glengine::pipeline::wgpu {
             dirty = true;
         }
 
-        void Commit() {
+        void Commit(const std::function<void(WGPUBuffer buffer)>& handleResize) {
             if (!dirty) return;
 
             if (bufferCapacity < storage.capacity()) {
                 grow(storage.capacity());
+                handleResize(buffer);
             }
 
             wgpuQueueWriteBuffer(queue, buffer, 0, storage.data(), storage.size() * sizeof(T));

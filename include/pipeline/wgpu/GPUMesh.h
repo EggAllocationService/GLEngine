@@ -15,13 +15,17 @@
 namespace glengine::pipeline::wgpu {
     class GPUMesh {
     public:
-        GPUMesh(WGPUBuffer buffer, int vertexCount);
+        GPUMesh(WGPUBuffer buffer, int vertexCount, int id);
         ~GPUMesh();
         [[nodiscard]] WGPUBuffer GetBuffer() const;
         [[nodiscard]] int GetVertexCount() const;
 
+        [[nodiscard]] int GetId() const {
+            return id;
+        }
     private:
         WGPUBuffer buffer;
         int vertexCount;
+        int id;
     };
 }

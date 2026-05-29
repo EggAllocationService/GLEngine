@@ -31,11 +31,12 @@ namespace glengine::rendering {
 	/// </summary>
 	class GLENGINE_EXPORT RenderObjects {
 	public:
-		RenderObjects();
+		RenderObjects(pipeline::wgpu::WGPURenderer* renderer);
 
 		template<typename T>
-		std::shared_ptr<T> Add() {
+		std::shared_ptr<T> Create() {
 			static_assert(std::is_base_of_v<pipeline::RenderObject, T>, "T must be a RenderObject");
+			pipeline::RenderObject::CURRENT_RENDERER = renderer;
 			auto inst = std::make_shared<T>();
 			objects.push_back(inst);
 			return inst;
@@ -53,6 +54,7 @@ namespace glengine::rendering {
 		}
 
 		std::vector<std::shared_ptr<pipeline::RenderObject>> objects;
-
+	private:
+		pipeline::wgpu::WGPURenderer* renderer;
 	};
 }

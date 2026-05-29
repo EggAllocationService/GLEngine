@@ -29,9 +29,11 @@ namespace glengine::pipeline::wgpu {
     class RenderPipeline : public Pipeline {
     public:
         RenderPipeline(WGPUDevice device, WGPURenderPipeline pipeline, std::vector<WGPUBindGroupLayout> layouts, WGPUBindGroup universalGroup, uint32_t immediateDataSize);
+        explicit RenderPipeline(RenderPipeline &other);
+        ~RenderPipeline();
         void DrawMesh(const RenderBundle& bundle, const GPUMesh& mesh, const void* immediateData);
         void DrawMeshInstanced(const RenderBundle& bundle, const GPUMesh& mesh, int instanceCount);
-
+        std::shared_ptr<RenderPipeline> CreateInstance();
     private:
         WGPURenderPassEncoder createPass(const RenderBundle& bundle);
         WGPURenderPipeline _pipeline;

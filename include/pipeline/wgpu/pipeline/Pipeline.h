@@ -9,6 +9,8 @@ namespace glengine::pipeline::wgpu {
     class Pipeline {
     public:
         Pipeline(WGPUDevice device, std::vector<WGPUBindGroupLayout> layouts, WGPUBindGroup universalGroup);
+        Pipeline(Pipeline& other);
+        ~Pipeline();
         void SetBinding(int group, WGPUBindGroupEntry entry);
         void CommitBindings();
     protected:

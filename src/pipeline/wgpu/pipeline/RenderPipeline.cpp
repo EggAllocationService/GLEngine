@@ -33,6 +33,20 @@ void glengine::pipeline::wgpu::RenderPipeline::DrawMeshInstanced(const RenderBun
     wgpuRenderPassEncoderEnd(pass);
 }
 
+std::shared_ptr<glengine::pipeline::wgpu::RenderPipeline> glengine::pipeline::wgpu::RenderPipeline::CreateInstance() {
+    return std::make_shared<RenderPipeline>(*this);
+}
+
+glengine::pipeline::wgpu::RenderPipeline::RenderPipeline(RenderPipeline &other) : Pipeline(other) {
+    _pipeline = other._pipeline;
+    _immediateDataSize = other._immediateDataSize;
+    wgpuRenderPipelineAddRef(_pipeline);
+}
+
+glengine::pipeline::wgpu::RenderPipeline::~RenderPipeline() {
+    wgpuRenderPipelineRelease(_pipeline);
+}
+
 WGPURenderPassEncoder glengine::pipeline::wgpu::RenderPipeline::createPass(const RenderBundle &bundle) {
     auto colorAttachment = WGPURenderPassColorAttachment {
         .nextInChain = nullptr,

@@ -14,6 +14,30 @@ namespace glengine::pipeline::wgpu {
         _groups[0] = universalGroup;
     }
 
+    Pipeline::Pipeline(Pipeline &other) {
+        _groups = std::vector(other._groups);
+        _entries = std::vector(other._entries);
+        _layouts = std::vector(other._layouts);
+        _device = other._device;
+        _dirty = other._dirty;
+
+        for (int i = 0; i < _groups.size(); i++) {
+            if (_groups[i] != nullptr) {
+                wgpuBindGroupAddRef(_groups[i]);
+            }
+            if (_layouts[i] != nullptr) {
+                wgpuBindGroupLayoutAddRef(_layouts[i]);
+            }
+        }
+    }
+
+    Pipeline::~Pipeline() {
+        for (int i = 1; i < _groups.size(); i++) {
+            wgpuBindGroupRelease(_groups[i]);
+            wgpuBindGroupLayoutRelease(_layouts[i]);
+        }
+    }
+
     void Pipeline::SetBinding(int group, WGPUBindGroupEntry entry) {
         if (group == 0) {
             return;

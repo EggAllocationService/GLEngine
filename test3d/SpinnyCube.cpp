@@ -11,6 +11,7 @@
 #include "GLMath.h"
 #include "3d/mesh/StaticMeshComponent.h"
 #include "3d/components/PointLightComponent.h"
+#include "3d/mesh/InstancedStaticMeshComponent.h"
 #include "3d/texture/StaticTexture2D.h"
 using namespace glengine::world::mesh;
 using namespace glengine::world::texture;
@@ -18,7 +19,7 @@ using namespace glengine::world::texture;
 SpinnyCube::SpinnyCube() {
     root = CreateComponent<glengine::world::ActorPrimitiveComponent>();
 
-    auto model = CreateComponent<StaticMeshComponent>();
+    auto model = CreateComponent<InstancedStaticMeshComponent>();
 
     auto mesh = GetEngine()
         ->GetResourceManager()

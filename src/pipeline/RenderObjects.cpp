@@ -5,4 +5,8 @@
 
 using namespace glengine::rendering;
 
-RenderObjects::RenderObjects() = default;
+glengine::pipeline::wgpu::WGPURenderer* glengine::pipeline::RenderObject::CURRENT_RENDERER = nullptr;
+
+RenderObjects::RenderObjects(glengine::pipeline::wgpu::WGPURenderer* renderer) {
+    this->renderer = renderer;
+};
