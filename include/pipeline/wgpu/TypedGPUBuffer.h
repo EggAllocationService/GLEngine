@@ -98,6 +98,8 @@ namespace glengine::pipeline::wgpu {
                 auto commandBundle = wgpuCommandEncoderFinish(encoder, nullptr);
                 wgpuQueueSubmit(queue, 1, &commandBundle);
                 wgpuBufferRelease(buffer);
+                wgpuCommandEncoderRelease(encoder);
+                wgpuCommandBufferRelease(commandBundle);
             }
 
             this->buffer = newBuffer;
