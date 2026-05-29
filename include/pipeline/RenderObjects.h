@@ -8,6 +8,8 @@
 
 #include <vector>
 
+#include "RenderObject.h"
+
 namespace glengine::rendering {
 
 	struct GLENGINE_EXPORT LightInfo {
@@ -31,27 +33,26 @@ namespace glengine::rendering {
 	public:
 		RenderObjects();
 
-		/// Submits a light for rendering next frame
-		void PushLight(LightInfo l);
-
-		void SetFog(FogSettings a) {
-			fog_ = a;
+		template<typename T>
+		std::shared_ptr<T> Add() {
+			static_assert(std::is_base_of_v<pipeline::RenderObject, T>, "T must be a RenderObject");
+			auto inst = std::make_shared<T>();
+			objects.push_back(inst);
+			return inst;
 		}
 
-		/// Sets up all gl light objects
-		void InitLights() const;
+		template <typename T>
+		std::shared_ptr<T> GetObject() {
+			static_assert(std::is_base_of_v<pipeline::RenderObject, T>, "T must be a RenderObject");
+			for (const auto &component : objects) {
+				if (auto result= std::dynamic_pointer_cast<T>(component)) {
+					return result;
+				}
+			}
+			return nullptr;
+		}
 
-		/// Sets up fog
-		void InitFog() const;
-
-		/// Disables all objects
-		void DeInit() const;
-
-		/// Removes all entries from previous frame
-		void Reset();
-	private:
-		std::vector<LightInfo> lights_;
-		std::optional<FogSettings> fog_;
+		std::vector<std::shared_ptr<pipeline::RenderObject>> objects;
 
 	};
 }

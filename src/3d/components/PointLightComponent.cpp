@@ -8,7 +8,6 @@ using namespace glengine::rendering;
 using namespace glengine::world::components;
 
 void PointLightComponent::Update(double) {
-	auto manager = GetActor()->GetEngine()->GetRenderObjectsManager();
 
 	auto pos = GetAbsolutePosition();
 
@@ -18,6 +17,4 @@ void PointLightComponent::Update(double) {
 		.specular = Specular * Intensity,
 		.ambient = Ambient * Intensity,
 	};
-
-	manager->PushLight(info);
 }

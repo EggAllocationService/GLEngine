@@ -13,12 +13,15 @@ struct ModelData {
 @binding(0)
 var<uniform> camera: RenderUniforms;
 
-var<immediate> m: ModelData;
+@group(1)
+@binding(0)
+var<storage, read> m: array<ModelData>;
 
 struct VertexIn {
     @location(0) pos: vec3f,
     @location(1) normal: vec3f,
-    @location(2) uv: vec2f
+    @location(2) uv: vec2f,
+    @builtin(instance_index) instance: u32
 }
 struct VertexOut {
     @builtin(position) pos: vec4f,
@@ -28,9 +31,11 @@ struct VertexOut {
 @vertex
 fn vs(i: VertexIn) -> VertexOut {
     var result: VertexOut;
-    let MVP = (camera.projectionViewMatrix * m.m);
+    let model = m[i.instance].m;
+    let MVP = camera.projectionViewMatrix * model;
+
     result.pos = MVP * vec4f(i.pos, 1.0);
-    result.normal = m.m * vec4f(i.normal, 1.0);
+    result.normal = model * vec4f(i.normal, 1.0);
     return result;
 }
 

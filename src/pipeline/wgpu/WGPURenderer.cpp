@@ -306,7 +306,7 @@ std::shared_ptr<glengine::pipeline::wgpu::RenderPipeline> glengine::pipeline::wg
             .nextInChain = nullptr,
             .topology = WGPUPrimitiveTopology_TriangleList,
             .stripIndexFormat = WGPUIndexFormat_Undefined,
-            .frontFace = WGPUFrontFace_CCW,
+            .frontFace = WGPUFrontFace_CW,
             .cullMode = WGPUCullMode_Back,
             .unclippedDepth = false
         },
@@ -441,11 +441,40 @@ void glengine::pipeline::wgpu::WGPURenderer::Resize(int2 size) {
 }
 
 const char BasicLit[] = {
-#embed "shaders/BasicLit.wgsl"
+    #embed "shaders/BasicLit.wgsl"
+    ,0
+};
+
+const char BasicLitInstanced[] = {
+    #embed "shaders/BasicLitInstanced.wgsl"
     ,0
 };
 
 void glengine::pipeline::wgpu::WGPURenderer::buildBuiltinPipelines() {
     auto basicLitShaders = CompileShader(BasicLit);
     BuildRenderPipeline("BasicLit", basicLitShaders, {} , sizeof(mat4));
+
+    WGPUBindGroupLayoutEntry basicLitInstancedBindGroupEntry = {
+        .nextInChain = nullptr,
+        .binding = 0,
+        .visibility = WGPUShaderStage_Vertex,
+        .bindingArraySize = 0,
+        .buffer = {
+            .nextInChain = nullptr,
+            .type = WGPUBufferBindingType_ReadOnlyStorage,
+            .hasDynamicOffset = false,
+            .minBindingSize = 0
+        },
+        .sampler = {},
+        .texture = {},
+        .storageTexture = {}
+    };
+    WGPUBindGroupLayoutDescriptor basicLitInstancedBindGroup = {
+        .nextInChain = nullptr,
+        .label = {},
+        .entryCount = 1,
+        .entries = &basicLitInstancedBindGroupEntry
+    };
+    auto basicLitInstancedShaders = CompileShader(BasicLitInstanced);
+    BuildRenderPipeline("BasicLitInstanced", basicLitInstancedShaders, std::span(&basicLitInstancedBindGroup, 1), 0);
 }

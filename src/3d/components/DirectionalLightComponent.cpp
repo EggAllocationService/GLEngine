@@ -11,8 +11,6 @@
 using namespace glengine::world::components;
 
 void DirectionalLightComponent::Update(double x) {
-    auto manager = GetActor()->GetEngine()->GetRenderObjectsManager();
-
     auto dir = GetForwardVector();
 
     rendering::LightInfo info = {
@@ -21,6 +19,4 @@ void DirectionalLightComponent::Update(double x) {
         .specular = Specular * Intensity,
         .ambient = Ambient * Intensity,
     };
-
-    manager->PushLight(info);
 }

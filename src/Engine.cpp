@@ -110,6 +110,11 @@ namespace glengine {
 
         updateActors(delta);
 
+        // update render objects post-actors
+        for (const auto& object: renderObjectManager->objects) {
+            object->UpdateEnd(delta);
+        }
+
         setLastUpdate();
 
         auto end = std::chrono::steady_clock::now();
@@ -250,6 +255,11 @@ namespace glengine {
         auto bundle = renderer->BeginRendering(uniforms);
         if (!bundle.valid) {
             return;
+        }
+
+        // before rendering actors, run all renderObjects
+        for (const auto& object : renderObjectManager->objects) {
+            object->RenderStart(bundle);
         }
 
         auto stack = MatrixStack();
