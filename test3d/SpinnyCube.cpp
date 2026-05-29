@@ -8,6 +8,7 @@
 
 #include "Colors.h"
 #include "Engine.h"
+#include "GLMath.h"
 #include "3d/mesh/StaticMeshComponent.h"
 #include "3d/components/PointLightComponent.h"
 #include "3d/texture/StaticTexture2D.h"
@@ -27,7 +28,7 @@ SpinnyCube::SpinnyCube() {
 }
 
 void SpinnyCube::Update(double deltaTime) {
-    rotation += (3.14159 / 2.0) * deltaTime;
+    rotation += (PI / 2.0) * deltaTime;
 
     root->GetTransform()->SetRotation(float3(0, rotation, 0));
 }

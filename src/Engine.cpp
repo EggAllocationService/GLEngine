@@ -249,7 +249,6 @@ namespace glengine {
         // set matrices
         auto bundle = renderer->BeginRendering(uniforms);
         if (!bundle.valid) {
-            printf("Invalid bundle! \n");
             return;
         }
 
