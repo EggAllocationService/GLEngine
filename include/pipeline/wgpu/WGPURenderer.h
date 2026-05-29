@@ -4,7 +4,7 @@
 
 #pragma once
 #include "Matrix.h"
-#include "RenderPipeline.h"
+#include "pipeline/RenderPipeline.h"
 #include "webgpu/wgpu.h"
 #include <span>
 

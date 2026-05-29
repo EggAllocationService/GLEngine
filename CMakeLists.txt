@@ -36,11 +36,10 @@ add_library(glengine SHARED
         src/3d/components/DirectionalLightComponent.cpp
         src/pipeline/wgpu/WGPURenderer.cpp
         include/pipeline/wgpu/WGPURenderer.h
-        src/pipeline/wgpu/RenderPipeline.cpp
-        include/pipeline/wgpu/RenderPipeline.h
+        src/pipeline/wgpu/pipeline/RenderPipeline.cpp
         src/pipeline/wgpu/GPUMesh.cpp
-        include/pipeline/wgpu/GPUMesh.h
-        src/3d/ActorComponent.cpp)
+        src/3d/ActorComponent.cpp
+        src/pipeline/wgpu/pipeline/Pipeline.cpp)
 
 target_include_directories(glengine PUBLIC include external/include)
 
