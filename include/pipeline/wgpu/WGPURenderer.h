@@ -8,6 +8,7 @@
 #include "webgpu/wgpu.h"
 #include <span>
 
+#include "TypedGPUBUffer.h"
 #include "GLFW/glfw3.h"
 
 
@@ -46,6 +47,12 @@ namespace glengine::pipeline::wgpu {
         void FinishRendering(RenderBundle bundle);
 
         void Resize(int2 size);
+
+        template<typename T>
+        std::unique_ptr<TypedGPUBUffer<T>> CreateBuffer(std::string name, WGPUBufferUsage usage, int initialCapacity) {
+            return std::make_unique<TypedGPUBUffer<T>>(std::move(name), device, usage, initialCapacity);
+        }
+
     private:
         void buildBuiltinPipelines();
 
