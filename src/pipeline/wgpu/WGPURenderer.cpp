@@ -90,7 +90,7 @@ glengine::pipeline::wgpu::WGPURenderer::WGPURenderer(GLFWwindow *window) {
 
     surfConfig.format = caps.formats[0]; // set preferred format
     surfConfig.usage = WGPUTextureUsage_RenderAttachment;
-    surfConfig.presentMode = WGPUPresentMode_Fifo;
+    surfConfig.presentMode = WGPUPresentMode_Immediate;
     surfConfig.alphaMode = WGPUCompositeAlphaMode_Auto;
     surfConfig.device = device;
 
@@ -385,6 +385,7 @@ glengine::pipeline::wgpu::RenderBundle glengine::pipeline::wgpu::WGPURenderer::B
 
     auto pass = wgpuCommandEncoderBeginRenderPass(encoder, &descriptor);
     wgpuRenderPassEncoderEnd(pass);
+    wgpuRenderPassEncoderRelease(pass);
 
     return {
         .encoder = encoder,
@@ -398,13 +399,16 @@ glengine::pipeline::wgpu::RenderBundle glengine::pipeline::wgpu::WGPURenderer::B
 void glengine::pipeline::wgpu::WGPURenderer::FinishRendering(RenderBundle bundle) {
     auto command = wgpuCommandEncoderFinish(bundle.encoder, nullptr);
 
-    wgpuQueueSubmit(queue, 1, &command);
+    if (lastFrame != 0) {
+        wgpuDevicePoll(device, true, &lastFrame);
+    }
+    lastFrame = wgpuQueueSubmitForIndex(queue, 1, &command);
+    wgpuCommandBufferRelease(command);
+    wgpuCommandEncoderRelease(bundle.encoder);
 
     wgpuTextureViewRelease(bundle.targetTexture);
     wgpuSurfacePresent(surface);
     wgpuTextureRelease(bundle.surfaceTexture);
-
-    wgpuDevicePoll(device, true, nullptr);
 }
 
 void glengine::pipeline::wgpu::WGPURenderer::Resize(int2 size) {

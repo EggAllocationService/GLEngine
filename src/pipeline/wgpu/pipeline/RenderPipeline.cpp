@@ -23,6 +23,7 @@ void glengine::pipeline::wgpu::RenderPipeline::DrawMesh(const RenderBundle &bund
 
     wgpuRenderPassEncoderDraw(pass, mesh.GetVertexCount(), 1, 0, 0);
     wgpuRenderPassEncoderEnd(pass);
+    wgpuRenderPassEncoderRelease(pass);
 }
 
 void glengine::pipeline::wgpu::RenderPipeline::DrawMeshInstanced(const RenderBundle &bundle, const GPUMesh &mesh,
@@ -31,6 +32,7 @@ void glengine::pipeline::wgpu::RenderPipeline::DrawMeshInstanced(const RenderBun
     wgpuRenderPassEncoderSetVertexBuffer(pass, 0, mesh.GetBuffer(), 0, mesh.GetVertexCount() * sizeof(Vertex));
     wgpuRenderPassEncoderDraw(pass, mesh.GetVertexCount(), instanceCount, 0, 0);
     wgpuRenderPassEncoderEnd(pass);
+    wgpuRenderPassEncoderRelease(pass);
 }
 
 std::shared_ptr<glengine::pipeline::wgpu::RenderPipeline> glengine::pipeline::wgpu::RenderPipeline::CreateInstance() {

@@ -68,5 +68,6 @@ namespace glengine::pipeline::wgpu {
         WGPUBindGroupLayout universalBindGroupLayout;
         WGPUBindGroup universalBindGroup;
         WGPUBuffer renderUniformsBuffer;
+        WGPUSubmissionIndex lastFrame = 0;
     };
 }
