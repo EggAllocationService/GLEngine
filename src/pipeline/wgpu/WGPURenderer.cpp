@@ -90,7 +90,7 @@ glengine::pipeline::wgpu::WGPURenderer::WGPURenderer(GLFWwindow *window) {
 
     surfConfig.format = caps.formats[0]; // set preferred format
     surfConfig.usage = WGPUTextureUsage_RenderAttachment;
-    surfConfig.presentMode = WGPUPresentMode_Immediate;
+    surfConfig.presentMode = WGPUPresentMode_Fifo;
     surfConfig.alphaMode = WGPUCompositeAlphaMode_Auto;
     surfConfig.device = device;
 
