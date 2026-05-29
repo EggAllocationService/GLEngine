@@ -22,7 +22,7 @@ namespace glengine::pipeline::wgpu {
             this->bufferCapacity = 0;
             this->usage = usage | WGPUBufferUsage_CopyDst | WGPUBufferUsage_CopySrc;
             this->grow(initialCapacity);
-            this->storage.resize(initialCapacity);
+            this->storage.reserve(initialCapacity);
             this->dirty = false;
         }
 
