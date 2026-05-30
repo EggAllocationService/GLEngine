@@ -21,9 +21,16 @@ SpinnyCube::SpinnyCube() {
 
     auto model = CreateComponent<InstancedStaticMeshComponent>();
 
+    const char *meshName = nullptr;
+    if (rand() % 2 == 0) {
+        meshName = "enterprise.obj";
+    } else {
+        meshName = "cube-tex.obj";
+    }
+
     auto mesh = GetEngine()
         ->GetResourceManager()
-        ->GetResource<StaticMesh>("/Users/kyle/Downloads/assignment_files_updated/submarine - updated.obj");
+        ->GetResource<StaticMesh>(meshName);
     model->SetMesh(mesh);
     model->SetupAttachment(root->GetTransform());
 }

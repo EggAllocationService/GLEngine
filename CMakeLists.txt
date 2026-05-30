@@ -45,7 +45,9 @@ add_library(glengine SHARED
         src/3d/mesh/InstancedStaticMeshComponent.cpp
         include/3d/mesh/InstancedStaticMeshComponent.h
         "src/3d/objects/InstancedDrawTracker.cpp"
-        "include/3d/objects/InstancedDrawTracker.h")
+        "include/3d/objects/InstancedDrawTracker.h"
+        src/3d/objects/LightTracker.cpp
+        include/3d/objects/LightTracker.h)
 
 target_include_directories(glengine PUBLIC include external/include)
 
@@ -118,16 +120,6 @@ function(engine_copy_freeglut_if_needed TARGETNAME)
     endif()
 endfunction()
 
-if (${PROJECT_IS_TOP_LEVEL})
-
-    add_executable(test3d test3d/main.cpp
-            test3d/SpinnyCube.cpp
-            test3d/SpinnyCube.h
-    )
-
-    target_link_libraries(test3d PRIVATE glengine)
-endif()
-
 function(copy_assets TARGET_NAME SOURCE_DIR)
     if(NOT TARGET_NAME OR NOT SOURCE_DIR)
         message(FATAL_ERROR "copy_assets requires a target name and a directory path.")
@@ -145,3 +137,17 @@ function(copy_assets TARGET_NAME SOURCE_DIR)
             VERBATIM
     )
 endfunction()
+
+if (${PROJECT_IS_TOP_LEVEL})
+
+    add_executable(test3d test3d/main.cpp
+            test3d/SpinnyCube.cpp
+            test3d/SpinnyCube.h
+            test3d/Enterprise.h
+            test3d/Enterprise.cpp
+    )
+
+    copy_assets(test3d test3d/assets)
+
+    target_link_libraries(test3d PRIVATE glengine)
+endif()

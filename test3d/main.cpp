@@ -5,6 +5,7 @@
 #include <fstream>
 
 #include "Engine.h"
+#include "Enterprise.h"
 #include "SpinnyCube.h"
 #include "3d/mesh/StaticMesh.h"
 
@@ -39,6 +40,9 @@ int main(int argc, char** argv) {
 
         cube->GetTransform()->SetPosition(float3(frand(-10, 10), 0, frand(-4, 4)));
     }
+
+    auto ship = engine->SpawnActor<Enterprise>();
+    engine->Possess(ship);
 
 
     engine->GetInputManager()->AddAction('x', [=]() {

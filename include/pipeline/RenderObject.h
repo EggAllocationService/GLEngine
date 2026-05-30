@@ -16,7 +16,7 @@ namespace glengine::pipeline {
 
         virtual void RenderStart(wgpu::RenderBundle& bundle) = 0;
 
-        wgpu::WGPURenderer* GetRenderer() {
+        static wgpu::WGPURenderer* GetRenderer() {
             return CURRENT_RENDERER;
         }
     };
