@@ -5,6 +5,8 @@
 #pragma once
 #include <utility>
 #include <vector>
+#include <functional>
+
 
 #include "webgpu/webgpu.h"
 

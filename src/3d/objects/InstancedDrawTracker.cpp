@@ -3,6 +3,7 @@
 //
 
 #include "3d/objects/InstancedDrawTracker.h"
+#include <format>
 
 namespace glengine::world::objects {
     InstancedDrawTracker::InstancedDrawTracker() {
@@ -32,8 +33,8 @@ namespace glengine::world::objects {
         }
     }
 
-    void InstancedDrawTracker::Draw(std::shared_ptr<pipeline::wgpu::GPUMesh> &mesh,
-        instanced::InstanceData data) {
+    void InstancedDrawTracker::Draw(const std::shared_ptr<pipeline::wgpu::GPUMesh> &mesh,
+        const instanced::InstanceData &data) {
 
         auto id = mesh->GetId();
         if (!buffers.contains(id)) {

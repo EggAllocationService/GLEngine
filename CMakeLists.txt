@@ -41,7 +41,7 @@ add_library(glengine SHARED
         src/3d/ActorComponent.cpp
         src/pipeline/wgpu/pipeline/Pipeline.cpp
         include/pipeline/RenderObject.h
-        include/pipeline/wgpu/TypedGPUBUffer.h
+        include/pipeline/wgpu/TypedGPUBuffer.h
         src/3d/mesh/InstancedStaticMeshComponent.cpp
         include/3d/mesh/InstancedStaticMeshComponent.h
         "src/3d/objects/InstancedDrawTracker.cpp"

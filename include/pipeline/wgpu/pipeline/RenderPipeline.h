@@ -5,6 +5,7 @@
 #include "../GPUMesh.h"
 #include "webgpu/webgpu.h"
 #include <span>
+#include <memory>
 
 #include "Pipeline.h"
 

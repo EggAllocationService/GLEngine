@@ -34,7 +34,6 @@ void StaticTexture2D::LoadFromFile(std::ifstream &stream, pipeline::wgpu::WGPURe
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     glGetError();
-    gluBuild2DMipmaps(GL_TEXTURE_2D, GL_RGBA, x, y, GL_RGBA, GL_UNSIGNED_BYTE, decoded);
     glBindTexture(GL_TEXTURE_2D, 0);
 
     stbi_image_free(decoded);

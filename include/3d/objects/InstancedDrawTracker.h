@@ -25,7 +25,7 @@ namespace glengine::world::objects {
 
         void RenderStart(pipeline::wgpu::RenderBundle &bundle) override;
 
-        void Draw(std::shared_ptr<pipeline::wgpu::GPUMesh>& mesh, instanced::InstanceData data);
+        void Draw(const std::shared_ptr<pipeline::wgpu::GPUMesh>& mesh, const instanced::InstanceData &data);
 
     private:
         std::unordered_map<int, instanced::InstanceTracker> buffers;

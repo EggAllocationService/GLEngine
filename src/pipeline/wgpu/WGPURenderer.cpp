@@ -5,6 +5,8 @@
 #include "pipeline/wgpu/WGPURenderer.h"
 
 #include <cassert>
+#include <cstring>
+#include <atomic>
 
 #include "glfw3webgpu.h"
 
@@ -34,6 +36,9 @@ static void handle_request_device(WGPURequestDeviceStatus status,
 }
 
 glengine::pipeline::wgpu::WGPURenderer::WGPURenderer(GLFWwindow *window) {
+    depthTexture = nullptr;
+    surfConfig = WGPU_SURFACE_CONFIGURATION_INIT;
+
     auto instance = wgpuCreateInstance(nullptr);
     WGPUAdapter adapter = nullptr;
     WGPURequestAdapterOptions options = {
@@ -87,7 +92,6 @@ glengine::pipeline::wgpu::WGPURenderer::WGPURenderer(GLFWwindow *window) {
     // find preferred surface texture format (usually the 0th)
     WGPUSurfaceCapabilities caps;
     wgpuSurfaceGetCapabilities(surface, adapter, &caps);
-
     surfConfig.format = caps.formats[0]; // set preferred format
     surfConfig.usage = WGPUTextureUsage_RenderAttachment;
     surfConfig.presentMode = WGPUPresentMode_Fifo;
@@ -377,7 +381,7 @@ glengine::pipeline::wgpu::RenderBundle glengine::pipeline::wgpu::WGPURenderer::B
         .resolveTarget = nullptr,
         .loadOp = WGPULoadOp_Clear,
         .storeOp = WGPUStoreOp_Store,
-        .clearValue = WGPUColor(0, 0, 0, 1)
+        .clearValue = WGPUColor(0, 1, 0, 1)
     };
     descriptor.depthStencilAttachment = &attachment;
     descriptor.colorAttachmentCount = 1;
