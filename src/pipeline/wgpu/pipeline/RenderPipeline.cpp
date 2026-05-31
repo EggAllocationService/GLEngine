@@ -16,12 +16,18 @@ void glengine::pipeline::wgpu::RenderPipeline::DrawMesh(const RenderBundle &bund
                                                         const void *immediateData) {
     auto pass = createPass(bundle);
 
-    wgpuRenderPassEncoderSetVertexBuffer(pass, 0, mesh.GetBuffer(), 0, mesh.GetVertexCount() * sizeof(Vertex));
+    wgpuRenderPassEncoderSetVertexBuffer(pass, 0, mesh.GetVertices(), 0, mesh.GetVertexCount() * sizeof(Vertex));
     if (_immediateDataSize != 0 && immediateData) {
         wgpuRenderPassEncoderSetImmediates(pass, 0, _immediateDataSize, immediateData);
     }
 
-    wgpuRenderPassEncoderDraw(pass, mesh.GetVertexCount(), 1, 0, 0);
+    if (mesh.IsIndexed()) {
+        wgpuRenderPassEncoderSetIndexBuffer(pass, mesh.GetIndices(), WGPUIndexFormat_Uint32, 0, mesh.GetIndexCount());
+        wgpuRenderPassEncoderDrawIndexed(pass, mesh.GetIndexCount(), 1, 0, 0, 0);
+    }
+    else {
+        wgpuRenderPassEncoderDraw(pass, mesh.GetVertexCount(), 0, 0, 0);
+    }
     wgpuRenderPassEncoderEnd(pass);
     wgpuRenderPassEncoderRelease(pass);
 }
@@ -29,8 +35,15 @@ void glengine::pipeline::wgpu::RenderPipeline::DrawMesh(const RenderBundle &bund
 void glengine::pipeline::wgpu::RenderPipeline::DrawMeshInstanced(const RenderBundle &bundle, const GPUMesh &mesh,
     int instanceCount) {
     auto pass = createPass(bundle);
-    wgpuRenderPassEncoderSetVertexBuffer(pass, 0, mesh.GetBuffer(), 0, mesh.GetVertexCount() * sizeof(Vertex));
-    wgpuRenderPassEncoderDraw(pass, mesh.GetVertexCount(), instanceCount, 0, 0);
+    auto indices = mesh.GetIndices();
+    wgpuRenderPassEncoderSetVertexBuffer(pass, 0, mesh.GetVertices(), 0, mesh.GetVertexCount() * sizeof(Vertex));
+    if (mesh.IsIndexed()) {
+        wgpuRenderPassEncoderSetIndexBuffer(pass, mesh.GetIndices(), WGPUIndexFormat_Uint32, 0, mesh.GetIndexCount());
+        wgpuRenderPassEncoderDrawIndexed(pass, mesh.GetIndexCount(), instanceCount, 0, 0, 0);
+    }
+    else {
+        wgpuRenderPassEncoderDraw(pass, mesh.GetVertexCount(), instanceCount, 0, 0);
+    }
     wgpuRenderPassEncoderEnd(pass);
     wgpuRenderPassEncoderRelease(pass);
 }

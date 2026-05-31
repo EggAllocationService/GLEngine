@@ -93,16 +93,40 @@ void StaticMesh::LoadFromFile(std::ifstream &file, pipeline::wgpu::WGPURenderer*
         RecalculateNormals();
     }
 
-    std::vector<pipeline::wgpu::Vertex> flattened(faces_.size());
-    int i = 0;
-    for (auto vertex : faces_) {
-        flattened[i].position = vertices_[vertex.x].position;
-        flattened[i].normal = vertices_[vertex.z].normal;
-        flattened[i].uv = hasTexCoords_ ? vertices_[vertex.y].uv : float2(0, 0);
-        i++;
+    std::vector<int3> indexMappings;
+    std::vector<pipeline::wgpu::Vertex> outVertices;
+    std::vector<unsigned int> indices;
+    indices.reserve(faces_.size());
+    outVertices.reserve(faces_.size());
+    indexMappings.reserve(faces_.size());
+
+    for (const auto& face : faces_) {
+        unsigned int existingIndex = 0xFFFFFFFF;
+        for (int i = 0; i < indexMappings.size(); i++) {
+            if (indexMappings[i] == face) {
+                existingIndex = i;
+                break;
+            }
+        }
+
+        if (existingIndex != 0xFFFFFFFF) {
+            // we already have a vertex for this, so send it
+            indices.push_back(existingIndex);
+        }
+        else {
+            // add a new vertex
+            outVertices.push_back(pipeline::wgpu::Vertex{
+                    .position = vertices_[face.x].position,
+                    .normal = vertices_[face.z].normal,
+                    .uv = hasTexCoords_ ? vertices_[face.y].uv : float2(0, 0)
+                });
+            indexMappings.push_back(face);
+
+            indices.push_back(indexMappings.size());
+        }
     }
 
-    mesh = renderer->UploadMesh(flattened);
+    this->mesh = renderer->UploadIndexedMesh(outVertices, indices);
 }
 
 float max(float a, float b, float c, float d) {
@@ -144,7 +168,7 @@ void StaticMesh::RecalculateNormals()
     auto newNormals = new AvgNormal[vertices_.size()];
 
     // loop through all faces, calculate the normal, then add to the average for each owning vertex
-    // faces are packed in the faces_ array, three entries in a row make a face
+    // face are packed in the faces_ array, three entries in a row make a face
     // each entry is an int3(vertex, texCoord, normal) tuple
     for (int i = 0; i < faces_.size(); i += 3) {
         auto& v1 = faces_[i];
