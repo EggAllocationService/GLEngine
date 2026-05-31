@@ -10,12 +10,12 @@
 
 #include "glfw3webgpu.h"
 
-extern "C" static void handle_request_adapter(WGPURequestAdapterStatus status,
+static void handle_request_adapter(WGPURequestAdapterStatus status,
     WGPUAdapter adapter, WGPUStringView message,
     void* userdata1, void* userdata2) {
     *(WGPUAdapter*)userdata1 = adapter;
 }
-extern "C" static void handle_request_device(WGPURequestDeviceStatus status,
+static void handle_request_device(WGPURequestDeviceStatus status,
                                   WGPUDevice device, WGPUStringView message,
                                   void *userdata1, void *userdata2) {
     *(WGPUDevice *)userdata1 = device;
