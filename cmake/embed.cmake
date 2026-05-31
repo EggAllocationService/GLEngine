@@ -25,4 +25,7 @@ function(create_resource_library)
     )
 
     add_library(${arg_NAME} STATIC ${arg_NAME}.c ${arg_NAME}.h)
+    target_sources(${arg_NAME} PRIVATE 
+        FILE_SET resources TYPE HEADERS FILES ${arg_SOURCES}
+    )
 endfunction()

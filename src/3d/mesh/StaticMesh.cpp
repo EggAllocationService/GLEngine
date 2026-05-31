@@ -93,7 +93,7 @@ void StaticMesh::LoadFromFile(std::ifstream &file, pipeline::wgpu::WGPURenderer*
         RecalculateNormals();
     }
 
-    std::vector<pipeline::wgpu::Vertex> flattened(faces_.size() * 3);
+    std::vector<pipeline::wgpu::Vertex> flattened(faces_.size());
     int i = 0;
     for (auto vertex : faces_) {
         flattened[i].position = vertices_[vertex.x].position;

@@ -42,6 +42,7 @@ extern "C" {
 		auto extension = p.filename().extension().string().substr(1);
 
 		header << std::format("extern const char embed_{}_{}[];", filename, extension) << std::endl;
+		header << std::format("static const unsigned int embed_{}_{}_length = {};", filename, extension, length) << std::endl;
 
 		source << std::format("const char embed_{}_{}[] = {{ ", filename, extension) << std::endl;
 

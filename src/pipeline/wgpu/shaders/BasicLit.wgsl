@@ -30,12 +30,12 @@ fn vs(i: VertexIn) -> VertexOut {
     var result: VertexOut;
     let MVP = (camera.projectionViewMatrix * m.m);
     result.pos = MVP * vec4f(i.pos, 1.0);
-    result.normal = m.m * vec4f(i.normal, 1.0);
+    result.normal = m.m * vec4f(i.normal, 0.0);
     return result;
 }
 
 @fragment
 fn fs(i: VertexOut) -> @location(0) vec4f {
-    return i.normal;
+    return vec4f(abs(normalize(i.normal)).xyz, 1.0);
 }
 
