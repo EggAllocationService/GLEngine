@@ -8,6 +8,16 @@
 #include "engine_GLUT.h"
 using namespace glengine::world::mesh;
 
+template<>
+struct std::hash<int3> {
+    std::size_t operator() (const int3& i) const noexcept {
+        auto h1 = std::hash<int>{}(i.x);
+        auto h2 = std::hash<int>{}(i.y);
+        auto h3 = std::hash<int>{}(i.z);
+        return h1 ^ (h2 << 1) ^ (h3 << 1);
+    }
+};
+
 void StaticMesh::LoadFromFile(std::ifstream &file, pipeline::wgpu::WGPURenderer* renderer) {
     vertices_.clear();
     faces_.clear();
@@ -93,25 +103,17 @@ void StaticMesh::LoadFromFile(std::ifstream &file, pipeline::wgpu::WGPURenderer*
         RecalculateNormals();
     }
 
-    std::vector<int3> indexMappings;
+    std::unordered_map<int3, unsigned int> indexMappings;
     std::vector<pipeline::wgpu::Vertex> outVertices;
     std::vector<unsigned int> indices;
     indices.reserve(faces_.size());
     outVertices.reserve(faces_.size());
-    indexMappings.reserve(faces_.size());
 
     for (const auto& face : faces_) {
-        unsigned int existingIndex = 0xFFFFFFFF;
-        for (int i = 0; i < indexMappings.size(); i++) {
-            if (indexMappings[i] == face) {
-                existingIndex = i;
-                break;
-            }
-        }
 
-        if (existingIndex != 0xFFFFFFFF) {
+        if (indexMappings.contains(face)) {
             // we already have a vertex for this, so send it
-            indices.push_back(existingIndex);
+            indices.push_back(indexMappings[face]);
         }
         else {
             // add a new vertex
@@ -120,9 +122,10 @@ void StaticMesh::LoadFromFile(std::ifstream &file, pipeline::wgpu::WGPURenderer*
                     .normal = vertices_[face.z].normal,
                     .uv = hasTexCoords_ ? vertices_[face.y].uv : float2(0, 0)
                 });
-            indexMappings.push_back(face);
 
-            indices.push_back(indexMappings.size());
+            unsigned int index = outVertices.size() - 1;
+            indexMappings.insert({face, index});
+            indices.push_back(index);
         }
     }
 

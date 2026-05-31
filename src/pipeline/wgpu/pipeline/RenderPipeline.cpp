@@ -22,7 +22,7 @@ void glengine::pipeline::wgpu::RenderPipeline::DrawMesh(const RenderBundle &bund
     }
 
     if (mesh.IsIndexed()) {
-        wgpuRenderPassEncoderSetIndexBuffer(pass, mesh.GetIndices(), WGPUIndexFormat_Uint32, 0, mesh.GetIndexCount());
+        wgpuRenderPassEncoderSetIndexBuffer(pass, mesh.GetIndices(), WGPUIndexFormat_Uint32, 0, mesh.GetIndexCount() * sizeof(unsigned int));
         wgpuRenderPassEncoderDrawIndexed(pass, mesh.GetIndexCount(), 1, 0, 0, 0);
     }
     else {
@@ -38,7 +38,7 @@ void glengine::pipeline::wgpu::RenderPipeline::DrawMeshInstanced(const RenderBun
     auto indices = mesh.GetIndices();
     wgpuRenderPassEncoderSetVertexBuffer(pass, 0, mesh.GetVertices(), 0, mesh.GetVertexCount() * sizeof(Vertex));
     if (mesh.IsIndexed()) {
-        wgpuRenderPassEncoderSetIndexBuffer(pass, mesh.GetIndices(), WGPUIndexFormat_Uint32, 0, mesh.GetIndexCount());
+        wgpuRenderPassEncoderSetIndexBuffer(pass, mesh.GetIndices(), WGPUIndexFormat_Uint32, 0, mesh.GetIndexCount() * sizeof(unsigned int));
         wgpuRenderPassEncoderDrawIndexed(pass, mesh.GetIndexCount(), instanceCount, 0, 0, 0);
     }
     else {
