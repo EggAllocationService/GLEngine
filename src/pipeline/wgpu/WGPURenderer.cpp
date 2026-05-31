@@ -42,7 +42,7 @@ glengine::pipeline::wgpu::WGPURenderer::WGPURenderer(GLFWwindow *window) {
         .featureLevel = WGPUFeatureLevel_Core,
         .powerPreference = WGPUPowerPreference_HighPerformance,
         .forceFallbackAdapter = false,
-        .backendType = WGPUBackendType_D3D12,
+        .backendType = WGPUBackendType_Undefined,
         .compatibleSurface = nullptr
     };
 
