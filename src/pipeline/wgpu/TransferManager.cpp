@@ -13,7 +13,9 @@ struct CallbackInfo {
 static void transferSessionCallback(WGPUMapAsyncStatus status, WGPUStringView message, void* userdata1, void* userdata2) {
 	auto info = reinterpret_cast<CallbackInfo*>(userdata1);
 
+
 	if (status == WGPUMapAsyncStatus_Success) {
+		info->buffer->mappedRange = wgpuBufferGetMappedRange(info->buffer->buffer, 0, info->buffer->capacity);
 		info->manager->Return(std::move(info->buffer));
 	}
 
@@ -114,6 +116,55 @@ TransferManager::TransferManager(WGPURenderer* renderer) {
 
 std::unique_ptr<TransferSession> TransferManager::CreateSession(std::string name, unsigned int estimatedTotalSize) {
 	return std::make_unique<TransferSession>(std::format("Ring Transfer: {}", name), this, device, queue, Take(estimatedTotalSize));
+}
+
+void TransferManager::Transfer(WGPUBuffer target, unsigned int offset, void* data, unsigned int length) {
+	auto buf = Take(length);
+	memcpy(buf->mappedRange, data, length);
+
+	wgpuBufferUnmap(buf->buffer);
+
+	WGPUCommandEncoderDescriptor encDesc = {
+		.nextInChain = nullptr,
+		.label {
+			.data = "Anonymous Ring Transfer",
+			.length = WGPU_STRLEN
+		}
+	};
+
+	auto encoder = wgpuDeviceCreateCommandEncoder(device, &encDesc);
+	wgpuCommandEncoderCopyBufferToBuffer(encoder, buf->buffer, 0, target, offset, length);
+
+	WGPUCommandBufferDescriptor cmdDesc = {
+		.nextInChain = nullptr,
+		.label {
+			.data = "Anonymous Ring Transfer",
+			.length = WGPU_STRLEN
+		}
+	};
+
+	auto cmd = wgpuCommandEncoderFinish(encoder, &cmdDesc);
+	wgpuCommandEncoderRelease(encoder);
+
+	wgpuQueueSubmit(queue, 1, &cmd);
+	wgpuCommandBufferRelease(cmd);
+
+
+	auto srcBuf = buf->buffer;
+	auto srcCap = buf->capacity;
+
+	auto cbi = new CallbackInfo();
+	cbi->buffer = std::move(buf);
+	cbi->manager = this;
+
+	WGPUBufferMapCallbackInfo cb = {
+		.nextInChain = nullptr,
+		.mode = WGPUCallbackMode_AllowSpontaneous,
+		.callback = transferSessionCallback,
+		.userdata1 = cbi
+	};
+	
+	wgpuBufferMapAsync(srcBuf, WGPUMapMode_Write, 0, srcCap, cb);
 }
 
 void TransferManager::Return(std::unique_ptr<StagingBuffer> buffer) {

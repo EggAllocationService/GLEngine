@@ -50,6 +50,8 @@ namespace glengine::pipeline::wgpu {
 
 		std::unique_ptr<TransferSession> CreateSession(std::string name, unsigned int estimatedTotalSize);
 
+		void Transfer(WGPUBuffer target, unsigned int offset, void* data, unsigned int length);
+
 		void Return(std::unique_ptr<StagingBuffer> buffer);
 		std::unique_ptr<StagingBuffer> Take(unsigned int minSize);
 	private:
