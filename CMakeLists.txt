@@ -1,6 +1,8 @@
 cmake_minimum_required(VERSION 3.3...4.0)
 project(GLEngine)
 
+option(TEXT_RENDERING "Compile builtin text rendering library (requires harfbuzz)" ON)
+
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 include(wgpu-native)
 include(embed)
@@ -48,12 +50,32 @@ add_library(glengine SHARED
         "src/3d/objects/InstancedDrawTracker.cpp"
         "include/3d/objects/InstancedDrawTracker.h"
         src/3d/objects/LightTracker.cpp
-        include/3d/objects/LightTracker.h "src/pipeline/wgpu/TransferManager.cpp" "include/pipeline/wgpu/TransferManager.h")
+        include/3d/objects/LightTracker.h
+        "src/pipeline/wgpu/TransferManager.cpp"
+        "include/pipeline/wgpu/TransferManager.h"
+)
 
 create_resource_library(NAME Shaders SOURCES 
     src/pipeline/wgpu/shaders/BasicLit.wgsl
     src/pipeline/wgpu/shaders/BasicLitInstanced.wgsl
 )
+
+if (${TEXT_RENDERING})
+    find_package(harfbuzz REQUIRED)
+    target_compile_definitions(glengine PUBLIC GLENGINE_TEXT_RENDERING)
+
+    target_sources(glengine PUBLIC
+            src/3d/text/Font.cpp
+            src/3d/text/Font.h
+            src/3d/text/truetype.c
+    )
+
+    create_resource_library(NAME TextRenderingResources SOURCES
+        src/3d/text/FiraCode.ttf
+        src/3d/text/slug.wgsl
+    )
+    target_link_libraries(glengine harfbuzz TextRenderingResources)
+endif()
 
 target_include_directories(glengine PUBLIC include external/include)
 

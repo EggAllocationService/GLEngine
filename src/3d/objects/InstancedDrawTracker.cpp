@@ -15,7 +15,7 @@ namespace glengine::world::objects {
     void InstancedDrawTracker::UpdateEnd(double deltaTime) {
         unsigned int totalData = 0;
         for (const auto& buf : buffers) {
-            totalData += buf.second.data->GetSize();
+            totalData += buf.second.data->GetSize() * sizeof(instanced::InstanceData);
         }
 
         auto session = renderer->GetTransferManager()->CreateSession("instanced draw data", totalData);

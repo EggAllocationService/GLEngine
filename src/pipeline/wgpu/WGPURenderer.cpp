@@ -231,7 +231,8 @@ GetRenderPipelineByName(const std::string &name) {
 }
 
 std::shared_ptr<glengine::pipeline::wgpu::RenderPipeline> glengine::pipeline::wgpu::WGPURenderer::BuildRenderPipeline(std::string name,
-                                                                                                                      WGPUShaderModule shaders, std::span<WGPUBindGroupLayoutDescriptor> bindGroups, int immediateDataBytes) {
+    WGPUShaderModule shaders, WGPUVertexBufferLayout* vertexLayout, std::span<WGPUBindGroupLayoutDescriptor>
+    bindGroups, int immediateDataBytes) {
 
     // manually build pipeline layout
     std::vector<WGPUBindGroupLayout> bindGroupLayouts(bindGroups.size() + 1);
@@ -305,8 +306,8 @@ std::shared_ptr<glengine::pipeline::wgpu::RenderPipeline> glengine::pipeline::wg
             .nextInChain = nullptr,
             .stepMode = WGPUVertexStepMode_Vertex,
             .arrayStride = sizeof(Vertex),
-            .attributeCount = 3,
-            .attributes = &attributes[0],
+            .attributeCount =  3,
+            .attributes = &attributes[0]
         };
     auto depthStencilState = WGPUDepthStencilState {
         .nextInChain = nullptr,
@@ -340,7 +341,7 @@ std::shared_ptr<glengine::pipeline::wgpu::RenderPipeline> glengine::pipeline::wg
            .constantCount = 0,
            .constants = nullptr,
            .bufferCount = 1,
-           .buffers = &vtxLayout,
+           .buffers = vertexLayout != nullptr ? vertexLayout : &vtxLayout,
         },
         .primitive = {
             .nextInChain = nullptr,
@@ -485,7 +486,7 @@ void glengine::pipeline::wgpu::WGPURenderer::Resize(int2 size) {
 
 void glengine::pipeline::wgpu::WGPURenderer::buildBuiltinPipelines() {
     auto basicLitShaders = CompileShader(embed_BasicLit_wgsl);
-    BuildRenderPipeline("BasicLit", basicLitShaders, {} , sizeof(mat4));
+    BuildRenderPipeline("BasicLit", basicLitShaders, {}, {}, sizeof(mat4));
 
     WGPUBindGroupLayoutEntry basicLitInstancedBindGroupEntry = {
         .nextInChain = nullptr,
@@ -509,5 +510,5 @@ void glengine::pipeline::wgpu::WGPURenderer::buildBuiltinPipelines() {
         .entries = &basicLitInstancedBindGroupEntry
     };
     auto basicLitInstancedShaders = CompileShader(embed_BasicLitInstanced_wgsl);
-    BuildRenderPipeline("BasicLitInstanced", basicLitInstancedShaders, std::span(&basicLitInstancedBindGroup, 1), 0);
+    BuildRenderPipeline("BasicLitInstanced", basicLitInstancedShaders, {}, std::span(&basicLitInstancedBindGroup, 1), 0);
 }

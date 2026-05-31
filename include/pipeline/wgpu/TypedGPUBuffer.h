@@ -18,7 +18,6 @@ namespace glengine::pipeline::wgpu {
     public:
         TypedGPUBuffer(std::string name, WGPUDevice device, WGPUBufferUsage usage, int initialCapacity) {
             static_assert(std::is_standard_layout_v<T>, "T must be standard layout");
-            static_assert(std::is_trivial_v<T>, "T must be a trivial type");
             this->device = device;
             this->name = std::move(name);
             this->queue = wgpuDeviceGetQueue(device);
@@ -46,6 +45,15 @@ namespace glengine::pipeline::wgpu {
         void Push(T value) {
             storage.push_back(value);
             dirty = true;
+        }
+
+        void ReserveExtra(int value) {
+            storage.reserve(storage.size() + value);
+            dirty = true;
+        }
+
+        std::vector<T>& GetStorage() {
+            return storage;
         }
 
         void Clear() {

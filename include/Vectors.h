@@ -411,6 +411,13 @@ struct vec4 {
         data[3] = w;
     }
 
+    vec4(vec2<T> xy, vec2<T> zw) {
+        data[0] = xy.x;
+        data[1] = xy.y;
+        data[2] = zw.x;
+        data[3] = zw.y;
+    }
+
     vec4(vec3<T> xyz, T w) {
         data[0] = xyz.x;
         data[1] = xyz.y;
@@ -435,6 +442,7 @@ struct vec4 {
         vec_swizzle<vec3<T>, T, 4, 2, 1, 0> zyx, bgr;
         vec_swizzle<vec2<T>, T, 4, 0, 1> xy, rg;
         vec_swizzle<vec2<T>, T, 4, 1, 0> yx, gr;
+        vec_swizzle<vec2<T>, T, 4, 2, 3> zw, ba;
     };
 
     operator const T *() const {
@@ -479,4 +487,15 @@ typedef vec2<int> int2;
 // utility methods
 inline int2 floor(float2 a) {
     return int2((int)floor(a.x), (int)floor(a.y));
+}
+
+inline float2 abs(const float2 a) {
+    return {static_cast<float>(fabs(a.x)), static_cast<float>(fabs(a.y))};
+}
+
+inline float2 min(const float2 a, const float2 b) {
+    return {std::fmin(a.x, b.x), std::fmin(a.y, b.y)};
+}
+inline float2 max(const float2 a, const float2 b) {
+    return {std::fmax(a.x, b.x), std::fmax(a.y, b.y)};
 }

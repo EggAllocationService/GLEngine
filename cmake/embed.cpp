@@ -51,7 +51,9 @@ extern "C" {
 			char val;
 			file.read(&val, 1);
 
-			source << "0x" << std::hex << std::setw(2) << std::setfill('0') << static_cast<unsigned int>(val) << ",";
+			unsigned char val2 = std::bit_cast<unsigned char>(val);
+
+			source << "0x" << std::hex << std::setw(2) << std::setfill('0') << static_cast<unsigned int>(val2) << ",";
 		}
 
 		source << "0x00\n};\n";
