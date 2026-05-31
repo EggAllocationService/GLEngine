@@ -361,8 +361,7 @@ std::shared_ptr<glengine::pipeline::wgpu::RenderPipeline> glengine::pipeline::wg
 
 glengine::pipeline::wgpu::RenderBundle glengine::pipeline::wgpu::WGPURenderer::BeginRendering(RenderUniforms& uniforms) {
     // upload uniforms for this frame and submit any in-flight writes
-    wgpuQueueWriteBuffer(queue, renderUniformsBuffer, 0, &uniforms, sizeof(uniforms));
-    wgpuQueueSubmit(queue, 0, nullptr);
+    transferManager->Transfer(renderUniformsBuffer, 0, &uniforms, sizeof(uniforms));
 
     // get surface texture
     CONFIGURE:

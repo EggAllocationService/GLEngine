@@ -98,6 +98,7 @@ void TransferSession::Commit() {
 }
 
 TransferManager::TransferManager(WGPURenderer* renderer) {
+	this->bufferCounter = 0;
 	device = renderer->GetDevice();
 	queue = wgpuDeviceGetQueue(device);
 
