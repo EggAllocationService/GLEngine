@@ -81,14 +81,14 @@ void Enterprise::OnPossess(glengine::input::InputManager* input)
 	input->AddAxis('w', 's', [this](float amount) {
 			auto position = this->GetTransform()->GetPosition();
 			auto forward = this->GetTransform()->GetForwardVector();
-			this->GetTransform()->SetPosition(position + forward * amount);
+			this->GetTransform()->SetPosition(position + forward * amount * 4);
 		});
 
 	// right arrow to go right, left arrow to go left (+X axis = right)
 	input->AddAxis('d', 'a', [this](float amount) {
 			auto position = this->GetTransform()->GetPosition();
 			auto right = this->GetTransform()->GetRightVector();
-			this->GetTransform()->SetPosition(position + right * amount);
+			this->GetTransform()->SetPosition(position + right * amount * 4);
 
 			// add some tilt input and clamp
 			tilt.x += amount * TiltMultiplier;
@@ -98,7 +98,7 @@ void Enterprise::OnPossess(glengine::input::InputManager* input)
 	// up arrow to go up, down arrow to go down (+Y axis = up)
 	input->AddAxis('r', 'f', [this](float amount) {
 			auto position = this->GetTransform()->GetPosition();
-			this->GetTransform()->SetPosition(position + float3(0, amount, 0));
+			this->GetTransform()->SetPosition(position + float3(0, amount * 4, 0));
 
 			// add some tilt input and clamp
 			tilt.y += amount * TiltMultiplier;

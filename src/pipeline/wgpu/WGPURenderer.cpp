@@ -90,6 +90,15 @@ glengine::pipeline::wgpu::WGPURenderer::WGPURenderer(GLFWwindow *window) {
     // find preferred surface texture format (usually the 0th)
     WGPUSurfaceCapabilities caps;
     wgpuSurfaceGetCapabilities(surface, adapter, &caps);
+    auto surfExtras = new WGPUSurfaceConfigurationExtras {
+        .chain = {
+            .next = nullptr,
+            .sType = std::bit_cast<WGPUSType>(WGPUSType_SurfaceConfigurationExtras),
+        },
+        .desiredMaximumFrameLatency = 3
+    };
+
+    surfConfig.nextInChain = &surfExtras->chain;
     surfConfig.format = caps.formats[0]; // set preferred format
     surfConfig.usage = WGPUTextureUsage_RenderAttachment;
     surfConfig.presentMode = WGPUPresentMode_Fifo;
@@ -428,9 +437,6 @@ void glengine::pipeline::wgpu::WGPURenderer::FinishRendering(RenderBundle bundle
     if (!bundle.valid) return;
     auto command = wgpuCommandEncoderFinish(bundle.encoder, nullptr);
 
-    if (lastFrame != 0) {
-        wgpuDevicePoll(device, true, &lastFrame);
-    }
     lastFrame = wgpuQueueSubmitForIndex(queue, 1, &command);
     wgpuCommandBufferRelease(command);
     wgpuCommandEncoderRelease(bundle.encoder);
