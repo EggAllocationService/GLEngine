@@ -16,7 +16,7 @@ namespace glengine::world::objects {
         for (auto& buf : buffers) {
             buf.second.data->Commit([&](WGPUBuffer buffer) {
                 // handle buffer resize
-                auto entry = WGPU_BIND_GROUP_ENTRY_INIT;
+                WGPUBindGroupEntry entry = WGPU_BIND_GROUP_ENTRY_INIT;
                 entry.buffer = buffer;
 
                 buf.second.pipeline->SetBinding(1, entry);
@@ -44,7 +44,7 @@ namespace glengine::world::objects {
                 .mesh = mesh
             };
 
-            auto entry = WGPU_BIND_GROUP_ENTRY_INIT;
+            WGPUBindGroupEntry entry = WGPU_BIND_GROUP_ENTRY_INIT;
             entry.buffer = *tracker.data;
 
             tracker.pipeline->SetBinding(1, entry);

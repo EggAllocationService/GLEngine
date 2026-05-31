@@ -49,11 +49,12 @@ glengine::pipeline::wgpu::WGPURenderer::WGPURenderer(GLFWwindow *window) {
         .backendType = WGPUBackendType_Undefined,
         .compatibleSurface = nullptr
     };
-    wgpuInstanceRequestAdapter(instance, &options,
-                           (const WGPURequestAdapterCallbackInfo){
-                               .callback = handle_request_adapter,
-                               .userdata1 = &adapter
-                           });
+
+    WGPURequestAdapterCallbackInfo adapterCb = WGPU_REQUEST_ADAPTER_CALLBACK_INFO_INIT;
+    adapterCb.callback = handle_request_adapter;
+    adapterCb.userdata1 = &adapter;
+
+    wgpuInstanceRequestAdapter(instance, &options, adapterCb);
     assert(adapter);
 
     WGPUNativeLimits nativeLimits = {
@@ -71,17 +72,18 @@ glengine::pipeline::wgpu::WGPURenderer::WGPURenderer(GLFWwindow *window) {
     requiredLimits.maxImmediateSize = 128;
 
     auto features = new WGPUNativeFeature[1] { WGPUNativeFeature_Immediates };
-    auto deviceDescriptor = WGPU_DEVICE_DESCRIPTOR_INIT;
+    WGPUDeviceDescriptor deviceDescriptor = WGPU_DEVICE_DESCRIPTOR_INIT;
     deviceDescriptor.requiredLimits = &requiredLimits;
     deviceDescriptor.requiredFeatures = reinterpret_cast<WGPUFeatureName*>(&features[0]);
     deviceDescriptor.requiredFeatureCount = 1;
 
     device = nullptr;
-    wgpuAdapterRequestDevice(adapter, &deviceDescriptor,
-                           (const WGPURequestDeviceCallbackInfo){
-                               .callback = handle_request_device,
-                               .userdata1 = &device
-                           });
+
+    WGPURequestDeviceCallbackInfo deviceCb = WGPU_REQUEST_DEVICE_CALLBACK_INFO_INIT;
+    deviceCb.callback = handle_request_device;
+    deviceCb.userdata1 = &device;
+
+    wgpuAdapterRequestDevice(adapter, &deviceDescriptor, deviceCb);
     assert(device);
     queue = wgpuDeviceGetQueue(device);
 
@@ -94,7 +96,7 @@ glengine::pipeline::wgpu::WGPURenderer::WGPURenderer(GLFWwindow *window) {
     wgpuSurfaceGetCapabilities(surface, adapter, &caps);
     surfConfig.format = caps.formats[0]; // set preferred format
     surfConfig.usage = WGPUTextureUsage_RenderAttachment;
-    surfConfig.presentMode = WGPUPresentMode_Fifo;
+    surfConfig.presentMode = WGPUPresentMode_Mailbox;
     surfConfig.alphaMode = WGPUCompositeAlphaMode_Auto;
     surfConfig.device = device;
 
@@ -135,7 +137,7 @@ glengine::pipeline::wgpu::WGPURenderer::WGPURenderer(GLFWwindow *window) {
     };
     renderUniformsBuffer = wgpuDeviceCreateBuffer(device, &renderBufDesc);
 
-    auto entry0 = WGPU_BIND_GROUP_ENTRY_INIT;
+    WGPUBindGroupEntry entry0 = WGPU_BIND_GROUP_ENTRY_INIT;
     entry0.buffer = renderUniformsBuffer;
     auto universalDesc = WGPUBindGroupDescriptor {
         .nextInChain = nullptr,
@@ -361,7 +363,7 @@ glengine::pipeline::wgpu::RenderBundle glengine::pipeline::wgpu::WGPURenderer::B
     // clear textures
     auto encoder = wgpuDeviceCreateCommandEncoder(device, nullptr);
 
-    auto descriptor = WGPU_RENDER_PASS_DESCRIPTOR_INIT;
+    WGPURenderPassDescriptor descriptor = WGPU_RENDER_PASS_DESCRIPTOR_INIT;
     auto attachment = WGPURenderPassDepthStencilAttachment {
         .nextInChain = nullptr,
         .view = depthTextureView,
@@ -381,7 +383,7 @@ glengine::pipeline::wgpu::RenderBundle glengine::pipeline::wgpu::WGPURenderer::B
         .resolveTarget = nullptr,
         .loadOp = WGPULoadOp_Clear,
         .storeOp = WGPUStoreOp_Store,
-        .clearValue = WGPUColor(0, 1, 0, 1)
+        .clearValue = WGPUColor(0, 0, 0, 1)
     };
     descriptor.depthStencilAttachment = &attachment;
     descriptor.colorAttachmentCount = 1;
@@ -450,18 +452,10 @@ void glengine::pipeline::wgpu::WGPURenderer::Resize(int2 size) {
     depthTextureView = wgpuTextureCreateView(depthTexture, nullptr);
 }
 
-const char BasicLit[] = {
-    #embed "shaders/BasicLit.wgsl"
-    ,0
-};
-
-const char BasicLitInstanced[] = {
-    #embed "shaders/BasicLitInstanced.wgsl"
-    ,0
-};
+#include "Shaders.h"
 
 void glengine::pipeline::wgpu::WGPURenderer::buildBuiltinPipelines() {
-    auto basicLitShaders = CompileShader(BasicLit);
+    auto basicLitShaders = CompileShader(embed_BasicLit_wgsl);
     BuildRenderPipeline("BasicLit", basicLitShaders, {} , sizeof(mat4));
 
     WGPUBindGroupLayoutEntry basicLitInstancedBindGroupEntry = {
@@ -485,6 +479,6 @@ void glengine::pipeline::wgpu::WGPURenderer::buildBuiltinPipelines() {
         .entryCount = 1,
         .entries = &basicLitInstancedBindGroupEntry
     };
-    auto basicLitInstancedShaders = CompileShader(BasicLitInstanced);
+    auto basicLitInstancedShaders = CompileShader(embed_BasicLitInstanced_wgsl);
     BuildRenderPipeline("BasicLitInstanced", basicLitInstancedShaders, std::span(&basicLitInstancedBindGroup, 1), 0);
 }

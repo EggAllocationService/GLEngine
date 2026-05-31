@@ -41,6 +41,6 @@ fn vs(i: VertexIn) -> VertexOut {
 
 @fragment
 fn fs(i: VertexOut) -> @location(0) vec4f {
-    return abs(normalize(i.normal));
+    return vec4f(abs(normalize(i.normal)).xyz, 1.0);
 }
 

@@ -18,3 +18,7 @@ endif()
 if (GLFW_BUILD_WAYLAND)
     target_compile_definitions(glfw3webgpu PRIVATE _GLFW_WAYLAND)
 endif()
+
+if (GLFW_BUILD_WIN32)
+    target_compile_definitions(glfw3webgpu PRIVATE _GLFW_WIN32)
+endif()

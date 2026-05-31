@@ -16,8 +16,8 @@ namespace glengine::world {
     /// Basic components do not have a scene transform and are not rendered onscreen
     class GLENGINE_EXPORT ActorComponent {
     public:
-        static GLENGINE_EXPORT Engine* CURRENT_ENGINE_CONSTRUCTING;
-        static GLENGINE_EXPORT Actor* CURRENT_ACTOR_CONSTRUCTING;
+        static Engine* CURRENT_ENGINE_CONSTRUCTING;
+        static Actor* CURRENT_ACTOR_CONSTRUCTING;
 
         virtual ~ActorComponent() = default;
 

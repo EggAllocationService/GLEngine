@@ -9,6 +9,10 @@
 #include "SpinnyCube.h"
 #include "3d/mesh/StaticMesh.h"
 
+#ifdef _WIN32
+#include "windows.h"
+#endif
+
 #define KEY_ESCAPE 27
 
 using namespace glengine;
@@ -25,12 +29,13 @@ static void error_callback(int error, const char* description)
 }
 
 int main(int argc, char** argv) {
+    glfwSetErrorCallback(error_callback);
+    int result = glfwInit();
+
 #ifdef _WIN32
     // Hide the console window on Windows
     FreeConsole();
 #endif
-    glfwSetErrorCallback(error_callback);
-    glfwInit();
 
     auto engine = new Engine("3D Test", int2(1280, 720));
     engine->SetAllowNonFocusedPawnInput(true);

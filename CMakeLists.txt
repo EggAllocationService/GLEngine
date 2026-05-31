@@ -3,6 +3,7 @@ project(GLEngine)
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 include(wgpu-native)
+include(embed)
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -49,6 +50,11 @@ add_library(glengine SHARED
         src/3d/objects/LightTracker.cpp
         include/3d/objects/LightTracker.h)
 
+create_resource_library(NAME Shaders SOURCES 
+    src/pipeline/wgpu/shaders/BasicLit.wgsl
+    src/pipeline/wgpu/shaders/BasicLitInstanced.wgsl
+)
+
 target_include_directories(glengine PUBLIC include external/include)
 
 include(GenerateExportHeader)
@@ -78,32 +84,15 @@ if (${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
     target_link_libraries(glengine "-framework OpenGL")
     SET(CMAKE_CXX_FLAGS_DEBUG "-g")
 elseif(${CMAKE_SYSTEM_NAME} MATCHES "Windows")
-    target_include_directories(glengine PUBLIC "C:\\Program Files\\freeglut\\include")
-
-    if (CMAKE_SIZEOF_VOID_P EQUAL 4)
-        # x86 libraries
-        set(FREEGLUT_LIB "C:\\Program Files\\freeglut\\lib\\freeglut.lib")
-        set(FREEGLUT_DLL "C:\\Program Files\\freeglut\\bin\\freeglut.dll")
-    else()
-        # x64 libraries
-        set(FREEGLUT_LIB "C:\\Program Files\\freeglut\\lib\\x64\\freeglut.lib")
-        set(FREEGLUT_DLL "C:\\Program Files\\freeglut\\bin\\x64\\freeglut.dll")
-    endif()
-
-    target_link_libraries(glengine ${FREEGLUT_LIB})
-
-    # msvc gets confused about templates sometimes
     # also narrowing conversion warnings for integers??? (double -> float)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /wd4251 /wd4244")
-
-    add_custom_command(TARGET glengine POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy_if_different ${FREEGLUT_DLL} $<TARGET_FILE_DIR:glengine>)
 elseif(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
     target_link_libraries(glengine "glut")
     target_link_libraries(glengine "OpenGL")
     target_link_libraries(glengine "GLU")
 endif()
 
-target_link_libraries(glengine glfw webgpu glfw3webgpu)
+target_link_libraries(glengine glfw webgpu glfw3webgpu Shaders)
 
 function(engine_copy_freeglut_if_needed TARGETNAME)
     if (${CMAKE_SYSTEM_NAME} MATCHES "Windows")

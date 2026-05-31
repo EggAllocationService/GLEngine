@@ -5,7 +5,6 @@
 #include "engine_GLUT.h"
 #include "Colors.h"
 #include <map>
-#include "unistd.h"
 #include <algorithm>
 
 #include "GLMath.h"
@@ -45,6 +44,7 @@ namespace glengine {
 
     Engine::Engine(const std::string &windowName, int2 size) {
         windowSize = size;
+        glfwInit();
         glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
         window = glfwCreateWindow(windowSize.x, windowSize.y, windowName.c_str(), nullptr, nullptr);
         mouseManager = new input::MouseManager(this);
