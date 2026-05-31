@@ -22,7 +22,7 @@ public:
     float TiltMultiplier = 10.0;
 
 private:
-    std::shared_ptr<glengine::world::mesh::InstancedStaticMeshComponent> mesh;
+    std::shared_ptr<glengine::world::mesh::StaticMeshComponent> mesh;
 
     // tilt.x = +right -left
     // tilt.y = +up -down

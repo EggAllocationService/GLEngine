@@ -13,8 +13,15 @@ namespace glengine::world::objects {
     }
 
     void InstancedDrawTracker::UpdateEnd(double deltaTime) {
+        unsigned int totalData = 0;
+        for (const auto& buf : buffers) {
+            totalData += buf.second.data->GetSize();
+        }
+
+        auto session = renderer->GetTransferManager()->CreateSession("instanced draw data", totalData);
         for (auto& buf : buffers) {
-            buf.second.data->Commit([&](WGPUBuffer buffer) {
+
+            buf.second.data->Commit(session, [&](WGPUBuffer buffer) {
                 // handle buffer resize
                 WGPUBindGroupEntry entry = WGPU_BIND_GROUP_ENTRY_INIT;
                 entry.buffer = buffer;
@@ -23,6 +30,8 @@ namespace glengine::world::objects {
                 buf.second.pipeline->CommitBindings();
             });
         }
+
+        session->Commit();
     }
 
     void InstancedDrawTracker::RenderStart(pipeline::wgpu::RenderBundle &bundle) {

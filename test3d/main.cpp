@@ -4,6 +4,7 @@
 
 #include <fstream>
 
+#include "GLMath.h"
 #include "Engine.h"
 #include "Enterprise.h"
 #include "SpinnyCube.h"
@@ -40,10 +41,11 @@ int main(int argc, char** argv) {
     auto engine = new Engine("3D Test", int2(1280, 720));
     engine->SetAllowNonFocusedPawnInput(true);
 
-    for (int i = 0; i < 10; i++) {
+    for (int i = 0; i < 50; i++) {
         auto cube = engine->SpawnActor<SpinnyCube>();
 
         cube->GetTransform()->SetPosition(float3(frand(-10, 10), 0, frand(-4, 4)));
+        cube->GetTransform()->SetRotation(float3(frand(-PI, PI), 0, frand(-PI, PI)));
     }
 
     auto ship = engine->SpawnActor<Enterprise>();

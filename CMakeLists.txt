@@ -48,7 +48,7 @@ add_library(glengine SHARED
         "src/3d/objects/InstancedDrawTracker.cpp"
         "include/3d/objects/InstancedDrawTracker.h"
         src/3d/objects/LightTracker.cpp
-        include/3d/objects/LightTracker.h)
+        include/3d/objects/LightTracker.h "src/pipeline/wgpu/TransferManager.cpp" "include/pipeline/wgpu/TransferManager.h")
 
 create_resource_library(NAME Shaders SOURCES 
     src/pipeline/wgpu/shaders/BasicLit.wgsl

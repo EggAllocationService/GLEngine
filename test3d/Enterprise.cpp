@@ -33,7 +33,7 @@ Enterprise::Enterprise()
 		->GetResourceManager()
 		->GetResource<StaticMesh>("enterprise.obj");
 
-	mesh = CreateComponent<InstancedStaticMeshComponent>();
+	mesh = CreateComponent<StaticMeshComponent>();
 	mesh->SetupAttachment(root->GetTransform());
 	mesh->SetMesh(model);
 }

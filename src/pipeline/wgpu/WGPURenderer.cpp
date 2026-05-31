@@ -149,6 +149,8 @@ glengine::pipeline::wgpu::WGPURenderer::WGPURenderer(GLFWwindow *window) {
     Resize(size);
 
     buildBuiltinPipelines();
+
+    transferManager = new TransferManager(this);
 }
 
 WGPUShaderModule glengine::pipeline::wgpu::WGPURenderer::CompileShader(const char* shaders) {

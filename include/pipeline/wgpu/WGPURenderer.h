@@ -11,6 +11,8 @@
 #include "TypedGPUBuffer.h"
 #include "GLFW/glfw3.h"
 
+#include "TransferManager.h"
+
 
 namespace glengine::pipeline::wgpu {
     struct alignas(16) RenderUniforms {
@@ -54,6 +56,14 @@ namespace glengine::pipeline::wgpu {
             return std::make_unique<TypedGPUBuffer<T>>(std::move(name), device, usage, initialCapacity);
         }
 
+        [[nodiscard]] WGPUDevice GetDevice() const {
+            return device;
+        }
+
+        [[nodiscard]] TransferManager* GetTransferManager() const {
+            return transferManager;
+        }
+
     private:
         void buildBuiltinPipelines();
 
@@ -70,5 +80,7 @@ namespace glengine::pipeline::wgpu {
         WGPUBindGroup universalBindGroup;
         WGPUBuffer renderUniformsBuffer;
         WGPUSubmissionIndex lastFrame = 0;
+
+        TransferManager* transferManager;
     };
 }

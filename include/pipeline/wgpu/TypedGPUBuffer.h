@@ -10,6 +10,8 @@
 
 #include "webgpu/webgpu.h"
 
+#include "TransferManager.h"
+
 namespace glengine::pipeline::wgpu {
     template<typename T>
     class TypedGPUBuffer {
@@ -60,6 +62,19 @@ namespace glengine::pipeline::wgpu {
             }
 
             wgpuQueueWriteBuffer(queue, buffer, 0, storage.data(), storage.size() * sizeof(T));
+
+            dirty = false;
+        }
+
+        void Commit(std::unique_ptr<TransferSession>& session, const std::function<void(WGPUBuffer buffer)>& handleResize) {
+            if (!dirty) return;
+
+            if (bufferCapacity < storage.capacity()) {
+                grow(storage.capacity());
+                handleResize(buffer);
+            }
+
+            session->Transfer(buffer, 0, storage.data(), storage.size() * sizeof(T));
 
             dirty = false;
         }
