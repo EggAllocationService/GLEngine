@@ -1,6 +1,7 @@
 #include "pipeline/wgpu/TransferManager.h"
 #include "pipeline/wgpu/WGPURenderer.h"
 #include <format>
+#include <cstring>
 
 using namespace glengine::pipeline::wgpu;
 
