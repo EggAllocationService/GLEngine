@@ -425,6 +425,7 @@ glengine::pipeline::wgpu::RenderBundle glengine::pipeline::wgpu::WGPURenderer::B
 }
 
 void glengine::pipeline::wgpu::WGPURenderer::FinishRendering(RenderBundle bundle) {
+    if (!bundle.valid) return;
     auto command = wgpuCommandEncoderFinish(bundle.encoder, nullptr);
 
     if (lastFrame != 0) {

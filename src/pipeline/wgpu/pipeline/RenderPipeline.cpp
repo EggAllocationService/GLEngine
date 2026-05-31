@@ -14,6 +14,7 @@ glengine::pipeline::wgpu::RenderPipeline::RenderPipeline(WGPUDevice device, WGPU
 
 void glengine::pipeline::wgpu::RenderPipeline::DrawMesh(const RenderBundle &bundle, const GPUMesh &mesh,
                                                         const void *immediateData) {
+    if (!bundle.valid) return;
     auto pass = createPass(bundle);
 
     wgpuRenderPassEncoderSetVertexBuffer(pass, 0, mesh.GetVertices(), 0, mesh.GetVertexCount() * sizeof(Vertex));
@@ -34,6 +35,7 @@ void glengine::pipeline::wgpu::RenderPipeline::DrawMesh(const RenderBundle &bund
 
 void glengine::pipeline::wgpu::RenderPipeline::DrawMeshInstanced(const RenderBundle &bundle, const GPUMesh &mesh,
     int instanceCount) {
+    if (!bundle.valid) return;
     auto pass = createPass(bundle);
     auto indices = mesh.GetIndices();
     wgpuRenderPassEncoderSetVertexBuffer(pass, 0, mesh.GetVertices(), 0, mesh.GetVertexCount() * sizeof(Vertex));

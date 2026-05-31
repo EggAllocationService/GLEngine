@@ -6,6 +6,7 @@
 #include "Colors.h"
 #include <map>
 #include <algorithm>
+#include <thread>
 
 #include "GLMath.h"
 #include "3d/ActorSceneComponent.h"
@@ -255,8 +256,9 @@ namespace glengine {
         };
         // set matrices
         auto bundle = renderer->BeginRendering(uniforms);
+
         if (!bundle.valid) {
-            return;
+            std::this_thread::sleep_for(std::chrono::milliseconds(10));
         }
 
         // before rendering actors, run all renderObjects
