@@ -10,16 +10,12 @@
 
 #include "glfw3webgpu.h"
 
-static void handle_request_adapter(WGPURequestAdapterStatus status,
-                                   WGPUAdapter adapter, WGPUStringView message,
-                                   void *userdata1, void *userdata2) {
-    *(WGPUAdapter *)userdata1 = adapter;
-
-    WGPUAdapterInfo info;
-    wgpuAdapterGetInfo(adapter, &info);
-    std::cout << std::string_view(info.device.data, info.device.length) << std::endl;
+extern "C" static void handle_request_adapter(WGPURequestAdapterStatus status,
+    WGPUAdapter adapter, WGPUStringView message,
+    void* userdata1, void* userdata2) {
+    *(WGPUAdapter*)userdata1 = adapter;
 }
-static void handle_request_device(WGPURequestDeviceStatus status,
+extern "C" static void handle_request_device(WGPURequestDeviceStatus status,
                                   WGPUDevice device, WGPUStringView message,
                                   void *userdata1, void *userdata2) {
     *(WGPUDevice *)userdata1 = device;
@@ -46,7 +42,7 @@ glengine::pipeline::wgpu::WGPURenderer::WGPURenderer(GLFWwindow *window) {
         .featureLevel = WGPUFeatureLevel_Core,
         .powerPreference = WGPUPowerPreference_HighPerformance,
         .forceFallbackAdapter = false,
-        .backendType = WGPUBackendType_Undefined,
+        .backendType = WGPUBackendType_D3D12,
         .compatibleSurface = nullptr
     };
 
@@ -63,8 +59,8 @@ glengine::pipeline::wgpu::WGPURenderer::WGPURenderer(GLFWwindow *window) {
             .sType = static_cast<WGPUSType>(WGPUSType_NativeLimits)
         },
         .maxImmediateSize = 128,
-        .maxNonSamplerBindings = 0,
-        .maxBindingArrayElementsPerShaderStage = 0
+        .maxNonSamplerBindings = WGPU_LIMIT_U32_UNDEFINED,
+        .maxBindingArrayElementsPerShaderStage = WGPU_LIMIT_U32_UNDEFINED
     };
 
     WGPULimits requiredLimits = WGPU_LIMITS_INIT;
