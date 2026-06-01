@@ -210,10 +210,6 @@ std::unique_ptr<StagingBuffer> TransferManager::allocateNew(unsigned int capacit
 	auto newItem = std::make_unique<StagingBuffer>();
 	newItem->capacity = capacity;
 	newItem->name = std::format("GLEngine transfer buffer #{}", ++bufferCounter);
-	printf("Allocated new transfer buffer #%d with capacity %d\n", bufferCounter, newItem->capacity);
-	if (capacity > 80000) {
-		printf("warn!\n");
-	}
 
 	WGPUBufferDescriptor desc = {
 		.nextInChain = nullptr,
