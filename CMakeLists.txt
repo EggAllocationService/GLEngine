@@ -53,6 +53,8 @@ add_library(glengine SHARED
         include/3d/objects/LightTracker.h
         "src/pipeline/wgpu/TransferManager.cpp"
         "include/pipeline/wgpu/TransferManager.h"
+        src/3d/text/SlugTextComponent.cpp
+        src/3d/text/SlugTextComponent.h
 )
 
 create_resource_library(NAME Shaders SOURCES 
@@ -60,8 +62,9 @@ create_resource_library(NAME Shaders SOURCES
     src/pipeline/wgpu/shaders/BasicLitInstanced.wgsl
 )
 
+find_package(PkgConfig REQUIRED)
+pkg_check_modules(HARFBUZZ REQUIRED IMPORTED_TARGET harfbuzz)
 if (${TEXT_RENDERING})
-    find_package(harfbuzz REQUIRED)
     target_compile_definitions(glengine PUBLIC GLENGINE_TEXT_RENDERING)
 
     target_sources(glengine PUBLIC
@@ -74,7 +77,7 @@ if (${TEXT_RENDERING})
         src/3d/text/FiraCode.ttf
         src/3d/text/slug.wgsl
     )
-    target_link_libraries(glengine harfbuzz TextRenderingResources)
+    target_link_libraries(glengine PkgConfig::HARFBUZZ TextRenderingResources)
 endif()
 
 target_include_directories(glengine PUBLIC include external/include)

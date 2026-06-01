@@ -3,7 +3,7 @@
 //
 #pragma once
 
-#include <harfbuzz/hb.h>
+#include <hb.h>
 #include "truetype.h"
 #include "pipeline/wgpu/TypedGPUBuffer.h"
 #include "pipeline/wgpu/pipeline/RenderPipeline.h"
@@ -32,7 +32,11 @@ namespace glengine::world::font {
     public:
         Font(pipeline::wgpu::WGPURenderer *Renderer);
 
-        std::unique_ptr<pipeline::wgpu::GPUMesh> PrepareText(const char* text);
+        std::shared_ptr<pipeline::wgpu::GPUMesh> PrepareText(const char* text);
+
+        [[nodiscard]] std::shared_ptr<pipeline::wgpu::RenderPipeline> GetPipeline() const {
+            return pipeline;
+        }
 
     private:
         void addGlyphToAtlas(unsigned int id);
@@ -44,6 +48,8 @@ namespace glengine::world::font {
         hb_font_t *font;
         pipeline::wgpu::WGPURenderer* renderer;
         std::shared_ptr<pipeline::wgpu::RenderPipeline> pipeline;
+
+        float2 scale;
 
     };
 }

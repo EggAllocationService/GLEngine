@@ -9,6 +9,7 @@
 #include "Colors.h"
 #include "Engine.h"
 #include "GLMath.h"
+#include "../src/3d/text/SlugTextComponent.h"
 #include "3d/mesh/StaticMeshComponent.h"
 #include "3d/components/PointLightComponent.h"
 #include "3d/mesh/InstancedStaticMeshComponent.h"
@@ -33,6 +34,9 @@ SpinnyCube::SpinnyCube() {
         ->GetResource<StaticMesh>(meshName);
     model->SetMesh(mesh);
     model->SetupAttachment(root->GetTransform());
+
+    auto text = CreateComponent<glengine::world::font::SlugTextComponent>();
+    text->GetTransform()->SetPosition(float3(0, 0, 2));
 }
 
 void SpinnyCube::Update(double deltaTime) {

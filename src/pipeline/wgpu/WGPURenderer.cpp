@@ -180,8 +180,6 @@ WGPUShaderModule glengine::pipeline::wgpu::WGPURenderer::CompileShader(const cha
     return wgpuDeviceCreateShaderModule(device, &desc);
 }
 
-static std::atomic<int> meshIdTracker = 0;
-
 std::shared_ptr<glengine::pipeline::wgpu::GPUMesh> glengine::pipeline::wgpu::WGPURenderer::UploadMesh(const std::vector<Vertex>& vertices) {
     auto bufferDesc = WGPUBufferDescriptor {
         .nextInChain = nullptr,
@@ -195,31 +193,6 @@ std::shared_ptr<glengine::pipeline::wgpu::GPUMesh> glengine::pipeline::wgpu::WGP
 
     return std::make_shared<GPUMesh>(buffer, nullptr, vertices.size(), 0, meshIdTracker++);
 }
-
-std::shared_ptr<glengine::pipeline::wgpu::GPUMesh> glengine::pipeline::wgpu::WGPURenderer::UploadIndexedMesh(const std::vector<Vertex>& vertices, const std::vector<unsigned int>& indices) {
-    auto verticesDesc = WGPUBufferDescriptor{
-        .nextInChain = nullptr,
-        .label = {},
-        .usage = WGPUBufferUsage_Vertex | WGPUBufferUsage_CopyDst,
-        .size = sizeof(Vertex) * vertices.size(),
-        .mappedAtCreation = false
-    };
-    auto vertciesBuf = wgpuDeviceCreateBuffer(device, &verticesDesc);
-    wgpuQueueWriteBuffer(queue, vertciesBuf, 0, vertices.data(), vertices.size() * sizeof(Vertex));
-
-    auto indicesDesc = WGPUBufferDescriptor{
-        .nextInChain = nullptr,
-        .label = {},
-        .usage = WGPUBufferUsage_Index | WGPUBufferUsage_CopyDst,
-        .size = sizeof(unsigned int) * indices.size(),
-        .mappedAtCreation = false
-    };
-    auto indicesBuf = wgpuDeviceCreateBuffer(device, &indicesDesc);
-    wgpuQueueWriteBuffer(queue, indicesBuf, 0, indices.data(), indices.size() * sizeof(unsigned int));
-
-    return std::make_shared<GPUMesh>(vertciesBuf, indicesBuf, vertices.size(), indices.size(), meshIdTracker++);
-}
-
 
 std::shared_ptr<glengine::pipeline::wgpu::RenderPipeline> glengine::pipeline::wgpu::WGPURenderer::
 GetRenderPipelineByName(const std::string &name) {

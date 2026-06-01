@@ -5,9 +5,11 @@
 #include "Font.h"
 
 #include <algorithm>
+#include <cassert>
 #include <cstring>
 #include <vector>
 
+#include "Colors.h"
 #include "TextRenderingResources.h"
 #include "Vectors.h"
 #include "pipeline/wgpu/WGPURenderer.h"
@@ -17,7 +19,7 @@ using namespace glengine::world::font;
 struct SlugVertex {
     float4 pos;
     float4 color;
-    int2 glyphData;
+    uint2 glyphData;
 };
 
 class SlugGlyph {
@@ -38,6 +40,10 @@ Font::Font(pipeline::wgpu::WGPURenderer* renderer) {
                                    nullptr);
     auto face = hb_face_create(fontBlob, 0);
     font = hb_font_create(face);
+
+    int2 iScale;
+    hb_font_get_scale(font, &iScale.x, &iScale.y);
+    this->scale = float2(1.0f / iScale.x, 1.0f / iScale.y);
 
     ttInitFont(&fontData, embed_FiraCode_ttf, embed_FiraCode_ttf_length);
 
@@ -147,7 +153,7 @@ Font::Font(pipeline::wgpu::WGPURenderer* renderer) {
     pipeline->CommitBindings();
 }
 
-std::unique_ptr<glengine::pipeline::wgpu::GPUMesh> Font::PrepareText(const char *text) {
+std::shared_ptr<glengine::pipeline::wgpu::GPUMesh> Font::PrepareText(const char *text) {
 
     auto buf = hb_buffer_create();
     hb_buffer_add_utf8(buf, text, strlen(text), 0, -1);
@@ -187,6 +193,60 @@ std::unique_ptr<glengine::pipeline::wgpu::GPUMesh> Font::PrepareText(const char 
 
     session->Commit();
     pipeline->CommitBindings();
+
+    std::vector<SlugVertex> vertices;
+    vertices.reserve(glyphCount * 4);
+    std::vector<uint32_t> indices;
+    indices.reserve(glyphCount * 6);
+
+    unsigned int glyphPositionCount;
+    auto positions = hb_buffer_get_glyph_positions(buf, &glyphPositionCount);
+
+    assert(glyphPositionCount == glyphCount);
+
+    float2 offset;
+
+    for (int i = 0; i < glyphPositionCount; i++) {
+        auto glyphIndex = glyphIndexMap[glyphInfos[i].codepoint];
+        auto bounds = this->glyphInfos->operator[](glyphIndex).bounds;
+        float2 min = bounds.xy;
+        float2 max = bounds.zw;
+        float2 minS = min * scale;
+        float2 maxS = max * scale;
+        int2 minI(min);
+        int2 maxI(max);
+
+        uint32_t vertexOffset = vertices.size();
+        vertices.emplace_back(
+            float4(offset.x + minS.x, offset.y + minS.y, 0, 1),
+            Colors::WHITE,
+            uint2((minI.x << 16) | (minI.y & 0xFFFF) , glyphIndex)
+            );
+        vertices.emplace_back(
+            float4(offset.x + minS.x, offset.y + maxS.y, 0, 1),
+            Colors::WHITE,
+            uint2((minI.x << 16) | (maxI.y & 0xFFFF) , glyphIndex)
+            );
+        vertices.emplace_back(
+            float4(offset.x + maxS.x, offset.y + maxS.y, 0, 1),
+            Colors::WHITE,
+            uint2((maxI.x << 16) | (maxI.y & 0xFFFF) , glyphIndex)
+            );
+        vertices.emplace_back(
+            float4(offset.x + maxS.x, offset.y + minS.y, 0, 1),
+            Colors::WHITE,
+            uint2((maxI.x << 16) | (minI.y & 0xFFFF) , glyphIndex)
+            );
+        indices.insert(indices.end(), {
+            vertexOffset + 0, vertexOffset + 1, vertexOffset + 2,
+            vertexOffset + 0, vertexOffset + 2, vertexOffset + 3
+        });
+
+
+        offset.x += positions[i].x_advance * scale.x;
+    }
+
+    return renderer->UploadIndexedMesh(vertices, indices);
 }
 
 int moveTo(void* ptr, int x, int y) {
@@ -206,16 +266,7 @@ int lineTo(void* ptr, int x, int y) {
     const auto start = glyph->cursor;
     const auto end = float2(x, y);
     auto controlPoint = (start + end) / 2;
-    auto delta = abs(end - start);
-    if (delta.x > LINE_EPSILON && delta.y > LINE_EPSILON) {
-        auto length = sqrt(delta.x * delta.x + delta.y * delta.y);
-        if (length > 0) {
-            // for non-zero line segments conver the line to a curve by offsetting the middle point a touch
-            auto offset = LINE_EPSILON / length;
-            controlPoint.x -= offset * delta.y;
-            controlPoint.y += offset * delta.x;
-        }
-    }
+    controlPoint += float2(LINE_EPSILON, LINE_EPSILON) * 0.1;
 
     glyph->curves.emplace_back(start, controlPoint, end);
     glyph->boundMin = min(glyph->boundMin, start);
@@ -295,15 +346,15 @@ void Font::addGlyphToAtlas(unsigned int id) {
         auto aabb = curve.BoundingBox();
         float2 cMin = aabb.xy;
         float2 cMax = aabb.zw;
-        int lowerBand = std::clamp(static_cast<int>((cMin.y - glyph->boundMin.y) / (dimensions.y * BAND_COUNT)), 0, BAND_COUNT - 1);
-        int upperBand = std::clamp(static_cast<int>((cMax.y - glyph->boundMin.y) / (dimensions.y * BAND_COUNT)), 0, BAND_COUNT - 1);
+        int lowerBand = std::clamp(static_cast<int>((cMin.y - glyph->boundMin.y) / dimensions.y * BAND_COUNT), 0, BAND_COUNT - 1);
+        int upperBand = std::clamp(static_cast<int>((cMax.y - glyph->boundMin.y) / dimensions.y * BAND_COUNT), 0, BAND_COUNT - 1);
         for (int band = lowerBand; band <= upperBand; band++) {
             bandCountH[band]++;
             totalIndices++;
         }
 
-        int leftBand = std::clamp(static_cast<int>((cMin.x - glyph->boundMin.x) / (dimensions.x * BAND_COUNT)), 0, BAND_COUNT - 1);
-        int rightBand = std::clamp(static_cast<int>((cMax.x - glyph->boundMin.x) / (dimensions.x * BAND_COUNT)), 0, BAND_COUNT - 1);
+        int leftBand = std::clamp(static_cast<int>((cMin.x - glyph->boundMin.x) / dimensions.x * BAND_COUNT), 0, BAND_COUNT - 1);
+        int rightBand = std::clamp(static_cast<int>((cMax.x - glyph->boundMin.x) / dimensions.x * BAND_COUNT), 0, BAND_COUNT - 1);
         for (int band = leftBand; band <= rightBand; band++) {
             bandCountV[band]++;
             totalIndices++;
@@ -382,6 +433,13 @@ void Font::addGlyphToAtlas(unsigned int id) {
     }
 
     this->glyphInfos->Push(data);
+
+    for (const auto&curve : glyph->curves) {
+
+        printf("%.2f, %.2f, %.2f, %.2f, %.2f, %.2f,\n", curve.p0.x, curve.p0.y, curve.p1.x, curve.p1.y, curve.p2.x, curve.p2.y);
+    }
+
+    printf("\n\n\n\n\n");
 
     delete glyph;
 

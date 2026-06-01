@@ -265,6 +265,10 @@ struct vec2 {
     vec2 norm() const {
         return *this / len();
     }
+
+    vec2 inv() {
+        return vec2(1 / x, 1 / y);
+    }
 };
 
 /// Constant-width vector, 3 lanes
@@ -483,6 +487,7 @@ typedef vec3<int> int3;
 
 typedef vec2<float> float2;
 typedef vec2<int> int2;
+typedef vec2<unsigned int> uint2;
 
 // utility methods
 inline int2 floor(float2 a) {

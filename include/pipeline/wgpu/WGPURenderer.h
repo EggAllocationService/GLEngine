@@ -41,7 +41,31 @@ namespace glengine::pipeline::wgpu {
         WGPURenderer(GLFWwindow* window);
         WGPUShaderModule CompileShader(const char* shaders);
         std::shared_ptr<GPUMesh> UploadMesh(const std::vector<Vertex>& vertices);
-        std::shared_ptr<GPUMesh> UploadIndexedMesh(const std::vector<Vertex>& vertices, const std::vector<unsigned int>& indices);
+
+        template<typename T>
+        std::shared_ptr<GPUMesh> UploadIndexedMesh(const std::vector<T>& vertices, const std::vector<unsigned int>& indices) {
+            auto verticesDesc = WGPUBufferDescriptor{
+                .nextInChain = nullptr,
+                .label = {},
+                .usage = WGPUBufferUsage_Vertex | WGPUBufferUsage_CopyDst,
+                .size = sizeof(T) * vertices.size(),
+                .mappedAtCreation = false
+            };
+            auto vertciesBuf = wgpuDeviceCreateBuffer(device, &verticesDesc);
+            wgpuQueueWriteBuffer(queue, vertciesBuf, 0, vertices.data(), vertices.size() * sizeof(T));
+
+            auto indicesDesc = WGPUBufferDescriptor{
+                .nextInChain = nullptr,
+                .label = {},
+                .usage = WGPUBufferUsage_Index | WGPUBufferUsage_CopyDst,
+                .size = sizeof(unsigned int) * indices.size(),
+                .mappedAtCreation = false
+            };
+            auto indicesBuf = wgpuDeviceCreateBuffer(device, &indicesDesc);
+            wgpuQueueWriteBuffer(queue, indicesBuf, 0, indices.data(), indices.size() * sizeof(unsigned int));
+
+            return std::make_shared<GPUMesh>(vertciesBuf, indicesBuf, vertices.size(), indices.size(), meshIdTracker++);
+        }
 
         std::shared_ptr<RenderPipeline> GetRenderPipelineByName(const std::string& name);
         std::shared_ptr<RenderPipeline> BuildRenderPipeline(
@@ -86,7 +110,8 @@ namespace glengine::pipeline::wgpu {
         WGPUBindGroup universalBindGroup;
         WGPUBuffer renderUniformsBuffer;
         WGPUSubmissionIndex lastFrame = 0;
-
         TransferManager* transferManager;
+        std::atomic<int> meshIdTracker = 0;
+
     };
 }
