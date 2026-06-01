@@ -10,6 +10,11 @@
 
 #include "glfw3webgpu.h"
 
+#ifdef GLENGINE_TEXT_RENDERING
+#include "3d/text/Font.h"
+#include "TextRenderingResources.h"
+#endif
+
 static void handle_request_adapter(WGPURequestAdapterStatus status,
     WGPUAdapter adapter, WGPUStringView message,
     void* userdata1, void* userdata2) {
@@ -237,10 +242,14 @@ std::shared_ptr<glengine::pipeline::wgpu::RenderPipeline> glengine::pipeline::wg
     auto layout = wgpuDeviceCreatePipelineLayout(device, &layoutDesc);
 
 
+    WGPUBlendState blend = WGPU_BLEND_STATE_INIT;
+    blend.color.dstFactor = WGPUBlendFactor_OneMinusSrcAlpha;
+    blend.color.srcFactor = WGPUBlendFactor_SrcAlpha;
+    blend.color.operation = WGPUBlendOperation_Add;
     auto target = WGPUColorTargetState {
         .nextInChain = nullptr,
         .format = surfConfig.format,
-        .blend = nullptr,
+        .blend = &blend,
         .writeMask = WGPUColorWriteMask_All
     };
     auto fragmentState = WGPUFragmentState {
@@ -484,4 +493,99 @@ void glengine::pipeline::wgpu::WGPURenderer::buildBuiltinPipelines() {
     };
     auto basicLitInstancedShaders = CompileShader(embed_BasicLitInstanced_wgsl);
     BuildRenderPipeline("BasicLitInstanced", basicLitInstancedShaders, {}, std::span(&basicLitInstancedBindGroup, 1), 0);
+
+#ifdef GLENGINE_TEXT_RENDERING
+
+    auto slugShaders = CompileShader(embed_slug_wgsl);
+
+    auto *slugEntries = new WGPUBindGroupLayoutEntry[3] {
+        {
+            .nextInChain = nullptr,
+            .binding = 0,
+            .visibility = WGPUShaderStage_Vertex | WGPUShaderStage_Fragment,
+            .bindingArraySize = 0,
+            .buffer = {
+                .nextInChain = nullptr,
+                .type = WGPUBufferBindingType_ReadOnlyStorage,
+                .hasDynamicOffset = false,
+                .minBindingSize = 0
+            },
+            .sampler = {},
+            .texture = {},
+            .storageTexture = {}
+        },
+        {
+            .nextInChain = nullptr,
+            .binding = 1,
+            .visibility = WGPUShaderStage_Vertex | WGPUShaderStage_Fragment,
+            .bindingArraySize = 0,
+            .buffer = {
+                .nextInChain = nullptr,
+                .type = WGPUBufferBindingType_ReadOnlyStorage,
+                .hasDynamicOffset = false,
+                .minBindingSize = 0
+            },
+            .sampler = {},
+            .texture = {},
+            .storageTexture = {}
+        },
+        {
+            .nextInChain = nullptr,
+            .binding = 2,
+            .visibility = WGPUShaderStage_Vertex | WGPUShaderStage_Fragment,
+            .bindingArraySize = 0,
+            .buffer = {
+                .nextInChain = nullptr,
+                .type = WGPUBufferBindingType_ReadOnlyStorage,
+                .hasDynamicOffset = false,
+                .minBindingSize = 0
+            },
+            .sampler = {},
+            .texture = {},
+            .storageTexture = {}
+        }
+    };
+
+    WGPUBindGroupLayoutDescriptor slugBindGroup = {
+        .nextInChain = nullptr,
+        .label = {},
+        .entryCount = 3,
+        .entries = &slugEntries[0]
+    };
+
+    auto slugVtxLayouts = new WGPUVertexAttribute[3] {
+        {
+            .nextInChain = nullptr,
+            .format = WGPUVertexFormat_Float32x4,
+            .offset = offsetof(world::font::SlugVertex, pos),
+            .shaderLocation = 0
+        },
+        {
+            .nextInChain = nullptr,
+            .format = WGPUVertexFormat_Float32x4,
+            .offset = offsetof(world::font::SlugVertex, color),
+            .shaderLocation = 2
+        },
+        {
+        .nextInChain = nullptr,
+        .format = WGPUVertexFormat_Uint32x2,
+        .offset = offsetof(world::font::SlugVertex, glyphData),
+        .shaderLocation = 1
+        }
+    };
+
+    WGPUVertexBufferLayout slugLayout = {
+        .nextInChain = nullptr,
+        .stepMode = WGPUVertexStepMode_Vertex,
+        .arrayStride = sizeof(world::font::SlugVertex),
+        .attributeCount = 3,
+        .attributes = slugVtxLayouts
+    };
+
+    BuildRenderPipeline("BuiltinSlug", slugShaders, &slugLayout, std::span(&slugBindGroup, 1), sizeof(mat4));
+
+    delete[] slugVtxLayouts;
+    delete[] slugEntries;
+#endif
+
 }

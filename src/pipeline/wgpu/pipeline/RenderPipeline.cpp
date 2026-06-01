@@ -37,7 +37,6 @@ void glengine::pipeline::wgpu::RenderPipeline::DrawMeshInstanced(const RenderBun
     int instanceCount) {
     if (!bundle.valid) return;
     auto pass = createPass(bundle);
-    auto indices = mesh.GetIndices();
     wgpuRenderPassEncoderSetVertexBuffer(pass, 0, mesh.GetVertices(), 0, mesh.GetVertexCount() * mesh.GetVertexStride());
     if (mesh.IsIndexed()) {
         wgpuRenderPassEncoderSetIndexBuffer(pass, mesh.GetIndices(), WGPUIndexFormat_Uint32, 0, mesh.GetIndexCount() * sizeof(unsigned int));

@@ -8,7 +8,7 @@
 #include "Engine.h"
 #include "Enterprise.h"
 #include "SpinnyCube.h"
-#include "../src/3d/text/Font.h"
+#include "../include/3d/text/Font.h"
 #include "3d/mesh/StaticMesh.h"
 
 #ifdef _WIN32
@@ -43,10 +43,9 @@ int main(int argc, char** argv) {
     engine->SetAllowNonFocusedPawnInput(true);
 
     auto cube = engine->SpawnActor<SpinnyCube>();
+    cube->GetTransform()->SetPosition(float3(0, 0, 5));
 
     auto ship = engine->SpawnActor<Enterprise>();
-    engine->Possess(ship);
-    ship->GetTransform()->SetPosition(float3(0, 0, -25));
 
 
     engine->GetInputManager()->AddAction('x', [=]() {

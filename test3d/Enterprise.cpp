@@ -9,6 +9,7 @@
 #include "ResourceManager.h"
 #include "GLMath.h"
 #include "3d/mesh/InstancedStaticMeshComponent.h"
+#include "3d/text/SlugTextComponent.h"
 
 
 using namespace glengine::world;
@@ -36,6 +37,17 @@ Enterprise::Enterprise()
 	mesh = CreateComponent<StaticMeshComponent>();
 	mesh->SetupAttachment(root->GetTransform());
 	mesh->SetMesh(model);
+
+	auto text = CreateComponent<font::SlugTextComponent>();
+	text->GetTransform()->SetPosition(float3(0, 0.12, 0.8));
+	text->GetTransform()->SetRotation(float3(PI/2, PI, 0));
+
+	auto font = GetEngine()
+		->GetResourceManager()
+		->GetResource<font::Font>("Builtin_FiraCode");
+	text->SetFont(font);
+	text->SetText("USS Enterprise");
+	text->GetTransform()->SetScale(float3(0.05, 0.05, 0.05));
 }
 
 inline float clampf(float a, float m, float M) {

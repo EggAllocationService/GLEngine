@@ -53,8 +53,7 @@ fn vs(attrib: VertexInput) -> VertexStruct {
 
     // Vertex positions
     let MVP = (params.projectionViewMatrix * m.m);
-    let transformed = MVP * vec4<f32>(attrib.pos.xyz, 1.0);
-    vertex.positions = transformed;
+    vertex.positions = MVP * attrib.pos;
 
     // Glyph texture coordinates
     let data0 = bitcast<i32>(attrib.glyph.x);
@@ -255,7 +254,7 @@ fn fs(vertex: VertexStruct) -> FragmentOutput {
     if (coverage == 0) {
         discard;
     }
-    out.color = coverage * vertex.color;
+    out.color = vec4f(vertex.color.xyz, coverage);
 
     return out;
 }

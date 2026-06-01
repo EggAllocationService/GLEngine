@@ -9,11 +9,14 @@ namespace glengine::world::font {
     class SlugTextComponent : public ActorSceneComponent {
     public:
         SlugTextComponent();
-        ~SlugTextComponent();
         void Render(const pipeline::wgpu::RenderBundle &, MatrixStack &stack) override;
 
+        void SetFont(std::shared_ptr<Font> newFont);
+        void SetText(std::string_view newText);
+
     private:
-        Font *font;
         std::shared_ptr<pipeline::wgpu::GPUMesh> mesh;
+        std::shared_ptr<Font> font;
+        std::string text;
     };
 }

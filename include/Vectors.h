@@ -463,6 +463,9 @@ struct vec4 {
     vec4 operator +(const vec4 other) const {
         return vec4(x + other.x, y + other.y, z + other.z, w + other.w);
     }
+    vec4 operator -(const vec4 other) const {
+        return vec4(x - other.x, y - other.y, z - other.z, w - other.w);
+    }
 
     void operator +=(const vec4 other) {
         for (int i = 0; i < 4; i++) {

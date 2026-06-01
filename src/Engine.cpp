@@ -12,6 +12,10 @@
 #include "3d/ActorSceneComponent.h"
 #include "3d/DefaultPawn.h"
 #include "3d/objects/InstancedDrawTracker.h"
+#ifdef GLENGINE_TEXT_RENDERING
+#include "3d/text/Font.h"
+#include "TextRenderingResources.h"
+#endif
 #include "pipeline/gl/GLRenderer.h"
 
 namespace glengine {
@@ -71,6 +75,11 @@ namespace glengine {
         // this has to be initialized at the end as its constructor requires an opengl context
         renderObjectManager = new rendering::RenderObjects(renderer);
         renderObjectManager->Create<world::objects::InstancedDrawTracker>();
+
+#ifdef GLENGINE_TEXT_RENDERING
+        // if text rendering is enabled, add a default font
+        resourceManager->GetResource<world::font::Font>("Builtin_FiraCode", embed_FiraCode_ttf, embed_FiraCode_ttf_length);
+#endif
     }
 
     Engine::~Engine() {

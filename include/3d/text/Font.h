@@ -4,6 +4,8 @@
 #pragma once
 
 #include <hb.h>
+
+#include "Resource.h"
 #include "truetype.h"
 #include "pipeline/wgpu/TypedGPUBuffer.h"
 #include "pipeline/wgpu/pipeline/RenderPipeline.h"
@@ -11,6 +13,12 @@
 #include "Vectors.h"
 
 namespace glengine::world::font {
+    struct SlugVertex {
+        float4 pos;
+        float4 color;
+        uint2 glyphData;
+    };
+
     struct Curve {
         float2 p0, p1, p2;
 
@@ -28,10 +36,9 @@ namespace glengine::world::font {
     };
 
 
-    class Font {
+    class Font : public Resource {
     public:
-        Font(pipeline::wgpu::WGPURenderer *Renderer);
-
+        Font(std::istream &, pipeline::wgpu::WGPURenderer *renderer);
         std::shared_ptr<pipeline::wgpu::GPUMesh> PrepareText(const char* text);
 
         [[nodiscard]] std::shared_ptr<pipeline::wgpu::RenderPipeline> GetPipeline() const {
@@ -48,6 +55,8 @@ namespace glengine::world::font {
         hb_font_t *font;
         pipeline::wgpu::WGPURenderer* renderer;
         std::shared_ptr<pipeline::wgpu::RenderPipeline> pipeline;
+        char* fontFile;
+        size_t fontFileLength;
 
         float2 scale;
 

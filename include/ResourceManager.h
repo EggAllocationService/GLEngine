@@ -18,24 +18,45 @@ namespace glengine {
         template <typename T>
         std::shared_ptr<T> GetResource(std::string_view path) {
             static_assert(std::is_base_of_v<Resource, T>, "T must derive from Resource");
+            static_assert(std::is_constructible_v<T, std::istream&, pipeline::wgpu::WGPURenderer*>, "T must have a standard resource constructor");
+
             const auto name = std::string(path);
 
             const auto found = resources.find(name);
             if (found == resources.end()) {
                 // create then add to map
-                auto resource = std::make_shared<T>();
-                resources[name] = resource;
 
                 std::ifstream file;
                 file.open(name.c_str(), std::ios::binary);
 
-                resource->LoadFromFile(file, renderer);
-
+                auto resource = std::make_shared<T>(file, renderer);
+                resources[name] = resource;
                 return resource;
             }
 
             return std::dynamic_pointer_cast<T>(found->second);
         }
+
+        template<typename T>
+        std::shared_ptr<T> GetResource(std::string_view path, const char* data, size_t len) {
+            static_assert(std::is_base_of_v<Resource, T>, "T must derive from Resource");
+            static_assert(std::is_constructible_v<T, std::istream&, pipeline::wgpu::WGPURenderer*>, "T must have a standard resource constructor");
+            const auto name = std::string(path);
+
+            const auto found = resources.find(name);
+            if (found == resources.end()) {
+                // create then add to map
+                auto stream = CreateStreamBuffer(data, len);
+
+                auto resource = std::make_shared<T>(*stream, renderer);
+                resources[name] = resource;
+                return resource;
+            }
+
+            return std::dynamic_pointer_cast<T>(found->second);
+        }
+
+        static std::unique_ptr<std::istream> CreateStreamBuffer(const char* data, size_t len);
     private:
         pipeline::wgpu::WGPURenderer *renderer;
         std::unordered_map<std::string, std::shared_ptr<Resource>> resources;

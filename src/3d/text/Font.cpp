@@ -2,7 +2,7 @@
 // Created by kyle on 2026-05-31.
 //
 
-#include "Font.h"
+#include "../../../include/3d/text/Font.h"
 
 #include <algorithm>
 #include <cassert>
@@ -16,11 +16,7 @@
 
 using namespace glengine::world::font;
 
-struct SlugVertex {
-    float4 pos;
-    float4 color;
-    uint2 glyphData;
-};
+
 
 class SlugGlyph {
 public:
@@ -30,13 +26,20 @@ public:
     float2 cursor;
 };
 
-Font::Font(pipeline::wgpu::WGPURenderer* renderer) {
+Font::Font(std::istream& data, pipeline::wgpu::WGPURenderer* renderer) {
     this->renderer = renderer;
     this->curves = renderer->CreateBuffer<Curve>("Font curve data", WGPUBufferUsage_Storage, 1024);
     this->curveIndices = renderer->CreateBuffer<uint32_t>("Font curve indices", WGPUBufferUsage_Storage, 1024);
     this->glyphInfos = renderer->CreateBuffer<GlyphData>("Font glyph data", WGPUBufferUsage_Storage, 64);
 
-    auto fontBlob = hb_blob_create(embed_FiraCode_ttf, embed_FiraCode_ttf_length, HB_MEMORY_MODE_READONLY, nullptr,
+    data.seekg(0, std::ios::end);
+    fontFileLength = data.tellg();
+    data.seekg(0, std::ios::beg);
+
+    fontFile = new char[fontFileLength];
+    data.read(fontFile, fontFileLength);
+
+    auto fontBlob = hb_blob_create(fontFile, fontFileLength, HB_MEMORY_MODE_READONLY, nullptr,
                                    nullptr);
     auto face = hb_face_create(fontBlob, 0);
     font = hb_font_create(face);
@@ -45,98 +48,8 @@ Font::Font(pipeline::wgpu::WGPURenderer* renderer) {
     hb_font_get_scale(font, &iScale.x, &iScale.y);
     this->scale = float2(1.0f / iScale.x, 1.0f / iScale.y);
 
-    ttInitFont(&fontData, embed_FiraCode_ttf, embed_FiraCode_ttf_length);
-
-    auto shaders = renderer->CompileShader(embed_slug_wgsl);
-
-    WGPUBindGroupLayoutEntry *entries = new WGPUBindGroupLayoutEntry[3] {
-        {
-            .nextInChain = nullptr,
-            .binding = 0,
-            .visibility = WGPUShaderStage_Vertex | WGPUShaderStage_Fragment,
-            .bindingArraySize = 0,
-            .buffer = {
-                .nextInChain = nullptr,
-                .type = WGPUBufferBindingType_ReadOnlyStorage,
-                .hasDynamicOffset = false,
-                .minBindingSize = 0
-            },
-            .sampler = {},
-            .texture = {},
-            .storageTexture = {}
-        },
-        {
-            .nextInChain = nullptr,
-            .binding = 1,
-            .visibility = WGPUShaderStage_Vertex | WGPUShaderStage_Fragment,
-            .bindingArraySize = 0,
-            .buffer = {
-                .nextInChain = nullptr,
-                .type = WGPUBufferBindingType_ReadOnlyStorage,
-                .hasDynamicOffset = false,
-                .minBindingSize = 0
-            },
-            .sampler = {},
-            .texture = {},
-            .storageTexture = {}
-        },
-        {
-            .nextInChain = nullptr,
-            .binding = 2,
-            .visibility = WGPUShaderStage_Vertex | WGPUShaderStage_Fragment,
-            .bindingArraySize = 0,
-            .buffer = {
-                .nextInChain = nullptr,
-                .type = WGPUBufferBindingType_ReadOnlyStorage,
-                .hasDynamicOffset = false,
-                .minBindingSize = 0
-            },
-            .sampler = {},
-            .texture = {},
-            .storageTexture = {}
-        }
-    };
-
-    WGPUBindGroupLayoutDescriptor slugBindGroup = {
-        .nextInChain = nullptr,
-        .label = {},
-        .entryCount = 3,
-        .entries = &entries[0]
-    };
-
-    auto vtxLayouts = new WGPUVertexAttribute[3] {
-        {
-            .nextInChain = nullptr,
-            .format = WGPUVertexFormat_Float32x4,
-            .offset = offsetof(SlugVertex, pos),
-            .shaderLocation = 0
-        },
-        {
-            .nextInChain = nullptr,
-            .format = WGPUVertexFormat_Float32x4,
-            .offset = offsetof(SlugVertex, color),
-            .shaderLocation = 2
-        },
-        {
-        .nextInChain = nullptr,
-        .format = WGPUVertexFormat_Uint32x2,
-        .offset = offsetof(SlugVertex, glyphData),
-        .shaderLocation = 1
-        }
-    };
-
-    WGPUVertexBufferLayout layout = {
-        .nextInChain = nullptr,
-        .stepMode = WGPUVertexStepMode_Vertex,
-        .arrayStride = sizeof(SlugVertex),
-        .attributeCount = 3,
-        .attributes = vtxLayouts
-    };
-
-    pipeline = renderer->BuildRenderPipeline("SLUG", shaders, &layout, std::span(&slugBindGroup, 1), sizeof(mat4));
-
-    delete[] vtxLayouts;
-    delete[] entries;
+    ttInitFont(&fontData, fontFile, fontFileLength);
+    this->pipeline = renderer->GetRenderPipelineByName("BuiltinSlug")->CreateInstance();
 
     WGPUBindGroupEntry entry = WGPU_BIND_GROUP_ENTRY_INIT;
     entry.buffer = *curves;
@@ -164,7 +77,6 @@ std::shared_ptr<glengine::pipeline::wgpu::GPUMesh> Font::PrepareText(const char 
     auto glyphInfos = hb_buffer_get_glyph_infos(buf, &glyphCount);
 
     for (int i = 0; i < glyphCount; i++) {
-        printf("Prepping glyph %d\n", glyphInfos[i].codepoint);
         addGlyphToAtlas(glyphInfos[i].codepoint);
     }
 
@@ -207,7 +119,6 @@ std::shared_ptr<glengine::pipeline::wgpu::GPUMesh> Font::PrepareText(const char 
     float2 offset;
 
     for (int i = 0; i < glyphPositionCount; i++) {
-        printf("layout %c\n", text[i]);
         auto glyphIndex = glyphIndexMap[glyphInfos[i].codepoint];
         auto bounds = this->glyphInfos->operator[](glyphIndex).bounds;
         float2 min = bounds.xy;
@@ -251,6 +162,11 @@ std::shared_ptr<glengine::pipeline::wgpu::GPUMesh> Font::PrepareText(const char 
 
 
         offset.x += positions[i].x_advance * scale.x;
+    }
+    // we want to center the text on 0,0
+    auto placementOffset = (vertices[vertices.size() - 1].pos.xy - vertices[0].pos.xy) / 2.0;
+    for (auto& vertex : vertices) {
+        vertex.pos.xy -= placementOffset;
     }
 
     return renderer->UploadIndexedMesh(vertices, indices);

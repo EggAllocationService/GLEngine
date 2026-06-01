@@ -1,2 +1,2 @@
 #define TT_IMPLEMENTATION
-#include "truetype.h"
+#include "../../../include/3d/text/truetype.h"

@@ -18,10 +18,7 @@ struct std::hash<int3> {
     }
 };
 
-void StaticMesh::LoadFromFile(std::ifstream &file, pipeline::wgpu::WGPURenderer* renderer) {
-    vertices_.clear();
-    faces_.clear();
-
+StaticMesh::StaticMesh(std::istream &file, pipeline::wgpu::WGPURenderer *renderer) {
     int vPos = 0, vtPos = 0, vnPos = 0;
 
     std::string line;

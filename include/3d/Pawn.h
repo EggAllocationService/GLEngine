@@ -27,7 +27,7 @@ namespace glengine::world {
         }
     protected:
         void SetActiveCamera(std::shared_ptr<components::CameraComponent> camera) {
-            activeCamera = camera;
+            activeCamera = std::move(camera);
         }
 
     private:

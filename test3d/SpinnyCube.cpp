@@ -9,7 +9,7 @@
 #include "Colors.h"
 #include "Engine.h"
 #include "GLMath.h"
-#include "../src/3d/text/SlugTextComponent.h"
+#include "../include/3d/text/SlugTextComponent.h"
 #include "3d/mesh/StaticMeshComponent.h"
 #include "3d/components/PointLightComponent.h"
 #include "3d/mesh/InstancedStaticMeshComponent.h"
@@ -32,15 +32,28 @@ SpinnyCube::SpinnyCube() {
     auto mesh = GetEngine()
         ->GetResourceManager()
         ->GetResource<StaticMesh>(meshName);
-    model->SetMesh(mesh);
-    model->SetupAttachment(root->GetTransform());
+    model_ = model;
+    model_->SetMesh(mesh);
+    model_->SetupAttachment(root->GetTransform());
 
     auto text = CreateComponent<glengine::world::font::SlugTextComponent>();
-    text->GetTransform()->SetPosition(float3(0, 0, 2));
+    text_ = text;
+    text_->GetTransform()->SetPosition(float3(0, 0, 2));
+
+    auto font = GetEngine()
+        ->GetResourceManager()
+        ->GetResource<glengine::world::font::Font>("Builtin_FiraCode");
+    text_->SetFont(font);
+    text_->SetText("Hello World!");
+    model_->GetTransform()->SetPosition(float3(2, 0, 0));
+
 }
 
 void SpinnyCube::Update(double deltaTime) {
     rotation += (PI / 2.0) * deltaTime;
 
     root->GetTransform()->SetRotation(float3(0, rotation, 0));
+    auto a = abs(sin(rotation));
+    model_->GetTransform()->SetScale(float3(a, a, a));
+
 }

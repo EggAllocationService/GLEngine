@@ -53,8 +53,7 @@ add_library(glengine SHARED
         include/3d/objects/LightTracker.h
         "src/pipeline/wgpu/TransferManager.cpp"
         "include/pipeline/wgpu/TransferManager.h"
-        src/3d/text/SlugTextComponent.cpp
-        src/3d/text/SlugTextComponent.h
+        src/ResourceManager.cpp
 )
 
 create_resource_library(NAME Shaders SOURCES 
@@ -69,8 +68,10 @@ if (${TEXT_RENDERING})
 
     target_sources(glengine PUBLIC
             src/3d/text/Font.cpp
-            src/3d/text/Font.h
+            include/3d/text/Font.h
             src/3d/text/truetype.c
+            src/3d/text/SlugTextComponent.cpp
+            include/3d/text/SlugTextComponent.h
     )
 
     create_resource_library(NAME TextRenderingResources SOURCES

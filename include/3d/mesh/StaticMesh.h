@@ -30,7 +30,7 @@ namespace glengine::world::mesh {
     /// A StaticMesh is a non-animated mesh
     class GLENGINE_EXPORT StaticMesh : public Resource {
     public:
-        void LoadFromFile(std::ifstream& file, pipeline::wgpu::WGPURenderer* renderer) override;
+        StaticMesh(std::istream& file, pipeline::wgpu::WGPURenderer* renderer);
 
         std::vector<pipeline::wgpu::Vertex> vertices_;
         std::vector<int3> faces_;

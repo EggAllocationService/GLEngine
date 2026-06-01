@@ -11,7 +11,5 @@ namespace glengine {
     class GLENGINE_EXPORT Resource {
     public:
         virtual ~Resource() = default;
-
-        virtual void LoadFromFile(std::ifstream&, pipeline::wgpu::WGPURenderer* renderer) = 0;
     };
 }

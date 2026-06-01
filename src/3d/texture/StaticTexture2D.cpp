@@ -8,7 +8,7 @@
 
 using namespace glengine::world::texture;
 
-void StaticTexture2D::LoadFromFile(std::ifstream &stream, pipeline::wgpu::WGPURenderer*) {
+StaticTexture2D::StaticTexture2D(std::istream &stream, pipeline::wgpu::WGPURenderer*) {
     // figure out how big the image file is
     stream.seekg(0, std::ios::end);
     auto size = stream.tellg();
@@ -17,15 +17,9 @@ void StaticTexture2D::LoadFromFile(std::ifstream &stream, pipeline::wgpu::WGPURe
     // allocate a buffer and read file contents
     auto buffer = std::make_unique<char[]>(size);
     stream.read(buffer.get(), size);
-    stream.close();
 
     int x, y, n;
     auto decoded = stbi_load_from_memory((unsigned char*) buffer.get(), size, &x, &y, &n, 4);
-
-    // allocate texture
-    if (textureID != -1) {
-        glDeleteTextures(1, &textureID);
-    }
 
     glGenTextures(1, &textureID);
     glBindTexture(GL_TEXTURE_2D, textureID);
