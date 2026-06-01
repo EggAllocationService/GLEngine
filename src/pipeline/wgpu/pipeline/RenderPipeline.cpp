@@ -17,7 +17,7 @@ void glengine::pipeline::wgpu::RenderPipeline::DrawMesh(const RenderBundle &bund
     if (!bundle.valid) return;
     auto pass = createPass(bundle);
 
-    wgpuRenderPassEncoderSetVertexBuffer(pass, 0, mesh.GetVertices(), 0, mesh.GetVertexCount() * sizeof(Vertex));
+    wgpuRenderPassEncoderSetVertexBuffer(pass, 0, mesh.GetVertices(), 0, mesh.GetVertexCount() * mesh.GetVertexStride());
     if (_immediateDataSize != 0 && immediateData) {
         wgpuRenderPassEncoderSetImmediates(pass, 0, _immediateDataSize, immediateData);
     }
@@ -38,7 +38,7 @@ void glengine::pipeline::wgpu::RenderPipeline::DrawMeshInstanced(const RenderBun
     if (!bundle.valid) return;
     auto pass = createPass(bundle);
     auto indices = mesh.GetIndices();
-    wgpuRenderPassEncoderSetVertexBuffer(pass, 0, mesh.GetVertices(), 0, mesh.GetVertexCount() * sizeof(Vertex));
+    wgpuRenderPassEncoderSetVertexBuffer(pass, 0, mesh.GetVertices(), 0, mesh.GetVertexCount() * mesh.GetVertexStride());
     if (mesh.IsIndexed()) {
         wgpuRenderPassEncoderSetIndexBuffer(pass, mesh.GetIndices(), WGPUIndexFormat_Uint32, 0, mesh.GetIndexCount() * sizeof(unsigned int));
         wgpuRenderPassEncoderDrawIndexed(pass, mesh.GetIndexCount(), instanceCount, 0, 0, 0);

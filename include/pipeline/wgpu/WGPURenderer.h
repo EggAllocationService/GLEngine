@@ -64,7 +64,7 @@ namespace glengine::pipeline::wgpu {
             auto indicesBuf = wgpuDeviceCreateBuffer(device, &indicesDesc);
             wgpuQueueWriteBuffer(queue, indicesBuf, 0, indices.data(), indices.size() * sizeof(unsigned int));
 
-            return std::make_shared<GPUMesh>(vertciesBuf, indicesBuf, vertices.size(), indices.size(), meshIdTracker++);
+            return std::make_shared<GPUMesh>(vertciesBuf, indicesBuf, vertices.size(), sizeof(T), indices.size(), meshIdTracker++);
         }
 
         std::shared_ptr<RenderPipeline> GetRenderPipelineByName(const std::string& name);

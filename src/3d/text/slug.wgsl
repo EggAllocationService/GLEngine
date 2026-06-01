@@ -252,6 +252,9 @@ fn fs(vertex: VertexStruct) -> FragmentOutput {
     let curve_indices_range = fetchCurveIndicesRange(vertex.positions_em, vertex.glyph_index);
     let coverage = SlugRender(vertex.positions_em, curve_indices_range);
 
+    if (coverage == 0) {
+        discard;
+    }
     out.color = coverage * vertex.color;
 
     return out;

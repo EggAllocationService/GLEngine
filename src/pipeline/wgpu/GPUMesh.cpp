@@ -4,10 +4,11 @@
 
 #include "pipeline/wgpu/GPUMesh.h"
 
-glengine::pipeline::wgpu::GPUMesh::GPUMesh(WGPUBuffer vertices, WGPUBuffer indices, int vertexCount, int indexCount, int id) {
+glengine::pipeline::wgpu::GPUMesh::GPUMesh(WGPUBuffer vertices, WGPUBuffer indices, int vertexCount, int vertexStride, int indexCount, int id) {
     this->vertices = vertices;
     this->indices = indices;
     this->vertexCount = vertexCount;
+    this->vertexStride = vertexStride;
     this->indexCount = indexCount;
     this->id = id;
 }

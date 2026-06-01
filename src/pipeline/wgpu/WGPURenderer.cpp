@@ -191,7 +191,7 @@ std::shared_ptr<glengine::pipeline::wgpu::GPUMesh> glengine::pipeline::wgpu::WGP
     auto buffer = wgpuDeviceCreateBuffer(device, &bufferDesc);
     wgpuQueueWriteBuffer(queue, buffer, 0, vertices.data(), vertices.size() * sizeof(Vertex));
 
-    return std::make_shared<GPUMesh>(buffer, nullptr, vertices.size(), 0, meshIdTracker++);
+    return std::make_shared<GPUMesh>(buffer, nullptr, vertices.size(), sizeof(Vertex), 0, meshIdTracker++);
 }
 
 std::shared_ptr<glengine::pipeline::wgpu::RenderPipeline> glengine::pipeline::wgpu::WGPURenderer::

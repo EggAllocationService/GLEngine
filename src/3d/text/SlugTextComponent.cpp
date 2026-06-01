@@ -12,7 +12,7 @@ namespace glengine::world {
     } // text
     font::SlugTextComponent::SlugTextComponent() {
         font = new Font(GetEngine()->GetRenderer());
-        mesh = font->PrepareText("Hello");
+        mesh = font->PrepareText("Hello!");
     }
 
     font::SlugTextComponent::~SlugTextComponent() {

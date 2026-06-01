@@ -15,12 +15,15 @@
 namespace glengine::pipeline::wgpu {
     class GPUMesh {
     public:
-        GPUMesh(WGPUBuffer vertices, WGPUBuffer indices, int vertexCount, int indexCount, int id);
+        GPUMesh(WGPUBuffer vertices, WGPUBuffer indices, int vertexCount, int vertexStride, int indexCount, int id);
         ~GPUMesh();
         [[nodiscard]] WGPUBuffer GetVertices() const;
         [[nodiscard]] WGPUBuffer GetIndices() const;
         [[nodiscard]] int GetVertexCount() const {
             return vertexCount;
+        }
+        [[nodiscard]] int GetVertexStride() const {
+            return vertexStride;
         }
         [[nodiscard]] int GetIndexCount() const {
             return indexCount;
@@ -39,5 +42,6 @@ namespace glengine::pipeline::wgpu {
         int vertexCount;
         int indexCount;
         int id;
+        int vertexStride;
     };
 }
