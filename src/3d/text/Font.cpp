@@ -207,6 +207,7 @@ std::shared_ptr<glengine::pipeline::wgpu::GPUMesh> Font::PrepareText(const char 
     float2 offset;
 
     for (int i = 0; i < glyphPositionCount; i++) {
+        printf("layout %c\n", text[i]);
         auto glyphIndex = glyphIndexMap[glyphInfos[i].codepoint];
         auto bounds = this->glyphInfos->operator[](glyphIndex).bounds;
         float2 min = bounds.xy;
@@ -346,15 +347,15 @@ void Font::addGlyphToAtlas(unsigned int id) {
         auto aabb = curve.BoundingBox();
         float2 cMin = aabb.xy;
         float2 cMax = aabb.zw;
-        int lowerBand = std::clamp(static_cast<int>((cMin.y - glyph->boundMin.y) / dimensions.y * BAND_COUNT), 0, BAND_COUNT - 1);
-        int upperBand = std::clamp(static_cast<int>((cMax.y - glyph->boundMin.y) / dimensions.y * BAND_COUNT), 0, BAND_COUNT - 1);
+        int lowerBand = std::clamp(static_cast<int>(((cMin.y - glyph->boundMin.y) / dimensions.y) * BAND_COUNT), 0, BAND_COUNT - 1);
+        int upperBand = std::clamp(static_cast<int>(((cMax.y - glyph->boundMin.y) / dimensions.y) * BAND_COUNT), 0, BAND_COUNT - 1);
         for (int band = lowerBand; band <= upperBand; band++) {
             bandCountH[band]++;
             totalIndices++;
         }
 
-        int leftBand = std::clamp(static_cast<int>((cMin.x - glyph->boundMin.x) / dimensions.x * BAND_COUNT), 0, BAND_COUNT - 1);
-        int rightBand = std::clamp(static_cast<int>((cMax.x - glyph->boundMin.x) / dimensions.x * BAND_COUNT), 0, BAND_COUNT - 1);
+        int leftBand = std::clamp(static_cast<int>(((cMin.x - glyph->boundMin.x) / dimensions.x) * BAND_COUNT), 0, BAND_COUNT - 1);
+        int rightBand = std::clamp(static_cast<int>(((cMax.x - glyph->boundMin.x) / dimensions.x) * BAND_COUNT), 0, BAND_COUNT - 1);
         for (int band = leftBand; band <= rightBand; band++) {
             bandCountV[band]++;
             totalIndices++;
@@ -396,15 +397,15 @@ void Font::addGlyphToAtlas(unsigned int id) {
         auto aabb = curve.BoundingBox();
         float2 cMin = aabb.xy;
         float2 cMax = aabb.zw;
-        int lowerBand = std::clamp(static_cast<int>((cMin.y - glyph->boundMin.y) / (dimensions.y * BAND_COUNT)), 0, BAND_COUNT - 1);
-        int upperBand = std::clamp(static_cast<int>((cMax.y - glyph->boundMin.y) / (dimensions.y * BAND_COUNT)), 0, BAND_COUNT - 1);
+        int lowerBand = std::clamp(static_cast<int>(((cMin.y - glyph->boundMin.y) / dimensions.y) * BAND_COUNT), 0, BAND_COUNT - 1);
+        int upperBand = std::clamp(static_cast<int>(((cMax.y - glyph->boundMin.y) / dimensions.y) * BAND_COUNT), 0, BAND_COUNT - 1);
         for (int band = lowerBand; band <= upperBand; band++) {
             curveIndices->operator[](horizontalBands[band].start + bandCountH[band]) = curveIndex;
             bandCountH[band]++;
         }
 
-        int leftBand = std::clamp(static_cast<int>((cMin.x - glyph->boundMin.x) / (dimensions.x * BAND_COUNT)), 0, BAND_COUNT - 1);
-        int rightBand = std::clamp(static_cast<int>((cMax.x - glyph->boundMin.x) / (dimensions.x * BAND_COUNT)), 0, BAND_COUNT - 1);
+        int leftBand = std::clamp(static_cast<int>(((cMin.x - glyph->boundMin.x) / dimensions.x) * BAND_COUNT), 0, BAND_COUNT - 1);
+        int rightBand = std::clamp(static_cast<int>(((cMax.x - glyph->boundMin.x) / dimensions.x) * BAND_COUNT), 0, BAND_COUNT - 1);
         for (int band = leftBand; band <= rightBand; band++) {
             curveIndices->operator[](verticalBands[band].start + bandCountV[band]) = curveIndex;
             bandCountV[band]++;
@@ -433,14 +434,6 @@ void Font::addGlyphToAtlas(unsigned int id) {
     }
 
     this->glyphInfos->Push(data);
-
-    for (const auto&curve : glyph->curves) {
-
-        printf("%.2f, %.2f, %.2f, %.2f, %.2f, %.2f,\n", curve.p0.x, curve.p0.y, curve.p1.x, curve.p1.y, curve.p2.x, curve.p2.y);
-    }
-
-    printf("\n\n\n\n\n");
-
     delete glyph;
 
     glyphIndexMap.insert({id, this->glyphInfos->GetSize() - 1});
