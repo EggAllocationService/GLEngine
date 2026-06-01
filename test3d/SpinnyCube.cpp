@@ -42,9 +42,9 @@ SpinnyCube::SpinnyCube() {
 
     auto font = GetEngine()
         ->GetResourceManager()
-        ->GetResource<glengine::world::font::Font>("Builtin_FiraCode");
+        ->GetResource<glengine::world::font::Font>("/builtin/QuattrocentoSans.ttf");
     text_->SetFont(font);
-    text_->SetText("Hello World!");
+    text_->SetText("Amazingly few discothèques provide jukeboxes.");
     model_->GetTransform()->SetPosition(float3(2, 0, 0));
 
 }

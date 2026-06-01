@@ -78,8 +78,9 @@ namespace glengine {
 
 #ifdef GLENGINE_TEXT_RENDERING
         // if text rendering is enabled, add a default font
-        resourceManager->GetResource<world::font::Font>("Builtin_FiraCode", embed_FiraCode_ttf, embed_FiraCode_ttf_length);
-#endif
+        resourceManager->GetResource<world::font::Font>("/builtin/trim.ttf", embed_trim_ttf, embed_trim_ttf_length);
+        resourceManager->GetResource<world::font::Font>("/builtin/QuattrocentoSans.ttf", embed_QuattrocentoSans_ttf, embed_QuattrocentoSans_ttf_length);
+        #endif
     }
 
     Engine::~Engine() {

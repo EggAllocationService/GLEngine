@@ -44,7 +44,7 @@ Enterprise::Enterprise()
 
 	auto font = GetEngine()
 		->GetResourceManager()
-		->GetResource<font::Font>("Builtin_FiraCode");
+		->GetResource<font::Font>("/builtin/trim.ttf");
 	text->SetFont(font);
 	text->SetText("USS Enterprise");
 	text->GetTransform()->SetScale(float3(0.05, 0.05, 0.05));

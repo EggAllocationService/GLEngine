@@ -1,0 +1,5 @@
+GLEngine bundles some assets at build time to provide users with sensible placeholders. These assets
+are covered by their own (free) licenses:
+
+- /builtin/GoogleSans.ttf: licenses/OFL.txt
+- /builtin/trim.ttf: Public Domain

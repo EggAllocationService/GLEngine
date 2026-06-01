@@ -75,7 +75,8 @@ if (${TEXT_RENDERING})
     )
 
     create_resource_library(NAME TextRenderingResources SOURCES
-        src/3d/text/FiraCode.ttf
+        src/3d/text/trim.ttf
+        src/3d/text/QuattrocentoSans.ttf
         src/3d/text/slug.wgsl
     )
     target_link_libraries(glengine PkgConfig::HARFBUZZ TextRenderingResources)

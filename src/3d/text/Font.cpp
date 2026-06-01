@@ -164,7 +164,7 @@ std::shared_ptr<glengine::pipeline::wgpu::GPUMesh> Font::PrepareText(const char 
         offset.x += positions[i].x_advance * scale.x;
     }
     // we want to center the text on 0,0
-    auto placementOffset = (vertices[vertices.size() - 1].pos.xy - vertices[0].pos.xy) / 2.0;
+    auto placementOffset = (vertices[vertices.size() - 2].pos.xy - vertices[0].pos.xy) / 2.0;
     for (auto& vertex : vertices) {
         vertex.pos.xy -= placementOffset;
     }
