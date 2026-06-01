@@ -29,8 +29,6 @@ void glengine::pipeline::wgpu::RenderPipeline::DrawMesh(const RenderBundle &bund
     else {
         wgpuRenderPassEncoderDraw(pass, mesh.GetVertexCount(), 0, 0, 0);
     }
-    wgpuRenderPassEncoderEnd(pass);
-    wgpuRenderPassEncoderRelease(pass);
 }
 
 void glengine::pipeline::wgpu::RenderPipeline::DrawMeshInstanced(const RenderBundle &bundle, const GPUMesh &mesh,
@@ -45,8 +43,6 @@ void glengine::pipeline::wgpu::RenderPipeline::DrawMeshInstanced(const RenderBun
     else {
         wgpuRenderPassEncoderDraw(pass, mesh.GetVertexCount(), instanceCount, 0, 0);
     }
-    wgpuRenderPassEncoderEnd(pass);
-    wgpuRenderPassEncoderRelease(pass);
 }
 
 std::shared_ptr<glengine::pipeline::wgpu::RenderPipeline> glengine::pipeline::wgpu::RenderPipeline::CreateInstance() {
@@ -64,41 +60,10 @@ glengine::pipeline::wgpu::RenderPipeline::~RenderPipeline() {
 }
 
 WGPURenderPassEncoder glengine::pipeline::wgpu::RenderPipeline::createPass(const RenderBundle &bundle) {
-    auto colorAttachment = WGPURenderPassColorAttachment {
-        .nextInChain = nullptr,
-        .view = bundle.targetTexture,
-        .depthSlice = WGPU_DEPTH_SLICE_UNDEFINED,
-        .resolveTarget = nullptr,
-        .loadOp = WGPULoadOp_Load,
-        .storeOp = WGPUStoreOp_Store,
-        .clearValue = WGPUColor(1, 1, 1, 1)
-    };
-    auto depthAttachment = WGPURenderPassDepthStencilAttachment {
-        .nextInChain = nullptr,
-        .view = bundle.depthTexture,
-        .depthLoadOp = WGPULoadOp_Load,
-        .depthStoreOp = WGPUStoreOp_Store,
-        .depthClearValue = 0,
-        .depthReadOnly = false,
-        .stencilLoadOp = WGPULoadOp_Undefined,
-        .stencilStoreOp = WGPUStoreOp_Undefined,
-        .stencilClearValue = 0,
-        .stencilReadOnly = true
-    };
 
-    WGPURenderPassDescriptor desc = {
-        .nextInChain = nullptr,
-        .label = {},
-        .colorAttachmentCount = 1,
-        .colorAttachments = &colorAttachment,
-        .depthStencilAttachment = &depthAttachment,
-        .occlusionQuerySet = nullptr,
-        .timestampWrites = nullptr
-    };
-    auto pass = wgpuCommandEncoderBeginRenderPass(bundle.encoder, &desc);
-
+    auto pass = bundle.passEncoder;
     wgpuRenderPassEncoderSetPipeline(pass, _pipeline);
-    for (int i = 0; i < _groups.size(); i++) {
+    for (int i = 1; i < _groups.size(); i++) {
         wgpuRenderPassEncoderSetBindGroup(pass, i, _groups[i], 0, nullptr);
     }
 

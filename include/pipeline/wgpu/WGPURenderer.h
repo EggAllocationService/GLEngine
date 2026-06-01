@@ -30,6 +30,7 @@ namespace glengine::pipeline::wgpu {
 
     struct RenderBundle {
         WGPUCommandEncoder encoder;
+        WGPURenderPassEncoder passEncoder;
         WGPUTextureView targetTexture;
         WGPUTextureView depthTexture;
         WGPUTexture surfaceTexture;

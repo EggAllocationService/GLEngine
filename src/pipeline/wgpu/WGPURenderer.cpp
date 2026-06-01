@@ -404,11 +404,11 @@ glengine::pipeline::wgpu::RenderBundle glengine::pipeline::wgpu::WGPURenderer::B
     descriptor.colorAttachments = &colorAttachment;
 
     auto pass = wgpuCommandEncoderBeginRenderPass(encoder, &descriptor);
-    wgpuRenderPassEncoderEnd(pass);
-    wgpuRenderPassEncoderRelease(pass);
+    wgpuRenderPassEncoderSetBindGroup(pass, 0, universalBindGroup, 0, nullptr);
 
     return {
         .encoder = encoder,
+        .passEncoder = pass,
         .targetTexture = textureView,
         .depthTexture = depthTextureView,
         .surfaceTexture = texture.texture,
@@ -418,6 +418,9 @@ glengine::pipeline::wgpu::RenderBundle glengine::pipeline::wgpu::WGPURenderer::B
 
 void glengine::pipeline::wgpu::WGPURenderer::FinishRendering(RenderBundle bundle) {
     if (!bundle.valid) return;
+    wgpuRenderPassEncoderEnd(bundle.passEncoder);
+    wgpuRenderPassEncoderRelease(bundle.passEncoder);
+
     auto command = wgpuCommandEncoderFinish(bundle.encoder, nullptr);
 
     lastFrame = wgpuQueueSubmitForIndex(queue, 1, &command);
