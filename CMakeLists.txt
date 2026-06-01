@@ -6,6 +6,7 @@ option(TEXT_RENDERING "Compile builtin text rendering library (requires harfbuzz
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 include(wgpu-native)
 include(embed)
+include(harfbuzz)
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -61,17 +62,15 @@ create_resource_library(NAME Shaders SOURCES
     src/pipeline/wgpu/shaders/BasicLitInstanced.wgsl
 )
 
-find_package(PkgConfig REQUIRED)
-pkg_check_modules(HARFBUZZ REQUIRED IMPORTED_TARGET harfbuzz)
 if (${TEXT_RENDERING})
+    provide_harfbuzz(14.2.0)
+
     target_compile_definitions(glengine PUBLIC GLENGINE_TEXT_RENDERING)
 
-    target_sources(glengine PUBLIC
+    target_sources(glengine PRIVATE
             src/3d/text/Font.cpp
-            include/3d/text/Font.h
             src/3d/text/truetype.c
             src/3d/text/SlugTextComponent.cpp
-            include/3d/text/SlugTextComponent.h
     )
 
     create_resource_library(NAME TextRenderingResources SOURCES
@@ -79,7 +78,7 @@ if (${TEXT_RENDERING})
         src/3d/text/QuattrocentoSans.ttf
         src/3d/text/slug.wgsl
     )
-    target_link_libraries(glengine PkgConfig::HARFBUZZ TextRenderingResources)
+    target_link_libraries(glengine harfbuzz TextRenderingResources)
 endif()
 
 target_include_directories(glengine PUBLIC include external/include)

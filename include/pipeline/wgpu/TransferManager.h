@@ -1,6 +1,7 @@
 #pragma once
 
 #include "webgpu/wgpu.h"
+#include "glengine_export.h"
 #include <vector>
 #include <memory>
 #include <string>
@@ -10,7 +11,7 @@ namespace glengine::pipeline::wgpu {
 	class WGPURenderer;
 	class TransferManager;
 
-	struct TransferInfo {
+	struct GLENGINE_EXPORT TransferInfo {
 		WGPUBuffer target;
 		void* data;
 		unsigned int length;
@@ -19,14 +20,14 @@ namespace glengine::pipeline::wgpu {
 		unsigned int sourceOffset;
 	};
 
-	struct StagingBuffer {
+	struct GLENGINE_EXPORT StagingBuffer {
 		std::string name;
 		WGPUBuffer buffer;
 		void* mappedRange;
 		unsigned int capacity;
 	};
 
-	class TransferSession {
+	class GLENGINE_EXPORT TransferSession {
 
 	public:
 		TransferSession(std::string name, TransferManager* manager, WGPUDevice device, WGPUQueue queue, std::unique_ptr<StagingBuffer> buffer);
@@ -44,7 +45,7 @@ namespace glengine::pipeline::wgpu {
 		unsigned int usedCapacity;
 	};
 
-	class TransferManager {
+	class GLENGINE_EXPORT TransferManager {
 	public:
 		TransferManager(WGPURenderer* renderer);
 

@@ -7,7 +7,7 @@
 #include "pipeline/RenderPipeline.h"
 #include "webgpu/wgpu.h"
 #include <span>
-
+#include "glengine_export.h"
 #include "TypedGPUBuffer.h"
 #include "GLFW/glfw3.h"
 
@@ -37,7 +37,7 @@ namespace glengine::pipeline::wgpu {
         bool valid;
     };
 
-    class WGPURenderer {
+    class GLENGINE_EXPORT WGPURenderer {
     public:
         WGPURenderer(GLFWwindow* window);
         WGPUShaderModule CompileShader(const char* shaders);

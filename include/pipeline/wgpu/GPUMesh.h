@@ -4,6 +4,7 @@
 #pragma once
 
 #include "webgpu/webgpu.h"
+#include "glengine_export.h"
 
 /*
  * Standard vertex layout:
@@ -13,7 +14,7 @@
  */
 
 namespace glengine::pipeline::wgpu {
-    class GPUMesh {
+    class GLENGINE_EXPORT GPUMesh {
     public:
         GPUMesh(WGPUBuffer vertices, WGPUBuffer indices, int vertexCount, int vertexStride, int indexCount, int id);
         ~GPUMesh();

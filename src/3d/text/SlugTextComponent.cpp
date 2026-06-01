@@ -2,14 +2,13 @@
 // Created by Kyle Smith on 2026-05-31.
 //
 
-#include "../../../include/3d/text/SlugTextComponent.h"
+#include "3d/text/SlugTextComponent.h"
 
 #include "Engine.h"
 
 
 namespace glengine::world {
-    namespace text {
-    } // text
+
     font::SlugTextComponent::SlugTextComponent() = default;
 
     void font::SlugTextComponent::Render(const pipeline::wgpu::RenderBundle &bundle, MatrixStack &stack) {

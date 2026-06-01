@@ -3,10 +3,11 @@
 //
 #pragma once
 #include <vector>
+#include "glengine_export.h"
 
 #include "webgpu/webgpu.h"
 namespace glengine::pipeline::wgpu {
-    class Pipeline {
+    class GLENGINE_EXPORT Pipeline {
     public:
         Pipeline(WGPUDevice device, std::vector<WGPUBindGroupLayout> layouts, WGPUBindGroup universalGroup);
         Pipeline(Pipeline& other);

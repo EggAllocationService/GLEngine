@@ -6,7 +6,7 @@
 #include "webgpu/webgpu.h"
 #include <span>
 #include <memory>
-
+#include "glengine_export.h"
 #include "Pipeline.h"
 
 /*
@@ -27,7 +27,7 @@
 namespace glengine::pipeline::wgpu {
     struct RenderBundle;
 
-    class RenderPipeline : public Pipeline {
+    class GLENGINE_EXPORT RenderPipeline : public Pipeline {
     public:
         RenderPipeline(WGPUDevice device, WGPURenderPipeline pipeline, std::vector<WGPUBindGroupLayout> layouts, WGPUBindGroup universalGroup, uint32_t immediateDataSize);
         explicit RenderPipeline(RenderPipeline &other);

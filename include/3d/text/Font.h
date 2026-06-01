@@ -12,6 +12,8 @@
 #include "pipeline/wgpu/GPUMesh.h"
 #include "Vectors.h"
 
+#include "glengine_export.h"
+
 namespace glengine::world::font {
     struct SlugVertex {
         float4 pos;
@@ -36,7 +38,7 @@ namespace glengine::world::font {
     };
 
 
-    class Font : public Resource {
+    class GLENGINE_EXPORT Font : public Resource {
     public:
         Font(std::istream &, pipeline::wgpu::WGPURenderer *renderer);
         std::shared_ptr<pipeline::wgpu::GPUMesh> PrepareText(const char* text);

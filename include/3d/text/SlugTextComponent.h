@@ -4,9 +4,10 @@
 #pragma once
 #include "Font.h"
 #include "3d/ActorSceneComponent.h"
+#include "glengine_export.h"
 
 namespace glengine::world::font {
-    class SlugTextComponent : public ActorSceneComponent {
+    class GLENGINE_EXPORT SlugTextComponent : public ActorSceneComponent {
     public:
         SlugTextComponent();
         void Render(const pipeline::wgpu::RenderBundle &, MatrixStack &stack) override;

@@ -7,6 +7,7 @@
 #include <cassert>
 #include <cstring>
 #include <atomic>
+#include <bit>
 
 #include "glfw3webgpu.h"
 
@@ -338,7 +339,7 @@ std::shared_ptr<glengine::pipeline::wgpu::RenderPipeline> glengine::pipeline::wg
             .nextInChain = nullptr,
             .count = 1,
             .mask = 0xFFFFFFFF,
-            .alphaToCoverageEnabled = true
+            .alphaToCoverageEnabled = false
         },
         .fragment = &fragmentState,
     };
