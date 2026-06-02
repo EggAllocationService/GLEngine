@@ -13,7 +13,7 @@ namespace glengine::pipeline::wgpu {
 
 	struct GLENGINE_EXPORT TransferInfo {
 		WGPUBuffer target;
-		void* data;
+		const void* data;
 		unsigned int length;
 		unsigned int offset;
 
@@ -33,7 +33,7 @@ namespace glengine::pipeline::wgpu {
 	public:
 		TransferSession(std::string name, TransferManager* manager, WGPUDevice device, WGPUQueue queue, std::unique_ptr<StagingBuffer> buffer);
 
-		void Transfer(WGPUBuffer target, unsigned int offset, void* data, unsigned int length);
+		void Transfer(WGPUBuffer target, unsigned int offset, const void* data, unsigned int length);
 
 		void Commit();
 	private:
@@ -52,7 +52,7 @@ namespace glengine::pipeline::wgpu {
 
 		std::unique_ptr<TransferSession> CreateSession(std::string name, unsigned int estimatedTotalSize);
 
-		void Transfer(WGPUBuffer target, unsigned int offset, void* data, unsigned int length);
+		void Transfer(WGPUBuffer target, unsigned int offset, const void* data, unsigned int length);
 
 		void Return(std::unique_ptr<StagingBuffer> buffer);
 		std::unique_ptr<StagingBuffer> TakeWithoutAllocating(unsigned int minSize);

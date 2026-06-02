@@ -32,7 +32,7 @@ TransferSession::TransferSession(std::string name, TransferManager* manager, WGP
 	this->name = name;
 }
 
-void TransferSession::Transfer(WGPUBuffer target, unsigned int offset, void* data, unsigned int length) {
+void TransferSession::Transfer(WGPUBuffer target, unsigned int offset, const void* data, unsigned int length) {
 	bool fitIntoExisting = false;
 	for (unsigned int i = 0; i < buffers.size(); i++) {
 		// find a buffer which can fit the request
@@ -168,7 +168,7 @@ std::unique_ptr<TransferSession> TransferManager::CreateSession(std::string name
 	return std::make_unique<TransferSession>(std::format("Ring Transfer: {}", name), this, device, queue, Take(estimatedTotalSize));
 }
 
-void TransferManager::Transfer(WGPUBuffer target, unsigned int offset, void* data, unsigned int length) {
+void TransferManager::Transfer(WGPUBuffer target, unsigned int offset, const void* data, unsigned int length) {
 	auto buf = Take(length);
 	memcpy(buf->mappedRange, data, length);
 
