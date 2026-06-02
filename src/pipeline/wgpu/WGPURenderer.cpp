@@ -549,8 +549,34 @@ void glengine::pipeline::wgpu::WGPURenderer::Resize(int2 size) {
     depthTextureView = wgpuTextureCreateView(depthTexture, nullptr);
 }
 
+std::shared_ptr<glengine::pipeline::wgpu::GPUTexture> glengine::pipeline::wgpu::WGPURenderer::CreateTexture(std::string_view name,
+    WGPUTextureUsage usage, WGPUTextureFormat format, unsigned int width, unsigned int height) {
+
+    auto desc = WGPUTextureDescriptor {
+        .nextInChain = nullptr,
+        .label = {
+            .data = name.data(),
+            .length = name.length(),
+        },
+        .usage = usage,
+        .dimension = WGPUTextureDimension_2D,
+        .size = {
+          .width = width,
+          .height = height,
+          .depthOrArrayLayers = 1
+        },
+        .format = format,
+        .mipLevelCount = 1,
+        .sampleCount = 1,
+        .viewFormatCount = 0,
+        .viewFormats = nullptr
+    };
+
+    return std::make_shared<GPUTexture>(wgpuDeviceCreateTexture(device, &desc), format, width, height);
+}
+
 glengine::pipeline::wgpu::WrappedBuffer glengine::pipeline::wgpu::WGPURenderer::CreateRawBuffer(std::string_view name,
-    WGPUBufferUsage usage, unsigned int size) const {
+                                                                                                WGPUBufferUsage usage, unsigned int size) const {
 
     auto desc = WGPUBufferDescriptor {
         .nextInChain = nullptr,

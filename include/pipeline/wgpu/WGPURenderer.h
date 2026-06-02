@@ -9,6 +9,7 @@
 #include <span>
 #include "glengine_export.h"
 #include "GPUPointer.h"
+#include "GPUTexture.h"
 #include "TypedGPUBuffer.h"
 #include "GLFW/glfw3.h"
 
@@ -96,6 +97,9 @@ namespace glengine::pipeline::wgpu {
         void CommitComputePass(ComputeBundle& bundle);
 
         void Resize(int2 size);
+
+        std::shared_ptr<GPUTexture> CreateTexture(std::string_view name, WGPUTextureUsage usage, WGPUTextureFormat format,
+            unsigned int width, unsigned int height);
 
         WrappedBuffer CreateRawBuffer(std::string_view name, WGPUBufferUsage usage, unsigned int size) const;
 

@@ -64,6 +64,7 @@ add_library(glengine SHARED
         include/pipeline/wgpu/GPUPointer.h
         src/pipeline/wgpu/WrappedBuffer.cpp
         include/pipeline/wgpu/WrappedBuffer.h
+        include/pipeline/wgpu/GPUTexture.h
 )
 
 create_resource_library(NAME Shaders SOURCES 

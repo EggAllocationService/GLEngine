@@ -223,7 +223,7 @@ void TransferManager::Return(std::unique_ptr<StagingBuffer> buffer) {
 }
 
 std::unique_ptr<StagingBuffer> TransferManager::TakeWithoutAllocating(unsigned int minSize) {
-	std::lock_guard<std::mutex> lock(ringMutex);
+	std::lock_guard lock(ringMutex);
 	// find buffer closest to minSize without going under
 
 	auto best_it = availableBuffers.end();
