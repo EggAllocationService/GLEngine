@@ -549,8 +549,8 @@ void glengine::pipeline::wgpu::WGPURenderer::Resize(int2 size) {
     depthTextureView = wgpuTextureCreateView(depthTexture, nullptr);
 }
 
-glengine::pipeline::wgpu::WrappedBuffer glengine::pipeline::wgpu::WGPURenderer::CreateRawBuffer(std::string_view name, unsigned int size,
-    WGPUBufferUsage usage) const {
+glengine::pipeline::wgpu::WrappedBuffer glengine::pipeline::wgpu::WGPURenderer::CreateRawBuffer(std::string_view name,
+    WGPUBufferUsage usage, unsigned int size) const {
 
     auto desc = WGPUBufferDescriptor {
         .nextInChain = nullptr,

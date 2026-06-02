@@ -97,7 +97,7 @@ namespace glengine::pipeline::wgpu {
 
         void Resize(int2 size);
 
-        WrappedBuffer CreateRawBuffer(std::string_view name, unsigned int size, WGPUBufferUsage usage) const;
+        WrappedBuffer CreateRawBuffer(std::string_view name, WGPUBufferUsage usage, unsigned int size) const;
 
         template<typename T>
         std::unique_ptr<TypedGPUBuffer<T>> CreateBuffer(std::string name, WGPUBufferUsage usage, int initialCapacity) {
