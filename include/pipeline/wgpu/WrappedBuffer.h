@@ -9,7 +9,9 @@ namespace glengine::pipeline::wgpu {
         WrappedBuffer();
         WrappedBuffer(WGPUBuffer buffer);
         ~WrappedBuffer();
-        WrappedBuffer(const WrappedBuffer&) = delete;
+        WrappedBuffer(const WrappedBuffer&);
+        WrappedBuffer& operator=(const WrappedBuffer&);
+
         operator WGPUBuffer() {
             return buffer;
         }
