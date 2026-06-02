@@ -549,6 +549,22 @@ void glengine::pipeline::wgpu::WGPURenderer::Resize(int2 size) {
     depthTextureView = wgpuTextureCreateView(depthTexture, nullptr);
 }
 
+glengine::pipeline::wgpu::WrappedBuffer glengine::pipeline::wgpu::WGPURenderer::CreateRawBuffer(std::string_view name, unsigned int size,
+    WGPUBufferUsage usage) const {
+
+    auto desc = WGPUBufferDescriptor {
+        .nextInChain = nullptr,
+        .label = {
+            .data = name.data(),
+            .length = name.length(),
+        },
+        .usage = usage,
+        .size = size,
+        .mappedAtCreation = false
+    };
+    return {wgpuDeviceCreateBuffer(device, &desc)};
+}
+
 #include "Shaders.h"
 
 void glengine::pipeline::wgpu::WGPURenderer::buildBuiltinPipelines() {

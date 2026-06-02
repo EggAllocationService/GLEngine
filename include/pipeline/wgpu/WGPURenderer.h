@@ -13,6 +13,7 @@
 #include "GLFW/glfw3.h"
 
 #include "TransferManager.h"
+#include "WrappedBuffer.h"
 #include "pipeline/ComputePipeline.h"
 
 
@@ -95,6 +96,8 @@ namespace glengine::pipeline::wgpu {
         void CommitComputePass(ComputeBundle& bundle);
 
         void Resize(int2 size);
+
+        WrappedBuffer CreateRawBuffer(std::string_view name, unsigned int size, WGPUBufferUsage usage) const;
 
         template<typename T>
         std::unique_ptr<TypedGPUBuffer<T>> CreateBuffer(std::string name, WGPUBufferUsage usage, int initialCapacity) {
