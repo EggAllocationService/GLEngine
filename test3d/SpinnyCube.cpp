@@ -22,38 +22,27 @@ SpinnyCube::SpinnyCube() {
 
     auto model = CreateComponent<InstancedStaticMeshComponent>();
 
-    const char *meshName = nullptr;
-    if (rand() % 2 == 0) {
-        meshName = "enterprise.obj";
-    } else {
-        meshName = "cube-tex.obj";
-    }
-
     auto mesh = GetEngine()
         ->GetResourceManager()
-        ->GetResource<StaticMesh>(meshName);
+        ->GetResource<StaticMesh>("cube-tex.obj");
     model_ = model;
     model_->SetMesh(mesh);
     model_->SetupAttachment(root->GetTransform());
 
     auto text = CreateComponent<glengine::world::font::SlugTextComponent>();
     text_ = text;
-    text_->GetTransform()->SetPosition(float3(0, 0, 2));
+    text_->GetTransform()->SetPosition(float3(0, 0, -1.5));
 
     auto font = GetEngine()
         ->GetResourceManager()
         ->GetResource<glengine::world::font::Font>("/builtin/QuattrocentoSans.ttf");
     text_->SetFont(font);
     text_->SetText("Amazingly few discothèques provide jukeboxes.");
-    model_->GetTransform()->SetPosition(float3(2, 0, 0));
 
 }
 
 void SpinnyCube::Update(double deltaTime) {
-    rotation += (PI / 2.0) * deltaTime;
-
+    rotation += (PI / 2.0) * deltaTime * 0.1;
     root->GetTransform()->SetRotation(float3(0, rotation, 0));
-    auto a = abs(sin(rotation));
-    model_->GetTransform()->SetScale(float3(a, a, a));
 
 }
