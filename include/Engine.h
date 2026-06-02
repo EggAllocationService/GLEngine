@@ -129,7 +129,7 @@ namespace glengine {
         GLFWwindow* window;
 
         // used for tracking deltaTime
-        std::chrono::steady_clock::time_point lastUpdate;
+        std::chrono::high_resolution_clock::time_point lastUpdate;
 
         /// <summary>
         /// Gets the number of seconds since the last Update() call.

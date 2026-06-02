@@ -117,6 +117,7 @@ namespace glengine {
         }
 
         double delta = calculateDeltaTime();
+        setLastUpdate();
 
         inputManager->Update(delta);
         pawnInputManager->Update(delta);
@@ -127,8 +128,6 @@ namespace glengine {
         for (const auto& object: renderObjectManager->objects) {
             object->UpdateEnd(delta);
         }
-
-        setLastUpdate();
 
         auto end = std::chrono::steady_clock::now();
         auto timeMs = std::chrono::duration_cast<std::chrono::duration<double, std::milli>>(end - start);
@@ -202,7 +201,7 @@ namespace glengine {
     }
 
     double Engine::calculateDeltaTime() const {
-        auto now = std::chrono::steady_clock::now();
+        auto now = std::chrono::high_resolution_clock::now();
         auto time = std::chrono::duration_cast<std::chrono::duration<double>>(now - lastUpdate);
 
         return time.count();
@@ -216,7 +215,7 @@ namespace glengine {
     }
 
     void Engine::setLastUpdate() {
-        lastUpdate = std::chrono::steady_clock::now();
+        lastUpdate = std::chrono::high_resolution_clock::now();
     }
 
     void Engine::updateActors(double deltaTime) {
