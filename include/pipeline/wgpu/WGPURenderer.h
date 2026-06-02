@@ -12,6 +12,7 @@
 #include "GLFW/glfw3.h"
 
 #include "TransferManager.h"
+#include "pipeline/ComputePipeline.h"
 
 
 namespace glengine::pipeline::wgpu {
@@ -77,8 +78,20 @@ namespace glengine::pipeline::wgpu {
             int immediateDataBytes
         );
 
+        std::shared_ptr<ComputePipeline> GetComputePipelineByName(const std::string& name);
+        std::shared_ptr<ComputePipeline> BuildComputePipeline(
+            std::string name,
+            WGPUShaderModule kernel,
+            std::string_view entryPoint,
+            std::span<WGPUBindGroupLayoutDescriptor> bindGroups,
+            int immediateDataBytes
+        );
+
         RenderBundle BeginRendering(RenderUniforms& uniforms);
         void FinishRendering(RenderBundle bundle);
+
+        ComputeBundle BeginComputePass();
+        void CommitComputePass(ComputeBundle& bundle);
 
         void Resize(int2 size);
 
@@ -100,6 +113,7 @@ namespace glengine::pipeline::wgpu {
 
         WGPUSurfaceConfiguration surfConfig;
         std::unordered_map<std::string, std::shared_ptr<RenderPipeline>> pipelines;
+        std::unordered_map<std::string, std::shared_ptr<ComputePipeline>> computePipelines;
         WGPUDevice device;
         WGPUQueue queue;
         WGPUSurface surface;

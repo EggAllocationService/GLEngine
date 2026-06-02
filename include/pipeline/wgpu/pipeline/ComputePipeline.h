@@ -7,6 +7,7 @@
 
 namespace glengine::pipeline::wgpu {
     struct ComputeBundle {
+        WGPUCommandEncoder cmd;
         WGPUComputePassEncoder encoder;
     };
 

@@ -352,6 +352,68 @@ std::shared_ptr<glengine::pipeline::wgpu::RenderPipeline> glengine::pipeline::wg
     return built;
 }
 
+std::shared_ptr<glengine::pipeline::wgpu::ComputePipeline> glengine::pipeline::wgpu::WGPURenderer::
+GetComputePipelineByName(const std::string &name) {
+    if (computePipelines.contains(name)) {
+        return computePipelines[name];
+    }
+
+    return nullptr;
+}
+
+std::shared_ptr<glengine::pipeline::wgpu::ComputePipeline> glengine::pipeline::wgpu::WGPURenderer::BuildComputePipeline(
+    std::string name, WGPUShaderModule kernel, std::string_view entryPoint,
+    std::span<WGPUBindGroupLayoutDescriptor> bindGroups, int immediateDataBytes) {
+
+    std::vector<WGPUBindGroupLayout> bindGroupLayouts(bindGroups.size());
+
+    for (int i = 0; i < bindGroups.size(); i++) {
+        bindGroupLayouts[i] = wgpuDeviceCreateBindGroupLayout(device, &bindGroups[i]);
+    }
+
+    WGPUPipelineLayoutExtras extras = {
+        .chain = {
+            .next = nullptr,
+            .sType = static_cast<WGPUSType>(WGPUSType_PipelineLayoutExtras),
+        },
+        .immediateDataSize = static_cast<uint32_t>(immediateDataBytes),
+    };
+
+    auto layoutDesc = WGPUPipelineLayoutDescriptor {
+        .nextInChain = &extras.chain,
+        .label = {},
+        .bindGroupLayoutCount = bindGroups.size(),
+        .bindGroupLayouts = bindGroupLayouts.data(),
+        .immediateSize = static_cast<uint32_t>(immediateDataBytes),
+    };
+
+    auto desc = WGPUComputePipelineDescriptor {
+        .nextInChain = nullptr,
+        .label = {
+            .data = name.data(),
+            .length = name.length(),
+        },
+        .layout = wgpuDeviceCreatePipelineLayout(device, &layoutDesc),
+        .compute = {
+            .nextInChain = nullptr,
+            .module = kernel,
+            .entryPoint = {
+               .data = entryPoint.data(),
+               .length = entryPoint.length()
+            },
+            .constantCount = 0,
+            .constants = nullptr
+        }
+    };
+
+    auto pipeline = wgpuDeviceCreateComputePipeline(device, &desc);
+
+    auto built = std::make_shared<ComputePipeline>(device, pipeline, std::move(bindGroupLayouts), immediateDataBytes);
+    computePipelines.insert_or_assign(name, built);
+
+    return built;
+}
+
 glengine::pipeline::wgpu::RenderBundle glengine::pipeline::wgpu::WGPURenderer::BeginRendering(RenderUniforms& uniforms) {
     // upload uniforms for this frame and submit any in-flight writes
     transferManager->Transfer(renderUniformsBuffer, 0, &uniforms, sizeof(uniforms));
@@ -431,6 +493,25 @@ void glengine::pipeline::wgpu::WGPURenderer::FinishRendering(RenderBundle bundle
     wgpuTextureViewRelease(bundle.targetTexture);
     wgpuSurfacePresent(surface);
     wgpuTextureRelease(bundle.surfaceTexture);
+}
+
+glengine::pipeline::wgpu::ComputeBundle glengine::pipeline::wgpu::WGPURenderer::BeginComputePass() {
+    auto cmd = wgpuDeviceCreateCommandEncoder(device, nullptr);
+    return {
+        .cmd = cmd,
+        .encoder = wgpuCommandEncoderBeginComputePass(cmd, nullptr)
+    };
+}
+
+void glengine::pipeline::wgpu::WGPURenderer::CommitComputePass(ComputeBundle& bundle) {
+    wgpuComputePassEncoderEnd(bundle.encoder);
+    wgpuComputePassEncoderRelease(bundle.encoder);
+
+    auto buf = wgpuCommandEncoderFinish(bundle.cmd, nullptr);
+    wgpuQueueSubmit(queue, 1, &buf);
+
+    wgpuCommandBufferRelease(buf);
+    wgpuCommandEncoderRelease(bundle.cmd);
 }
 
 void glengine::pipeline::wgpu::WGPURenderer::Resize(int2 size) {
