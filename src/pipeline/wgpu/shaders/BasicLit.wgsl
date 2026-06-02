@@ -47,6 +47,10 @@ fn vs(i: VertexIn) -> VertexOut {
 
 @fragment
 fn fs(i: VertexOut) -> @location(0) vec4f {
-    return material.diffuse;
+    let dir = normalize(vec3f(1, 1, 1));
+    let normal = normalize(i.normal.xyz);
+
+    let lamb = max(dot(dir, normal), 0.0);
+    return material.ambient + (lamb * material.diffuse);
 }
 

@@ -45,6 +45,4 @@ SpinnyCube::SpinnyCube() {
 void SpinnyCube::Update(double deltaTime) {
     rotation += (PI / 2.0) * deltaTime * 0.1;
     root->GetTransform()->SetRotation(float3(0, rotation, 0));
-
-    usleep(30 * 1000);
 }
