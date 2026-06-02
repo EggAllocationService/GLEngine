@@ -6,6 +6,7 @@
 
 namespace glengine::pipeline::wgpu {
     struct WrappedBuffer {
+        WrappedBuffer();
         WrappedBuffer(WGPUBuffer buffer);
         ~WrappedBuffer();
         WrappedBuffer(const WrappedBuffer&) = delete;

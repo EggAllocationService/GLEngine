@@ -5,11 +5,17 @@
 #include "pipeline/wgpu/WrappedBuffer.h"
 
 namespace glengine::pipeline::wgpu {
+    WrappedBuffer::WrappedBuffer() {
+        buffer = nullptr;
+    }
+
     WrappedBuffer::WrappedBuffer(WGPUBuffer buffer) {
         this->buffer = buffer;
     }
 
     WrappedBuffer::~WrappedBuffer() {
-        wgpuBufferRelease(buffer);
+        if (buffer != nullptr) {
+            wgpuBufferRelease(buffer);
+        }
     }
 }
