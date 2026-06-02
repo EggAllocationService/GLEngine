@@ -1,6 +1,6 @@
 # GLEngine
 
-3D Graphics Engine written from scratch in C++, using freeglut. 
+A cross-platform 3D Graphics Engine written from scratch in C++, using WebGPU and GLFW. 
 
 ## Engine
 
@@ -10,8 +10,7 @@ A frame is split into Update and Render passes. Update advances the state of the
 allowing for framerate-independent movement. The world is made of Actors, which are objects orchestrating Components, which are what is actually rendered. Special kinds of Actors called Pawns can be Possessed by the user, allowing them to
 control the pawn in some way. Memory is tracked via shared pointers, and ownership flows downwards so when an Actor is destroyed it and its subobjects are immediately freed. Weak pointers are used at higher levels to avoid segfaults.
 
-The engine supports window reshapes out of the box, and abstracts almost all GLUT functionality to allow for a more cohesive experience. Also included is a robust 2D UI rendering system (from assignment 1) and an onscreen console, allowing for
-debugging commands to be executed. A simplified input system allows binding C++ lambdas to keys, and optionally handling relative mouse input.
+The engine supports window reshapes out of the box, and abstracts almost all GLFW functionality to allow for a more cohesive experience. A simplified input system allows binding C++ lambdas to keys, and optionally handling relative mouse input.
 
 ### 3D
 The rendering engine exposes the following 3d primitives, which are used in the assignment implementations:
@@ -25,6 +24,8 @@ The rendering engine exposes the following 3d primitives, which are used in the 
         - CameraComponent: Represents a camera that the world can be viewed through. Controls FOV and near/far plane distance.
         - PointLightComponent: Provides functionality to add a point light to actors. All instances of this component are collected during Update() and used to feed glLight calls at the start of rendering
         - StaticMeshComponent: Renders a static mesh. Not much to say about this one, it does what it says on the tin. Also exposes material properties
+        - InstancedStaticMeshComponent: Will automatically instance draws of the same mesh - use this if you have a lot of the same mesh on-screen for free performance!
+        - SlugTextComponent: Renders 3D antialiased text using the Slug algorithm. Supports most TrueType fonts
 - Pawn: A subclass of Actor which can be controlled by the user. Contains a default Camera Component at the origin, but this can be overridden with the SetActiveCamera function
     - DefaultPawn (private): a free-flying Pawn implementation, supporting WASD movement and arrow keys for camera direction. Used as fallback
 - Transform: A class containing separate translation/rotation/scale vectors, and a cached transform matrix which is kept up-to-date. Can be parented to another transform.
@@ -92,15 +93,3 @@ The engine provides a global ResourceManager object, to centralize resource load
 
 After the initial vertex data is loaded, the engine re-calculates normal vectors (if required, existing normals will be kept if present in the file), then normalizes the scale so all vertices are within a (-1, 1) range. Finally, a display list
 is compiled with the vertex data, which is then called when the mesh needs to be rendered.
-
-### Console:
-
-A built in development console is provided, to allow for more complex commands to be added without complicated keybinds. By default pressing the backtick key will open the console, which appears as a text bar along the bottom of the screen.
-Applications can add their own commands to this console, but there are two default commands included:
-
-- detach: Spawns an empty DefaultPawn at the currently possessed pawn's origin, and possesses it.
-- quit: Closes the application
-
-Autocomplete is provided for command names, and the five closest matches will be shown in a box above the text caret. Pressing enter submits the command, which will close the console if a command is successfuly executed.
-
-Internally, commands are stored in a (string, function) map. When the first word of the input matches a command, that is stripped and the corresponding function pointer is called with a string view containing the remainder of the string (to allow for arguments).
