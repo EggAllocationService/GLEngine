@@ -34,6 +34,9 @@ namespace glengine::pipeline::wgpu {
         ~RenderPipeline();
         void DrawMesh(const RenderBundle& bundle, const GPUMesh& mesh, const void* immediateData);
         void DrawMeshInstanced(const RenderBundle& bundle, const GPUMesh& mesh, int instanceCount);
+
+        void DrawMeshInstancedIndirect(const RenderBundle& bundle, const GPUMesh& mesh, WGPUBuffer indirectBuffer);
+
         std::shared_ptr<RenderPipeline> CreateInstance();
     private:
         WGPURenderPassEncoder createPass(const RenderBundle& bundle);

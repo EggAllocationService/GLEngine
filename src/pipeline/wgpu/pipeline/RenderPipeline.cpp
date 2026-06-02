@@ -45,6 +45,20 @@ void glengine::pipeline::wgpu::RenderPipeline::DrawMeshInstanced(const RenderBun
     }
 }
 
+void glengine::pipeline::wgpu::RenderPipeline::DrawMeshInstancedIndirect(const RenderBundle &bundle, const GPUMesh &mesh, WGPUBuffer indirectBuffer) {
+    if (!bundle.valid) return;
+
+    auto pass = createPass(bundle);
+    wgpuRenderPassEncoderSetVertexBuffer(pass, 0, mesh.GetVertices(), 0, mesh.GetVertexCount() * mesh.GetVertexStride());
+    if (mesh.IsIndexed()) {
+        wgpuRenderPassEncoderSetIndexBuffer(pass, mesh.GetIndices(), WGPUIndexFormat_Uint32, 0, mesh.GetIndexCount() * sizeof(unsigned int));
+
+        wgpuRenderPassEncoderDrawIndexedIndirect(bundle.passEncoder, indirectBuffer, 0);
+    } else {
+        wgpuRenderPassEncoderDrawIndirect(bundle.passEncoder, indirectBuffer, 0);
+    }
+}
+
 std::shared_ptr<glengine::pipeline::wgpu::RenderPipeline> glengine::pipeline::wgpu::RenderPipeline::CreateInstance() {
     return std::make_shared<RenderPipeline>(*this);
 }
