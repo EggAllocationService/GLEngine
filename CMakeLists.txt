@@ -61,6 +61,7 @@ add_library(glengine SHARED
         src/ResourceManager.cpp
         src/pipeline/wgpu/pipeline/ComputePipeline.cpp
         include/pipeline/wgpu/pipeline/ComputePipeline.h
+        include/pipeline/wgpu/GPUPointer.h
 )
 
 create_resource_library(NAME Shaders SOURCES 

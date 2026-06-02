@@ -13,19 +13,11 @@
 #include "pipeline/wgpu/WGPURenderer.h"
 
 namespace glengine::world::mesh {
-    struct GLENGINE_EXPORT Material {
+    struct GLENGINE_EXPORT alignas(sizeof(float4)) Material {
         float4 Diffuse = float4(1.0f, 1.0f, 1.0f, 1.0f);
         float4 Specular = float4(0, 0, 0, 1.0f);
         float4 Emissive = float4(0, 0, 0, 1);
         float Shininess = 0.0f;
-
-        /// Sets GL material properties for front and back according to current values
-        void Load() const {
-            glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, reinterpret_cast<const float *>(&Diffuse));
-            glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, reinterpret_cast<const float *>(&Specular));
-            glMaterialfv(GL_FRONT_AND_BACK, GL_EMISSION, reinterpret_cast<const float *>(&Emissive));
-            glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, Shininess);
-        }
     };
     /// A StaticMesh is a non-animated mesh
     class GLENGINE_EXPORT StaticMesh : public Resource {

@@ -10,11 +10,20 @@
 using namespace glengine::world::mesh;
 
 StaticMeshComponent::StaticMeshComponent() {
-    pipeline_ = GetActor()->GetEngine()->GetRenderer()->GetRenderPipelineByName("BasicLit");
+    auto renderer = GetActor()->GetEngine()->GetRenderer();
+    pipeline_ = renderer->GetRenderPipelineByName("BasicLit")->CreateInstance();
+    material = renderer->AllocateObject<Material>(WGPUBufferUsage_Uniform);
+
+    WGPUBindGroupEntry entry = WGPU_BIND_GROUP_ENTRY_INIT;
+    entry.buffer = material;
+
+    pipeline_->SetBinding(1, entry);
+    pipeline_->CommitBindings();
 }
 
 void StaticMeshComponent::Render(const pipeline::wgpu::RenderBundle& bundle, MatrixStack& stack) {
     if (mesh_ == nullptr) return;
+    material.Commit();
 
     auto matrix = static_cast<mat4>(stack);
     pipeline_->DrawMesh(bundle, *mesh_->mesh, &matrix);

@@ -15,11 +15,12 @@ namespace glengine::world::mesh {
 
         void SetMesh(std::shared_ptr<StaticMesh>);
         void SetTexture(std::shared_ptr<texture::StaticTexture2D>);
+        pipeline::wgpu::GPUPointer<Material> material;
 
-        Material material;
     private:
         std::shared_ptr<StaticMesh> mesh_;
         std::shared_ptr<texture::StaticTexture2D> texture_;
         std::shared_ptr<pipeline::wgpu::RenderPipeline> pipeline_;
+
     };
 }

@@ -18,8 +18,7 @@ void GLRenderer::SetMatrices(mat4 viewMatrix, mat4 projectionMatrix) {
     glLoadMatrixf(&viewMatrix.data[0]);
 }
 
-void GLRenderer::RenderMesh(const StaticMesh *mesh, Material material, mat4 transform) {
-    material.Load();
+void GLRenderer::RenderMesh(const StaticMesh *mesh, Material material, mat4 transform) {;
     glMatrixMode(GL_MODELVIEW);
     glPushMatrix();
     glMultMatrixf(&transform.data[0]);

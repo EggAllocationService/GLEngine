@@ -553,7 +553,29 @@ void glengine::pipeline::wgpu::WGPURenderer::Resize(int2 size) {
 
 void glengine::pipeline::wgpu::WGPURenderer::buildBuiltinPipelines() {
     auto basicLitShaders = CompileShader(embed_BasicLit_wgsl);
-    BuildRenderPipeline("BasicLit", basicLitShaders, {}, {}, sizeof(mat4));
+    WGPUBindGroupLayoutEntry basicLitBindGroupEntry = {
+        .nextInChain = nullptr,
+        .binding = 0,
+        .visibility = WGPUShaderStage_Fragment,
+        .bindingArraySize = 0,
+        .buffer = {
+            .nextInChain = nullptr,
+            .type = WGPUBufferBindingType_Uniform,
+            .hasDynamicOffset = false,
+            .minBindingSize = 0
+        },
+        .sampler = {},
+        .texture = {},
+        .storageTexture = {}
+    };
+    WGPUBindGroupLayoutDescriptor basicLitBindGroup = {
+        .nextInChain = nullptr,
+        .label = {},
+        .entryCount = 1,
+        .entries = &basicLitBindGroupEntry
+    };
+
+    BuildRenderPipeline("BasicLit", basicLitShaders, {}, std::span(&basicLitBindGroup, 1), sizeof(mat4));
 
     WGPUBindGroupLayoutEntry basicLitInstancedBindGroupEntry = {
         .nextInChain = nullptr,

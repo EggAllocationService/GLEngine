@@ -5,6 +5,13 @@ struct RenderUniforms {
     lightCount: i32
 }
 
+struct Material {
+    diffuse: vec4f,
+    ambient: vec4f,
+    specular: vec4f,
+    shininess: f32
+}
+
 struct ModelData {
     m: mat4x4<f32>
 }
@@ -12,6 +19,10 @@ struct ModelData {
 @group(0)
 @binding(0)
 var<uniform> camera: RenderUniforms;
+
+@group(1)
+@binding(0)
+var<uniform> material: Material;
 
 var<immediate> m: ModelData;
 
@@ -36,6 +47,6 @@ fn vs(i: VertexIn) -> VertexOut {
 
 @fragment
 fn fs(i: VertexOut) -> @location(0) vec4f {
-    return vec4f(abs(normalize(i.normal)).xyz, 1.0);
+    return material.diffuse;
 }
 

@@ -8,6 +8,7 @@
 #include "webgpu/wgpu.h"
 #include <span>
 #include "glengine_export.h"
+#include "GPUPointer.h"
 #include "TypedGPUBuffer.h"
 #include "GLFW/glfw3.h"
 
@@ -98,6 +99,19 @@ namespace glengine::pipeline::wgpu {
         template<typename T>
         std::unique_ptr<TypedGPUBuffer<T>> CreateBuffer(std::string name, WGPUBufferUsage usage, int initialCapacity) {
             return std::make_unique<TypedGPUBuffer<T>>(std::move(name), device, usage, initialCapacity);
+        }
+
+        template<typename T>
+        GPUPointer<T> AllocateObject(WGPUBufferUsage usage) {
+            auto desc = WGPUBufferDescriptor {
+                .nextInChain = nullptr,
+                .label = {},
+                .usage = usage | WGPUBufferUsage_CopyDst,
+                .size = sizeof(T),
+                .mappedAtCreation =  false
+            };
+
+            return GPUPointer<T>(queue, wgpuDeviceCreateBuffer(device, &desc));
         }
 
         [[nodiscard]] WGPUDevice GetDevice() const {
