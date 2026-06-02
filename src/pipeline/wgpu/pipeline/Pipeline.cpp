@@ -11,7 +11,10 @@ namespace glengine::pipeline::wgpu {
         _dirty = std::vector(_layouts.size(), false);
         _groups = std::vector<WGPUBindGroup>(_layouts.size(), nullptr);
         _entries.resize(_layouts.size());
-        _groups[0] = universalGroup;
+        if (universalGroup != nullptr) {
+            _groups[0] = universalGroup;
+            wgpuBindGroupAddRef(universalGroup);
+        }
     }
 
     Pipeline::Pipeline(Pipeline &other) {
@@ -32,17 +35,13 @@ namespace glengine::pipeline::wgpu {
     }
 
     Pipeline::~Pipeline() {
-        for (int i = 1; i < _groups.size(); i++) {
+        for (int i = 0; i < _groups.size(); i++) {
             wgpuBindGroupRelease(_groups[i]);
             wgpuBindGroupLayoutRelease(_layouts[i]);
         }
     }
 
     void Pipeline::SetBinding(int group, WGPUBindGroupEntry entry) {
-        if (group == 0) {
-            return;
-        }
-
         auto& vector = _entries[group];
         if (vector.size() < entry.binding + 1) {
             vector.resize(entry.binding + 1);
@@ -52,8 +51,8 @@ namespace glengine::pipeline::wgpu {
     }
 
     void Pipeline::CommitBindings() {
-        for (int i = 1; i < _groups.size(); i++) {
-            if (!_dirty[i]) return;
+        for (int i = 0; i < _groups.size(); i++) {
+            if (!_dirty[i]) continue;
 
             if (_groups[i] != nullptr) {
                 wgpuBindGroupRelease(_groups[i]);

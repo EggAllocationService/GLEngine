@@ -59,6 +59,8 @@ add_library(glengine SHARED
         "src/pipeline/wgpu/TransferManager.cpp"
         "include/pipeline/wgpu/TransferManager.h"
         src/ResourceManager.cpp
+        src/pipeline/wgpu/pipeline/ComputePipeline.cpp
+        include/pipeline/wgpu/pipeline/ComputePipeline.h
 )
 
 create_resource_library(NAME Shaders SOURCES 
