@@ -17,6 +17,7 @@ namespace glengine::pipeline::wgpu {
 		unsigned int length;
 		unsigned int offset;
 
+		unsigned int sourceIndex;
 		unsigned int sourceOffset;
 	};
 
@@ -38,11 +39,11 @@ namespace glengine::pipeline::wgpu {
 	private:
 		std::vector<TransferInfo> transfers;
 		std::string name;
-		std::unique_ptr<StagingBuffer> buffer;
+		std::vector<std::unique_ptr<StagingBuffer>> buffers;
 		WGPUDevice device;
 		WGPUQueue queue;
 		TransferManager* manager;
-		unsigned int usedCapacity;
+		std::vector<unsigned int> usedCapacity;
 	};
 
 	class GLENGINE_EXPORT TransferManager {
@@ -54,10 +55,11 @@ namespace glengine::pipeline::wgpu {
 		void Transfer(WGPUBuffer target, unsigned int offset, void* data, unsigned int length);
 
 		void Return(std::unique_ptr<StagingBuffer> buffer);
+		std::unique_ptr<StagingBuffer> TakeWithoutAllocating(unsigned int minSize);
 		std::unique_ptr<StagingBuffer> Take(unsigned int minSize);
-	private:
-		std::unique_ptr<StagingBuffer> allocateNew(unsigned int capacity);
+		std::unique_ptr<StagingBuffer> AllocateNew(unsigned int capacity);
 
+	private:
 		std::vector<std::unique_ptr<StagingBuffer>> availableBuffers;
 		std::mutex ringMutex;
 		WGPUDevice device;
