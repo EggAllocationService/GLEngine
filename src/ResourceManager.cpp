@@ -2,7 +2,7 @@
 // Created by Kyle Smith on 2026-06-01.
 //
 #include "ResourceManager.h"
-
+#include "PakFile.h"
 
 #include <streambuf>
 #include <istream>
@@ -123,6 +123,80 @@ glengine::ResourceManager::ResourceManager(pipeline::wgpu::WGPURenderer *rendere
 #endif
 }
 
+void glengine::ResourceManager::MountPak(std::string_view path, std::string_view fileName) {
+    std::ifstream file;
+    file.open(fileName);
+    if (file.is_open()) {
+        MountPak(path, file);
+    } else {
+        std::cerr << "MountPak: failed to open file\n";
+    }
+}
+
+void glengine::ResourceManager::MountPak(std::string_view path, std::istream &data) {
+    pak::PakHeader header;
+    data.read(header.magic, sizeof(header.magic));
+    data.read(reinterpret_cast<char*>(&header.version), sizeof(header.version));
+    data.read(reinterpret_cast<char*>(&header.entryCount), sizeof(header.entryCount));
+
+    if (header.magic[0] != 'G' || header.magic[1] != 'P' ||
+        header.magic[2] != 'A' || header.magic[3] != 'K') {
+        std::cerr << "MountPak: invalid magic\n";
+        return;
+    }
+
+    if (header.version != 1) {
+        std::cerr << "MountPak: unsupported version " << header.version << "\n";
+        return;
+    }
+
+    std::string prefix(path);
+    while (!prefix.empty() && prefix.back() == '/') {
+        prefix.pop_back();
+    }
+
+    for (int i = 0; i < header.entryCount; ++i) {
+        unsigned short nameLength = 0;
+        data.read(reinterpret_cast<char*>(&nameLength), sizeof(nameLength));
+
+        std::string name(nameLength, '\0');
+        data.read(name.data(), nameLength);
+
+        unsigned int length = 0;
+        data.read(reinterpret_cast<char*>(&length), sizeof(length));
+
+        auto buffer = new char[length];
+        data.read(buffer, length);
+
+        Blob blob = {
+            .data = buffer,
+            .length = length
+        };
+
+        std::string key = prefix + name;
+        blobs[std::move(key)] = blob;
+    }
+}
+
+void glengine::ResourceManager::MountPak(std::string_view path, const void *data, size_t len) {
+    auto stream = CreateStreamBuffer(static_cast<const char *>(data), len);
+    MountPak(path, *stream);
+}
+
 std::unique_ptr<std::istream> glengine::ResourceManager::CreateStreamBuffer(const char *data, size_t len) {
     return std::make_unique<imemstream>(data, len);
+}
+
+std::unique_ptr<std::istream> glengine::ResourceManager::OpenResource(std::string_view path) {
+    std::string pathName(path);
+
+    if (blobs.contains(pathName)) {
+        // we mounted a pak file with this resource in it
+        const auto& blob = blobs[pathName];
+        return CreateStreamBuffer(blob.data, blob.length);
+    } else {
+        auto file = std::make_unique<std::ifstream>();
+        file->open(pathName);
+        return file;
+    }
 }

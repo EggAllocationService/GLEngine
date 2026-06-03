@@ -6,6 +6,7 @@ option(TEXT_RENDERING "Compile builtin text rendering library (requires harfbuzz
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 include(wgpu-native)
 include(embed)
+include(paktool)
 include(harfbuzz)
 
 set(CMAKE_CXX_STANDARD 20)
@@ -65,6 +66,7 @@ add_library(glengine SHARED
         src/pipeline/wgpu/WrappedBuffer.cpp
         include/pipeline/wgpu/WrappedBuffer.h
         include/pipeline/wgpu/GPUTexture.h
+        include/PakFile.h
 )
 
 create_resource_library(NAME Shaders SOURCES 
@@ -164,6 +166,15 @@ function(copy_assets TARGET_NAME SOURCE_DIR)
 endfunction()
 
 if (${PROJECT_IS_TOP_LEVEL})
+    build_pak(
+            NAME assets
+            SOURCES
+                test3d/assets/cube-tex.obj
+                test3d/assets/enterprise.obj
+            NAMES
+                /cube.obj
+                /enterprise.obj
+    )
 
     add_executable(test3d test3d/main.cpp
             test3d/SpinnyCube.cpp
@@ -177,4 +188,5 @@ if (${PROJECT_IS_TOP_LEVEL})
     copy_assets(test3d test3d/assets)
 
     target_link_libraries(test3d PRIVATE glengine)
+    add_dependencies(test3d assets)
 endif()

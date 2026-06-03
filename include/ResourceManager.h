@@ -53,6 +53,10 @@ consteval std::string_view GetTypeName() {
         }
     }
 
+    struct Blob {
+        char* data;
+        size_t length;
+    };
     class GLENGINE_EXPORT ResourceManager {
     public:
         ResourceManager(pipeline::wgpu::WGPURenderer* renderer);
@@ -68,11 +72,8 @@ consteval std::string_view GetTypeName() {
             const auto found = resources.find(name);
             if (found == resources.end()) {
                 // create then add to map
-
-                std::ifstream file;
-                file.open(name.c_str(), std::ios::binary);
-
-                auto resource = internal::ConstructResource<T>(file, renderer);
+                auto data = OpenResource(path);
+                auto resource = internal::ConstructResource<T>(*data, renderer);
                 resources[name] = resource;
                 return resource;
             }
@@ -108,10 +109,16 @@ consteval std::string_view GetTypeName() {
                 return std::dynamic_pointer_cast<Resource>(internal::ConstructResource<T>(stream, renderer));
             };
         }
+
+        void MountPak(std::string_view path, std::string_view fileName);
+        void MountPak(std::string_view path, std::istream& data);
+        void MountPak(std::string_view path, const void* data, size_t len);
     private:
         static std::unique_ptr<std::istream> CreateStreamBuffer(const char* data, size_t len);
+        std::unique_ptr<std::istream> OpenResource(std::string_view path);
         pipeline::wgpu::WGPURenderer *renderer;
         std::unordered_map<std::string, std::shared_ptr<Resource>> resources;
         std::unordered_map<std::string, std::function<std::shared_ptr<Resource>(std::istream&, pipeline::wgpu::WGPURenderer*)>> registeredConstructors;
+        std::unordered_map<std::string, Blob> blobs;
     };
 }

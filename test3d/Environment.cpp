@@ -7,8 +7,6 @@
 #include "Engine.h"
 #include "3d/components/DirectionalLightComponent.h"
 #include "GLMath.h"
-#include "3d/mesh/StaticMesh.h"
-#include "3d/mesh/StaticMeshComponent.h"
 
 Environment::Environment() {
     auto sun = CreateComponent<glengine::world::components::DirectionalLightComponent>();
