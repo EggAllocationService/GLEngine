@@ -11,6 +11,13 @@
 #include <iostream>
 #include <vector>
 
+#include "3d/mesh/StaticMesh.h"
+#include "3d/texture/StaticTexture2D.h"
+
+#ifdef GLENGINE_TEXT_RENDERING
+#include "3d/text/Font.h"
+#endif
+
 // 1. The Stream Buffer: Handles memory mapping and seeking
 class imemstream_buf : public std::streambuf {
 public:
@@ -87,6 +94,34 @@ public:
     explicit imemstream(std::span<const uint8_t> data)
         : imemstream(reinterpret_cast<const char*>(data.data()), data.size()) {}
 };
+
+template<>
+std::shared_ptr<WGPUShaderModule> glengine::internal::ConstructResource<WGPUShaderModule>(std::istream &stream,
+    pipeline::wgpu::WGPURenderer *renderer) {
+    // figure out how big the image file is
+    stream.seekg(0, std::ios::end);
+    auto size = stream.tellg();
+    stream.seekg(0, std::ios::beg);
+
+    // allocate a buffer and read file contents
+    auto buffer = new char[static_cast<unsigned long>(size) + 1];
+    stream.read(buffer, size);
+    buffer[size] = '\0';
+
+    return std::make_shared<WGPUShaderModule>(renderer->CompileShader(buffer));
+}
+
+#include <iostream>
+glengine::ResourceManager::ResourceManager(pipeline::wgpu::WGPURenderer *renderer) {
+    this->renderer = renderer;
+
+    RegisterResourceType<world::mesh::StaticMesh>();
+    RegisterResourceType<world::texture::StaticTexture2D>();
+
+#ifdef GLENGINE_TEXT_RENDERING
+    RegisterResourceType<world::font::Font>();
+#endif
+}
 
 std::unique_ptr<std::istream> glengine::ResourceManager::CreateStreamBuffer(const char *data, size_t len) {
     return std::make_unique<imemstream>(data, len);
