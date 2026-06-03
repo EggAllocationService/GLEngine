@@ -16,6 +16,7 @@
 #include "3d/text/Font.h"
 #include "TextRenderingResources.h"
 #endif
+#include "BuiltinAssets.h"
 #include "3d/objects/LightTracker.h"
 #include "pipeline/gl/GLRenderer.h"
 
@@ -78,11 +79,11 @@ namespace glengine {
         renderObjectManager->Create<world::objects::InstancedDrawTracker>();
         renderObjectManager->Create<world::objects::LightTracker>();
 
+        resourceManager->MountPak("/builtin", embed_builtin_pak, embed_builtin_pak_length);
 #ifdef GLENGINE_TEXT_RENDERING
-        // if text rendering is enabled, add a default font
-        resourceManager->GetResource<world::font::Font>("/builtin/trim.ttf", embed_trim_ttf, embed_trim_ttf_length);
-        resourceManager->GetResource<world::font::Font>("/builtin/QuattrocentoSans.ttf", embed_QuattrocentoSans_ttf, embed_QuattrocentoSans_ttf_length);
-        #endif
+        // if text rendering is enabled, add default fonts
+        resourceManager->MountPak("/builtin/fonts", embed_fonts_pak, embed_fonts_pak_length);
+#endif
     }
 
     Engine::~Engine() {

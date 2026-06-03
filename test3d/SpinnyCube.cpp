@@ -25,7 +25,7 @@ SpinnyCube::SpinnyCube() {
 
     auto mesh = GetEngine()
         ->GetResourceManager()
-        ->GetResource<StaticMesh>("cube-tex.obj");
+        ->GetResource<StaticMesh>("/assets/cube.obj");
     model_ = model;
     model_->SetMesh(mesh);
     model_->SetupAttachment(root->GetTransform());
@@ -36,7 +36,7 @@ SpinnyCube::SpinnyCube() {
 
     auto font = GetEngine()
         ->GetResourceManager()
-        ->GetResource<glengine::world::font::Font>("/builtin/QuattrocentoSans.ttf");
+        ->GetResource<glengine::world::font::Font>("/builtin/fonts/quattrocento.ttf");
     text_->SetFont(font);
     text_->SetText("Amazingly few discothèques provide jukeboxes.");
 

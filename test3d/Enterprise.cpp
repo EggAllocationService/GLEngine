@@ -32,7 +32,7 @@ Enterprise::Enterprise()
 	// load mesh
 	auto model = GetEngine()
 		->GetResourceManager()
-		->GetResource<StaticMesh>("enterprise.obj");
+		->GetResource<StaticMesh>("/assets/enterprise.obj");
 
 	mesh = CreateComponent<StaticMeshComponent>();
 	mesh->SetupAttachment(root->GetTransform());
@@ -44,7 +44,7 @@ Enterprise::Enterprise()
 
 	auto font = GetEngine()
 		->GetResourceManager()
-		->GetResource<font::Font>("/builtin/trim.ttf");
+		->GetResource<font::Font>("/builtin/fonts/trim.ttf");
 	text->SetFont(font);
 	text->SetText("USS Enterprise");
 	text->GetTransform()->SetScale(float3(0.05, 0.05, 0.05));

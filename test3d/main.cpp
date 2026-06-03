@@ -41,6 +41,7 @@ int main(int argc, char** argv) {
 #endif
 
     auto engine = new Engine("3D Test", int2(1280, 720));
+    engine->GetResourceManager()->MountPak("/assets", "assets.pak");
     engine->SetAllowNonFocusedPawnInput(true);
 
     engine->SpawnActor<Environment>();

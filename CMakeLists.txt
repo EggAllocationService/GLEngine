@@ -74,6 +74,19 @@ create_resource_library(NAME Shaders SOURCES
     src/pipeline/wgpu/shaders/BasicLitInstanced.wgsl
 )
 
+build_pak(
+        NAME builtin
+        SOURCES
+            src/assets/cube-tex.obj
+            src/assets/plane.obj
+            src/assets/sphere.obj
+        NAMES
+            /models/cube.obj
+            /models/plane.obj
+            /models/sphere.obj
+)
+create_resource_library(NAME BuiltinAssets RAW_SOURCES builtin.pak)
+
 if (${TEXT_RENDERING})
     provide_harfbuzz(14.2.0)
 
@@ -85,10 +98,19 @@ if (${TEXT_RENDERING})
             src/3d/text/SlugTextComponent.cpp
     )
 
-    create_resource_library(NAME TextRenderingResources SOURCES
-        src/3d/text/trim.ttf
-        src/3d/text/QuattrocentoSans.ttf
-        src/3d/text/slug.wgsl
+    build_pak(
+            NAME fonts
+            SOURCES
+                src/3d/text/trim.ttf
+                src/3d/text/QuattrocentoSans.ttf
+            NAMES
+                /trim.ttf
+                /quattrocento.ttf
+    )
+
+    create_resource_library(NAME TextRenderingResources
+            SOURCES src/3d/text/slug.wgsl
+            RAW_SOURCES fonts.pak
     )
     target_link_libraries(glengine harfbuzz TextRenderingResources)
 endif()
@@ -130,7 +152,7 @@ elseif(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
     target_link_libraries(glengine "GLU")
 endif()
 
-target_link_libraries(glengine glfw webgpu glfw3webgpu Shaders)
+target_link_libraries(glengine glfw webgpu glfw3webgpu Shaders BuiltinAssets)
 
 function(engine_copy_freeglut_if_needed TARGETNAME)
     if (${CMAKE_SYSTEM_NAME} MATCHES "Windows")
@@ -184,8 +206,6 @@ if (${PROJECT_IS_TOP_LEVEL})
             test3d/Environment.cpp
             test3d/Environment.h
     )
-
-    copy_assets(test3d test3d/assets)
 
     target_link_libraries(test3d PRIVATE glengine)
     add_dependencies(test3d assets)
