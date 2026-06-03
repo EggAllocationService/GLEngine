@@ -169,6 +169,8 @@ std::shared_ptr<glengine::pipeline::wgpu::GPUMesh> Font::PrepareText(const char 
         vertex.pos.xy -= placementOffset;
     }
 
+    hb_buffer_destroy(buf);
+
     return renderer->UploadIndexedMesh(vertices, indices);
 }
 
@@ -357,6 +359,7 @@ void Font::addGlyphToAtlas(unsigned int id) {
 
     this->glyphInfos->Push(data);
     delete glyph;
+    delete[] points;
 
     glyphIndexMap.insert({id, this->glyphInfos->GetSize() - 1});
 }

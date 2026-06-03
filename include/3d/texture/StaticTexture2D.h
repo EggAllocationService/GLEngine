@@ -10,9 +10,7 @@ namespace glengine::world::texture {
     class GLENGINE_EXPORT StaticTexture2D : public Resource {
     public:
         StaticTexture2D(std::istream &, pipeline::wgpu::WGPURenderer*);
-        void Bind() const;
-        void SetParameter(int param, int value);
     private:
-        unsigned int textureID = -1;
+        std::shared_ptr<pipeline::wgpu::GPUTexture> texture;
     };
 }

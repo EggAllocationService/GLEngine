@@ -8,7 +8,7 @@
 
 using namespace glengine::world::texture;
 
-StaticTexture2D::StaticTexture2D(std::istream &stream, pipeline::wgpu::WGPURenderer*) {
+StaticTexture2D::StaticTexture2D(std::istream &stream, pipeline::wgpu::WGPURenderer* renderer) {
     // figure out how big the image file is
     stream.seekg(0, std::ios::end);
     auto size = stream.tellg();
@@ -20,25 +20,25 @@ StaticTexture2D::StaticTexture2D(std::istream &stream, pipeline::wgpu::WGPURende
 
     int x, y, n;
     auto decoded = stbi_load_from_memory((unsigned char*) buffer.get(), size, &x, &y, &n, 4);
+    texture = renderer->CreateTexture("", WGPUTextureUsage_TextureBinding | WGPUTextureUsage_StorageBinding | WGPUTextureUsage_CopyDst, WGPUTextureFormat_RGBA8Unorm, x, y);
 
-    glGenTextures(1, &textureID);
-    glBindTexture(GL_TEXTURE_2D, textureID);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    glGetError();
-    glBindTexture(GL_TEXTURE_2D, 0);
+    auto textureCopyInfo = WGPUTexelCopyTextureInfo {
+        .texture = *texture,
+        .mipLevel = 1,
+        .origin = {0, 0, 0},
+        .aspect = WGPUTextureAspect_All
+    };
 
-    stbi_image_free(decoded);
-}
+    auto bufferInfo = WGPUTexelCopyBufferLayout {
+        .offset = 0,
+        .bytesPerRow = static_cast<unsigned int>(x * 4),
+        .rowsPerImage = static_cast<unsigned int>(y)
+    };
+    auto extent = WGPUExtent3D {
+        .width = static_cast<unsigned int>(x),
+        .height = static_cast<unsigned int>(y),
+        .depthOrArrayLayers = 1
+    };;
 
-void StaticTexture2D::Bind() const {
-    glBindTexture(GL_TEXTURE_2D, textureID);
-}
-
-void StaticTexture2D::SetParameter(int param, int value) {
-    Bind();
-    glTexParameteri(GL_TEXTURE_2D, param, value);
-    glBindTexture(GL_TEXTURE_2D, 0);
+    wgpuQueueWriteTexture(wgpuDeviceGetQueue(renderer->GetDevice()), &textureCopyInfo, decoded, x * y * n, &bufferInfo, &extent);
 }
