@@ -7,6 +7,7 @@
 #include "GLMath.h"
 #include "Engine.h"
 #include "Enterprise.h"
+#include "Environment.h"
 #include "SpinnyCube.h"
 #include "../include/3d/text/Font.h"
 #include "3d/mesh/StaticMesh.h"
@@ -41,6 +42,8 @@ int main(int argc, char** argv) {
 
     auto engine = new Engine("3D Test", int2(1280, 720));
     engine->SetAllowNonFocusedPawnInput(true);
+
+    engine->SpawnActor<Environment>();
 
     auto cube = engine->SpawnActor<SpinnyCube>();
     cube->GetTransform()->SetPosition(float3(0, 0, 5));

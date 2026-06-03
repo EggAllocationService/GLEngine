@@ -90,6 +90,8 @@ namespace glengine::pipeline::wgpu {
             int immediateDataBytes
         );
 
+        void SetUniversalBindGroupEntry(WGPUBindGroupEntry entry);
+
         RenderBundle BeginRendering(RenderUniforms& uniforms);
         void FinishRendering(RenderBundle bundle);
 
@@ -132,7 +134,10 @@ namespace glengine::pipeline::wgpu {
     private:
         void buildBuiltinPipelines();
 
+        void rebuildUniversalBindGroup();
+
         WGPUSurfaceConfiguration surfConfig;
+        std::vector<WGPUBindGroupEntry> universalEntries;
         std::unordered_map<std::string, std::shared_ptr<RenderPipeline>> pipelines;
         std::unordered_map<std::string, std::shared_ptr<ComputePipeline>> computePipelines;
         WGPUDevice device;
@@ -148,6 +153,8 @@ namespace glengine::pipeline::wgpu {
         WGPUSubmissionIndex lastFrame = 0;
         TransferManager* transferManager;
         std::atomic<int> meshIdTracker = 0;
+
+        bool universalDirty;
 
     };
 }

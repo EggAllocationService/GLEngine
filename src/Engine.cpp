@@ -16,6 +16,7 @@
 #include "3d/text/Font.h"
 #include "TextRenderingResources.h"
 #endif
+#include "3d/objects/LightTracker.h"
 #include "pipeline/gl/GLRenderer.h"
 
 namespace glengine {
@@ -75,6 +76,7 @@ namespace glengine {
         // this has to be initialized at the end as its constructor requires an opengl context
         renderObjectManager = new rendering::RenderObjects(renderer);
         renderObjectManager->Create<world::objects::InstancedDrawTracker>();
+        renderObjectManager->Create<world::objects::LightTracker>();
 
 #ifdef GLENGINE_TEXT_RENDERING
         // if text rendering is enabled, add a default font
@@ -261,7 +263,7 @@ namespace glengine {
             .projectionViewMatrix = projectionMatrix * viewMatrix,
             .projectionMatrix = projectionMatrix,
             .viewMatrix = viewMatrix,
-            .lightCount = 0
+            .lightCount = renderObjectManager->GetObject<world::objects::LightTracker>()->GetLightCount(),
         };
         // set matrices
         auto bundle = renderer->BeginRendering(uniforms);

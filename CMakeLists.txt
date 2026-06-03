@@ -170,6 +170,8 @@ if (${PROJECT_IS_TOP_LEVEL})
             test3d/SpinnyCube.h
             test3d/Enterprise.h
             test3d/Enterprise.cpp
+            test3d/Environment.cpp
+            test3d/Environment.h
     )
 
     copy_assets(test3d test3d/assets)

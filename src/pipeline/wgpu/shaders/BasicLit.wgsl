@@ -12,6 +12,13 @@ struct Material {
     shininess: f32
 }
 
+struct LightInfo {
+    position: vec4f,
+    diffuse: vec4f,
+    specular: vec4f,
+    ambient: vec4f
+}
+
 struct ModelData {
     m: mat4x4<f32>
 }
@@ -19,6 +26,10 @@ struct ModelData {
 @group(0)
 @binding(0)
 var<uniform> camera: RenderUniforms;
+
+@group(0)
+@binding(1)
+var<storage, read> lights: array<LightInfo>;
 
 @group(1)
 @binding(0)
@@ -33,24 +44,45 @@ struct VertexIn {
 }
 struct VertexOut {
     @builtin(position) pos: vec4f,
+    @location(0) worldPos: vec3f,
     @location(1) normal: vec4f
 }
 
 @vertex
 fn vs(i: VertexIn) -> VertexOut {
     var result: VertexOut;
-    let MVP = (camera.projectionViewMatrix * m.m);
-    result.pos = MVP * vec4f(i.pos, 1.0);
+    result.worldPos = (m.m * vec4f(i.pos, 1.0)).xyz;
+    result.pos = camera.projectionViewMatrix * vec4f(result.worldPos, 1.0);
     result.normal = m.m * vec4f(i.normal, 0.0);
     return result;
 }
 
 @fragment
-fn fs(i: VertexOut) -> @location(0) vec4f {
-    let dir = normalize(vec3f(1, 1, 1));
-    let normal = normalize(i.normal.xyz);
+fn fs(v: VertexOut) -> @location(0) vec4f {
+    var color = vec3f(0);
+    let normal = normalize(v.normal.xyz);
 
-    let lamb = max(dot(dir, normal), 0.0);
-    return material.ambient + (lamb * material.diffuse);
+    for (var i = 0; i < camera.lightCount; i++) {
+        var lightDir = vec3(0.0, 0.0, 0.0);
+        if (lights[i].position.w == 0) {
+            // directional light
+            lightDir = normalize(lights[i].position.xyz);
+        } else {
+            lightDir = normalize(lights[i].position.xyz - v.worldPos.xyz);
+        }
+
+        let diff = lights[i].diffuse.xyz * max(dot(normal, lightDir), 0);
+        var result = (lights[i].ambient.xyz * material.diffuse.xyz) + (diff * material.diffuse.xyz);
+        if (lights[i].position.w == 1) {
+            // point light, calculate attenuation
+            let distance = length(lights[i].position.xyz - v.worldPos.xyz);
+            result /= (0.5 * distance + (distance * distance));
+        }
+
+        color += result;
+    }
+    color += material.ambient.xyz;
+
+    return vec4f(color, 1);
 }
 

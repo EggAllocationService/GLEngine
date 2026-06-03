@@ -6,6 +6,7 @@
 
 #include "3d/Actor.h"
 #include "Engine.h"
+#include "3d/objects/LightTracker.h"
 #include "pipeline/RenderObjects.h"
 
 using namespace glengine::world::components;
@@ -19,4 +20,6 @@ void DirectionalLightComponent::Update(double x) {
         .specular = Specular * Intensity,
         .ambient = Ambient * Intensity,
     };
+
+    GetEngine()->GetRenderObjectsManager()->GetObject<objects::LightTracker>()->AddLight(info);
 }

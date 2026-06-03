@@ -11,8 +11,15 @@ namespace glengine::world::objects {
         LightTracker();
         void UpdateEnd(double deltaTime) override;
 
+        void AddLight(rendering::LightInfo info);
+
         void RenderStart(pipeline::wgpu::RenderBundle &bundle) override;
+
+        int GetLightCount() {
+            return lights->GetSize();
+        }
+
     private:
-        pipeline::wgpu::TypedGPUBuffer<rendering::LightInfo> lights;
+        std::unique_ptr<pipeline::wgpu::TypedGPUBuffer<rendering::LightInfo>> lights;
     };
 }

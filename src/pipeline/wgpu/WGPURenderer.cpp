@@ -112,31 +112,35 @@ glengine::pipeline::wgpu::WGPURenderer::WGPURenderer(GLFWwindow *window) {
     surfConfig.device = device;
 
     // create universal bind group layout descriptor
-    WGPUBindGroupLayoutEntry entry0Desc = {
+    WGPUBindGroupLayoutEntry *universalEntryDescs = new WGPUBindGroupLayoutEntry[2] {WGPU_BIND_GROUP_LAYOUT_ENTRY_INIT, WGPU_BIND_GROUP_LAYOUT_ENTRY_INIT};
+    universalEntryDescs[0].buffer = WGPUBufferBindingLayout { // render uniforms
         .nextInChain = nullptr,
-        .binding = 0,
-        .visibility = WGPUShaderStage_Fragment | WGPUShaderStage_Vertex,
-        .bindingArraySize = 0,
-        .buffer = {
-            .nextInChain = nullptr,
-            .type = WGPUBufferBindingType_Uniform,
-            .hasDynamicOffset = false,
-            .minBindingSize = sizeof(RenderUniforms),
-        },
-        .sampler = {},
-        .texture = {},
-        .storageTexture = {}
+        .type = WGPUBufferBindingType_Uniform,
+        .hasDynamicOffset = false,
+        .minBindingSize = sizeof(RenderUniforms)
     };
+    universalEntryDescs[0].visibility = WGPUShaderStage_Fragment | WGPUShaderStage_Vertex,
+
+    universalEntryDescs[1].binding = 1;
+    universalEntryDescs[1].buffer = WGPUBufferBindingLayout { // lighting info
+        .nextInChain = nullptr,
+        .type = WGPUBufferBindingType_ReadOnlyStorage,
+        .hasDynamicOffset = false,
+        .minBindingSize = 0
+    };
+    universalEntryDescs[1].visibility = WGPUShaderStage_Fragment;
+
     auto universalLayoutDescriptor = WGPUBindGroupLayoutDescriptor {
         .nextInChain = nullptr,
         .label = {
            .data = "Universal Bind Group Layout",
            .length = WGPU_STRLEN
         },
-        .entryCount = 1,
-        .entries = &entry0Desc
+        .entryCount = 2,
+        .entries = universalEntryDescs,
     };
     universalBindGroupLayout = wgpuDeviceCreateBindGroupLayout(device, &universalLayoutDescriptor);
+    delete[] universalEntryDescs;
 
     // create render uniforms buffer
     auto renderBufDesc = WGPUBufferDescriptor {
@@ -150,14 +154,9 @@ glengine::pipeline::wgpu::WGPURenderer::WGPURenderer(GLFWwindow *window) {
 
     WGPUBindGroupEntry entry0 = WGPU_BIND_GROUP_ENTRY_INIT;
     entry0.buffer = renderUniformsBuffer;
-    auto universalDesc = WGPUBindGroupDescriptor {
-        .nextInChain = nullptr,
-        .label = {},
-        .layout = universalBindGroupLayout,
-        .entryCount = 1,
-        .entries = &entry0
-    };
-    universalBindGroup = wgpuDeviceCreateBindGroup(device, &universalDesc);
+    universalEntries.push_back(entry0);
+
+    universalBindGroup = nullptr;
 
     int2 size;
     glfwGetWindowSize(window, &size.x, &size.y);
@@ -166,6 +165,7 @@ glengine::pipeline::wgpu::WGPURenderer::WGPURenderer(GLFWwindow *window) {
     buildBuiltinPipelines();
 
     transferManager = new TransferManager(this);
+    universalDirty = true;
 }
 
 WGPUShaderModule glengine::pipeline::wgpu::WGPURenderer::CompileShader(const char* shaders) {
@@ -346,7 +346,7 @@ std::shared_ptr<glengine::pipeline::wgpu::RenderPipeline> glengine::pipeline::wg
 
     auto pipeline = wgpuDeviceCreateRenderPipeline(device, &desc);
 
-    auto built = std::make_shared<RenderPipeline>(device, pipeline, std::move(bindGroupLayouts), universalBindGroup, immediateDataBytes);
+    auto built = std::make_shared<RenderPipeline>(device, pipeline, std::move(bindGroupLayouts), nullptr, immediateDataBytes);
     pipelines.insert_or_assign(name, built);
 
     return built;
@@ -414,9 +414,42 @@ std::shared_ptr<glengine::pipeline::wgpu::ComputePipeline> glengine::pipeline::w
     return built;
 }
 
+void glengine::pipeline::wgpu::WGPURenderer::SetUniversalBindGroupEntry(WGPUBindGroupEntry entry) {
+    if (universalEntries.size() < entry.binding + 1) {
+        universalEntries.resize(entry.binding + 1);
+    }
+    universalEntries[entry.binding] = entry;
+    universalDirty = true;
+}
+
+void glengine::pipeline::wgpu::WGPURenderer::rebuildUniversalBindGroup() {
+    if (universalBindGroup != nullptr) {
+        wgpuBindGroupRelease(universalBindGroup);
+    }
+
+    WGPUBindGroupDescriptor desc = {
+        .nextInChain = nullptr,
+        .label = {
+            .data = "GLEngine: Universal Group",
+            .length = WGPU_STRLEN
+        },
+        .layout = universalBindGroupLayout,
+        .entryCount = universalEntries.size(),
+        .entries = universalEntries.data()
+    };
+
+    universalBindGroup = wgpuDeviceCreateBindGroup(device, &desc);
+
+    universalDirty = false;
+}
+
 glengine::pipeline::wgpu::RenderBundle glengine::pipeline::wgpu::WGPURenderer::BeginRendering(RenderUniforms& uniforms) {
     // upload uniforms for this frame and submit any in-flight writes
     transferManager->Transfer(renderUniformsBuffer, 0, &uniforms, sizeof(uniforms));
+
+    if (universalDirty) {
+        rebuildUniversalBindGroup();
+    }
 
     // get surface texture
     CONFIGURE:

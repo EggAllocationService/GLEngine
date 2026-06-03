@@ -15,8 +15,8 @@
 namespace glengine::world::mesh {
     struct GLENGINE_EXPORT alignas(sizeof(float4)) Material {
         float4 Diffuse = float4(1.0f, 1.0f, 1.0f, 1.0f);
+        float4 Ambient = float4(0, 0, 0, 1);
         float4 Specular = float4(0, 0, 0, 1.0f);
-        float4 Emissive = float4(0, 0, 0, 1);
         float Shininess = 0.0f;
     };
     /// A StaticMesh is a non-animated mesh
