@@ -48,13 +48,13 @@ namespace glengine {
         /// Sets the current mouse mode to `mode`
         void SetMouseMode(input::MouseMode mode);
 
-        template <typename T>
-        std::shared_ptr<T> SpawnActor() {
+        template <typename T, typename... Args>
+        std::shared_ptr<T> SpawnActor(Args&&... args) {
             static_assert(std::is_base_of_v<world::Actor, T>, "T must be derived from Actor");
             // set global engine reference
             world::CURRENT_ENGINE_CONSTRUCTING = this;
 
-            std::shared_ptr<T> actor = std::make_shared<T>();
+            std::shared_ptr<T> actor = std::make_shared<T>(std::forward<Args>(args)...);
             actor->SetEngine(this);
             actors.push_back(actor);
             return actor;

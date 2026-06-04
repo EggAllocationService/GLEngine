@@ -53,8 +53,12 @@ int main(int argc, char** argv) {
 
 
     engine->GetInputManager()->AddAction('x', [=]() {
-        auto cube = engine->SpawnActor<SpinnyCube>();
-        cube->GetTransform()->SetPosition(float3(frand(-10, 10), 0, frand(-4, 4)));
+        auto possessed = engine->GetPossessedPawn();
+        if (possessed == ship.get()) {
+            engine->Possess(nullptr);
+        } else {
+            engine->Possess(ship);
+        }
     });
 
     engine->GetInputManager()->AddAction(KEY_ESCAPE, [=]() {

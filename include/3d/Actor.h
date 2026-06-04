@@ -69,12 +69,12 @@ namespace glengine::world {
         }
 
     protected:
-        template <typename T>
-        std::shared_ptr<T> CreateComponent() {
+        template <typename T, typename... Args>
+        std::shared_ptr<T> CreateComponent(Args&&... args) {
             static_assert(std::is_base_of_v<ActorComponent, T>, "T must derive from ActorComponent");
             ActorComponent::CURRENT_ACTOR_CONSTRUCTING = this;
             ActorComponent::CURRENT_ENGINE_CONSTRUCTING = GetEngine();
-            auto x = std::make_shared<T>();
+            auto x = std::make_shared<T>(std::forward<Args>(args)...);
             x->SetActor(this);
             components_.push_back(x);
             return x;

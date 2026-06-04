@@ -173,7 +173,14 @@ namespace glengine {
         }
 
         // update stored pawn and call OnPossess
+        auto oldPossessed = possessedPawn.lock();
         possessedPawn = target;
+        if (target == nullptr) {
+            possessedPawn = SpawnActor<world::DefaultPawn>();
+            if (oldPossessed != nullptr) {
+                target->GetTransform()->SetPosition(oldPossessed->GetTransform()->GetPosition());
+            }
+        }
         target->OnPossess(pawnInputManager);
     }
 
