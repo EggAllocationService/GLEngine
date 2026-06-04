@@ -176,12 +176,15 @@ namespace glengine {
         auto oldPossessed = possessedPawn.lock();
         possessedPawn = target;
         if (target == nullptr) {
-            possessedPawn = SpawnActor<world::DefaultPawn>();
+            auto dummy = SpawnActor<world::DefaultPawn>();;
+            possessedPawn = dummy;
             if (oldPossessed != nullptr) {
-                target->GetTransform()->SetPosition(oldPossessed->GetTransform()->GetPosition());
+                dummy->GetTransform()->SetPosition(oldPossessed->GetTransform()->GetPosition());
             }
+            dummy->OnPossess(pawnInputManager);
+        } else {
+            target->OnPossess(pawnInputManager);
         }
-        target->OnPossess(pawnInputManager);
     }
 
     void Engine::SetWindowSize(int2 size) {
