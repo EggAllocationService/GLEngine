@@ -73,11 +73,11 @@ glengine::pipeline::wgpu::WGPURenderer::WGPURenderer(GLFWwindow *window) {
     requiredLimits.nextInChain = &nativeLimits.chain;
     requiredLimits.maxImmediateSize = 128;
 
-    auto features = new WGPUNativeFeature[1] { WGPUNativeFeature_Immediates };
+    auto features = new WGPUNativeFeature[2] { WGPUNativeFeature_Immediates, WGPUNativeFeature_PolygonModeLine };
     WGPUDeviceDescriptor deviceDescriptor = WGPU_DEVICE_DESCRIPTOR_INIT;
     deviceDescriptor.requiredLimits = &requiredLimits;
     deviceDescriptor.requiredFeatures = reinterpret_cast<WGPUFeatureName*>(&features[0]);
-    deviceDescriptor.requiredFeatureCount = 1;
+    deviceDescriptor.requiredFeatureCount = 2;
 
     device = nullptr;
 
@@ -211,7 +211,7 @@ GetRenderPipelineByName(const std::string &name) {
 
 std::shared_ptr<glengine::pipeline::wgpu::RenderPipeline> glengine::pipeline::wgpu::WGPURenderer::BuildRenderPipeline(std::string name,
     WGPUShaderModule shaders, WGPUVertexBufferLayout* vertexLayout, std::span<WGPUBindGroupLayoutDescriptor>
-    bindGroups, int immediateDataBytes) {
+    bindGroups, int immediateDataBytes, RenderPipelineExtras* extras) {
 
     // manually build pipeline layout
     std::vector<WGPUBindGroupLayout> bindGroupLayouts(bindGroups.size() + 1);
@@ -221,7 +221,7 @@ std::shared_ptr<glengine::pipeline::wgpu::RenderPipeline> glengine::pipeline::wg
         bindGroupLayouts[i + 1] = wgpuDeviceCreateBindGroupLayout(device, &bindGroups[i]);
     }
 
-    WGPUPipelineLayoutExtras extras = {
+    WGPUPipelineLayoutExtras layoutExtras = {
         .chain = {
             .next = nullptr,
             .sType = static_cast<WGPUSType>(WGPUSType_PipelineLayoutExtras),
@@ -230,7 +230,7 @@ std::shared_ptr<glengine::pipeline::wgpu::RenderPipeline> glengine::pipeline::wg
     };
 
     auto layoutDesc = WGPUPipelineLayoutDescriptor {
-        .nextInChain = &extras.chain,
+        .nextInChain = &layoutExtras.chain,
         .label = {
            .data = name.data(),
            .length = name.length(),
@@ -296,7 +296,7 @@ std::shared_ptr<glengine::pipeline::wgpu::RenderPipeline> glengine::pipeline::wg
         .nextInChain = nullptr,
         .format = WGPUTextureFormat_Depth24Plus,
         .depthWriteEnabled = WGPUOptionalBool_True,
-        .depthCompare = WGPUCompareFunction_LessEqual,
+        .depthCompare = extras != nullptr ? extras->depthMode : WGPUCompareFunction_LessEqual,
         .stencilFront = {},
         .stencilBack = {},
         .stencilReadMask = 0,
@@ -306,7 +306,14 @@ std::shared_ptr<glengine::pipeline::wgpu::RenderPipeline> glengine::pipeline::wg
         .depthBiasClamp = 0
     };
 
-
+    auto primitiveExtras = WGPUPrimitiveStateExtras {
+        .chain = {
+           .next = nullptr,
+           .sType = std::bit_cast<WGPUSType>(WGPUSType_PrimitiveStateExtras),
+        },
+        .polygonMode = extras != nullptr ? extras->polygonMode : WGPUPolygonMode_Fill,
+        .conservative = false
+    };
     auto desc = WGPURenderPipelineDescriptor {
         .nextInChain = nullptr,
         .label = {
@@ -327,11 +334,11 @@ std::shared_ptr<glengine::pipeline::wgpu::RenderPipeline> glengine::pipeline::wg
            .buffers = vertexLayout != nullptr ? vertexLayout : &vtxLayout,
         },
         .primitive = {
-            .nextInChain = nullptr,
+            .nextInChain = &primitiveExtras.chain,
             .topology = WGPUPrimitiveTopology_TriangleList,
             .stripIndexFormat = WGPUIndexFormat_Undefined,
             .frontFace = WGPUFrontFace_CW,
-            .cullMode = WGPUCullMode_Back,
+            .cullMode = extras != nullptr ? extras->cullMode : WGPUCullMode_Back,
             .unclippedDepth = false
         },
         .depthStencil = &depthStencilState,
@@ -650,7 +657,7 @@ void glengine::pipeline::wgpu::WGPURenderer::buildBuiltinPipelines() {
         .entries = &basicLitBindGroupEntry
     };
 
-    BuildRenderPipeline("BasicLit", basicLitShaders, {}, std::span(&basicLitBindGroup, 1), sizeof(mat4));
+    BuildRenderPipeline("BasicLit", basicLitShaders, {}, std::span(&basicLitBindGroup, 1), sizeof(mat4), nullptr);
 
     WGPUBindGroupLayoutEntry basicLitInstancedBindGroupEntry = {
         .nextInChain = nullptr,
@@ -674,7 +681,7 @@ void glengine::pipeline::wgpu::WGPURenderer::buildBuiltinPipelines() {
         .entries = &basicLitInstancedBindGroupEntry
     };
     auto basicLitInstancedShaders = CompileShader(embed_BasicLitInstanced_wgsl);
-    BuildRenderPipeline("BasicLitInstanced", basicLitInstancedShaders, {}, std::span(&basicLitInstancedBindGroup, 1), 0);
+    BuildRenderPipeline("BasicLitInstanced", basicLitInstancedShaders, {}, std::span(&basicLitInstancedBindGroup, 1), 0, nullptr);
 
 #ifdef GLENGINE_TEXT_RENDERING
 
@@ -764,10 +771,18 @@ void glengine::pipeline::wgpu::WGPURenderer::buildBuiltinPipelines() {
         .attributes = slugVtxLayouts
     };
 
-    BuildRenderPipeline("BuiltinSlug", slugShaders, &slugLayout, std::span(&slugBindGroup, 1), sizeof(mat4));
+    BuildRenderPipeline("BuiltinSlug", slugShaders, &slugLayout, std::span(&slugBindGroup, 1), sizeof(mat4), nullptr);
 
     delete[] slugVtxLayouts;
     delete[] slugEntries;
 #endif
 
+    auto gizmoShaders = CompileShader(embed_Gizmo_wgsl);
+
+    auto extras = RenderPipelineExtras {
+        .polygonMode = WGPUPolygonMode_Line,
+        .depthMode = WGPUCompareFunction_Always,
+        .cullMode = WGPUCullMode_Back
+    };
+    BuildRenderPipeline("BuiltinGizmo", gizmoShaders, nullptr, {}, sizeof(mat4) + sizeof(float4), &extras);
 }

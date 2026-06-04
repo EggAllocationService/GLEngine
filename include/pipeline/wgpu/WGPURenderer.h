@@ -41,6 +41,12 @@ namespace glengine::pipeline::wgpu {
         bool valid;
     };
 
+    struct RenderPipelineExtras {
+        WGPUPolygonMode polygonMode;
+        WGPUCompareFunction depthMode;
+        WGPUCullMode cullMode;
+    };
+
     class GLENGINE_EXPORT WGPURenderer {
     public:
         WGPURenderer(GLFWwindow* window);
@@ -78,7 +84,8 @@ namespace glengine::pipeline::wgpu {
             WGPUShaderModule shaders,
             WGPUVertexBufferLayout *vertexLayout,
             std::span<WGPUBindGroupLayoutDescriptor> bindGroups,
-            int immediateDataBytes
+            int immediateDataBytes,
+            RenderPipelineExtras *extras
         );
 
         std::shared_ptr<ComputePipeline> GetComputePipelineByName(const std::string& name);

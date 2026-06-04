@@ -8,6 +8,7 @@
 #include "Engine.h"
 #include "ResourceManager.h"
 #include "GLMath.h"
+#include "3d/mesh/GizmoComponent.h"
 #include "3d/mesh/InstancedStaticMeshComponent.h"
 #include "3d/text/SlugTextComponent.h"
 
@@ -48,6 +49,9 @@ Enterprise::Enterprise()
 	text->SetFont(font);
 	text->SetText("USS Enterprise");
 	text->GetTransform()->SetScale(float3(0.05, 0.05, 0.05));
+
+	auto textGizmo = CreateComponent<GizmoComponent>("/builtin/models/cube.obj");
+	textGizmo->SetupAttachment(text->GetTransform());
 }
 
 inline float clampf(float a, float m, float M) {

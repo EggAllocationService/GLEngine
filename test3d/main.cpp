@@ -43,14 +43,12 @@ int main(int argc, char** argv) {
     auto engine = new Engine("3D Test", int2(1280, 720));
     engine->GetResourceManager()->MountPak("/assets", "assets.pak");
     engine->SetAllowNonFocusedPawnInput(true);
+    auto ship = engine->SpawnActor<Enterprise>();
 
     engine->SpawnActor<Environment>();
 
     auto cube = engine->SpawnActor<SpinnyCube>();
     cube->GetTransform()->SetPosition(float3(0, 0, 5));
-
-    auto ship = engine->SpawnActor<Enterprise>();
-
 
     engine->GetInputManager()->AddAction('x', [=]() {
         auto possessed = engine->GetPossessedPawn();

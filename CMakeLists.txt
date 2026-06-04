@@ -67,11 +67,14 @@ add_library(glengine SHARED
         include/pipeline/wgpu/WrappedBuffer.h
         include/pipeline/wgpu/GPUTexture.h
         include/PakFile.h
+        src/3d/mesh/GizmoComponent.cpp
+        include/3d/mesh/GizmoComponent.h
 )
 
 create_resource_library(NAME Shaders SOURCES 
     src/pipeline/wgpu/shaders/BasicLit.wgsl
     src/pipeline/wgpu/shaders/BasicLitInstanced.wgsl
+    src/pipeline/wgpu/shaders/Gizmo.wgsl
 )
 
 build_pak(
