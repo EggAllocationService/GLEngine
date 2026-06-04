@@ -7,6 +7,10 @@
 namespace glengine::world {
     Engine* CURRENT_ENGINE_CONSTRUCTING = nullptr;
 
+    Actor::Actor() {
+        engine_ = CURRENT_ENGINE_CONSTRUCTING;
+    }
+
     mat4 Actor::GetTransformMatrix() const {
         if (parent.expired()) {
             return transform_.GetMatrix();

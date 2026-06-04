@@ -23,6 +23,8 @@ namespace glengine::world {
 
     class GLENGINE_EXPORT Actor : public std::enable_shared_from_this<Actor> {
     public:
+        Actor();
+
         virtual ~Actor() = default;
 
         virtual void Update(double deltaTime) = 0;
@@ -45,11 +47,7 @@ namespace glengine::world {
         }
 
         Engine *GetEngine() const {
-            return engine_ == nullptr ? CURRENT_ENGINE_CONSTRUCTING : engine_;
-        }
-
-        void SetEngine(Engine *engine) {
-            engine_ = engine;
+            return engine_;
         }
 
         void Destroy() {
@@ -75,7 +73,6 @@ namespace glengine::world {
             ActorComponent::CURRENT_ACTOR_CONSTRUCTING = this;
             ActorComponent::CURRENT_ENGINE_CONSTRUCTING = GetEngine();
             auto x = std::make_shared<T>(std::forward<Args>(args)...);
-            x->SetActor(this);
             components_.push_back(x);
             return x;
         }

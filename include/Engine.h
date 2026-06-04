@@ -55,7 +55,6 @@ namespace glengine {
             world::CURRENT_ENGINE_CONSTRUCTING = this;
 
             std::shared_ptr<T> actor = std::make_shared<T>(std::forward<Args>(args)...);
-            actor->SetEngine(this);
             actors.push_back(actor);
             return actor;
         }

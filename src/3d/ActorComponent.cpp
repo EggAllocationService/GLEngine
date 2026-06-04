@@ -8,6 +8,10 @@ namespace glengine::world {
     Engine* ActorComponent::CURRENT_ENGINE_CONSTRUCTING = nullptr;
     Actor* ActorComponent::CURRENT_ACTOR_CONSTRUCTING = nullptr;
 
+    ActorComponent::ActorComponent() {
+        actor_ = CURRENT_ACTOR_CONSTRUCTING;
+    }
+
     Engine * ActorComponent::GetEngine() const {
         if (actor_ == nullptr) {
             return CURRENT_ENGINE_CONSTRUCTING;

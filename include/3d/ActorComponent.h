@@ -18,19 +18,12 @@ namespace glengine::world {
     public:
         static Engine* CURRENT_ENGINE_CONSTRUCTING;
         static Actor* CURRENT_ACTOR_CONSTRUCTING;
-
+        ActorComponent();
         virtual ~ActorComponent() = default;
 
         virtual void Update(double deltaTime) = 0;
 
-        void SetActor(Actor *actor) {
-            actor_ = actor;
-        }
-
         [[nodiscard]] Actor* GetActor() const {
-            if (actor_ == nullptr) {
-                return CURRENT_ACTOR_CONSTRUCTING;
-            }
             return actor_;
         }
 
