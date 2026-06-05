@@ -4,6 +4,7 @@
 #pragma once
 #include "pipeline/wgpu/pipeline/Pipeline.h"
 #include "glengine_export.h"
+#include <memory>
 
 namespace glengine::pipeline::wgpu {
     struct ComputeBundle {

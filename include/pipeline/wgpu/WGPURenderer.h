@@ -12,6 +12,7 @@
 #include "GPUTexture.h"
 #include "TypedGPUBuffer.h"
 #include "GLFW/glfw3.h"
+#include <atomic>
 
 #include "TransferManager.h"
 #include "WrappedBuffer.h"

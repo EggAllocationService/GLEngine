@@ -8,6 +8,7 @@
 #include <istream>
 #include <span>
 #include <cstddef>
+#include <filesystem>
 #include <iostream>
 #include <vector>
 
@@ -125,7 +126,7 @@ glengine::ResourceManager::ResourceManager(pipeline::wgpu::WGPURenderer *rendere
 
 void glengine::ResourceManager::MountPak(std::string_view path, std::string_view fileName) {
     std::ifstream file;
-    file.open(fileName);
+    file.open(std::filesystem::path(fileName));
     if (file.is_open()) {
         MountPak(path, file);
     } else {

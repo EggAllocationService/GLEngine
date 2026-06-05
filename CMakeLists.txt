@@ -3,11 +3,13 @@ project(GLEngine)
 
 option(TEXT_RENDERING "Compile builtin text rendering library (requires harfbuzz)" ON)
 
+set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 include(wgpu-native)
 include(embed)
 include(paktool)
 include(harfbuzz)
+
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
