@@ -69,7 +69,6 @@ namespace glengine::pipeline::wgpu {
 
         void Commit() {
             if (!internals->dirty) return;
-            printf("Committing material\n");
             wgpuQueueWriteBuffer(internals->queue, internals->buffer, 0, &internals->localCopy, sizeof(T));
             internals->dirty = false;
         }
