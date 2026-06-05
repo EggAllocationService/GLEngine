@@ -121,6 +121,10 @@ namespace glengine {
         [[nodiscard]] EnginePerformanceStats GetLastPerformanceTimes() {
             return { lastUpdateTime, lastRenderTime };
         }
+
+        [[nodiscard]] GLFWwindow* GetWindow() const {
+            return window;
+        }
 #pragma endregion
 
     private:

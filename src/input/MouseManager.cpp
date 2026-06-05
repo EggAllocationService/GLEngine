@@ -14,10 +14,10 @@ namespace glengine::input {
         if (mouseMode == FREE) {
             mousePosition = position;
         } else {
-            auto windowMiddle = float2(engine->GetWindowSize() / 2);
-            auto delta = position - windowMiddle;
-            mousePosition = delta;
-            centerCursor();
+            auto delta = position - mousePosition;
+            mousePosition = position;
+            engine->GetPawnInputManager()->AcceptMouseInput(delta);
+            engine->GetInputManager()->AcceptMouseInput(delta);
         }
     }
 
@@ -32,10 +32,9 @@ namespace glengine::input {
         mouseMode = mode;
         if (mode == FREE) {
             // do thing
+            glfwSetInputMode(engine->GetWindow(), GLFW_CURSOR, GLFW_CURSOR_NORMAL);
         } else {
-            // hide the cursor and center it
-            centerCursor();
-
+            glfwSetInputMode(engine->GetWindow(), GLFW_CURSOR, GLFW_CURSOR_DISABLED);
             // reset state
             mousePosition = float2(0, 0);
         }

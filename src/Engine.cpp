@@ -34,7 +34,7 @@ namespace glengine {
 
     static void mouseMoveExec(GLFWwindow* window, double x, double y) {
         auto engine = (Engine*)glfwGetWindowUserPointer(window);
-        engine->GetMouseManager()->HandleMotion(float2(x, y));
+        engine->GetMouseManager()->HandleMotion(float2(x, -y));
     }
 
     static void keyExec(GLFWwindow* window, int key, int scancode, int action, int flags) {

@@ -17,6 +17,7 @@
 #define KEY_PAGE_UP GLFW_KEY_PAGE_UP
 #define KEY_PAGE_DOWN GLFW_KEY_PAGE_DOWN
 
+#define KEY_ESCAPE GLFW_KEY_ESCAPE
 
 
 namespace glengine {
@@ -36,6 +37,11 @@ namespace glengine::input {
 		/// Returns true if the key has been "consumed", i.e. if an action or axis responded to the input
 		/// </summary>
 		bool AcceptKeyInput(int key);
+
+		/// <summary>
+		/// Accept relative mouse input
+		/// </summary>
+		void AcceptMouseInput(float2 input);
 
 		/// <summary>
 		/// Call when a key has been released

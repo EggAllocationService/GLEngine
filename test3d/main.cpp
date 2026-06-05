@@ -16,8 +16,6 @@
 #include "windows.h"
 #endif
 
-#define KEY_ESCAPE 27
-
 using namespace glengine;
 
 float frand(float min, float max) {

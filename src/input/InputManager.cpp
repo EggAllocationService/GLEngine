@@ -8,11 +8,6 @@ glengine::input::InputManager::InputManager(Engine* engineRef)
 
 void glengine::input::InputManager::Update(double deltaTime)
 {
-	auto mouseManager = engine_->GetMouseManager();
-	if (mouseHandler_ && mouseManager->GetMouseMode() == CAPTIVE) {
-		mouseHandler_(mouseManager->GetMousePosition());
-	}
-
 	for (auto key : pressedKeys_) {
 		if (axisHandlers.contains(key)) {
 			auto& handler = axisHandlers[key];
@@ -36,6 +31,12 @@ bool glengine::input::InputManager::AcceptKeyInput(int key)
 	}
 
 	return keyHandlers_.contains(key) || axisHandlers.contains(key);
+}
+
+void glengine::input::InputManager::AcceptMouseInput(float2 input) {
+	if (mouseHandler_) {
+		mouseHandler_(input);
+	}
 }
 
 void glengine::input::InputManager::KeyReleased(int key)
