@@ -771,7 +771,13 @@ void glengine::pipeline::wgpu::WGPURenderer::buildBuiltinPipelines() {
         .attributes = slugVtxLayouts
     };
 
-    BuildRenderPipeline("BuiltinSlug", slugShaders, &slugLayout, std::span(&slugBindGroup, 1), sizeof(mat4), nullptr);
+    auto slugExtras = RenderPipelineExtras {
+        .polygonMode = WGPUPolygonMode_Fill,
+        .depthMode = WGPUCompareFunction_LessEqual,
+        .cullMode = WGPUCullMode_None
+    };
+
+    BuildRenderPipeline("BuiltinSlug", slugShaders, &slugLayout, std::span(&slugBindGroup, 1), sizeof(mat4), &slugExtras);
 
     delete[] slugVtxLayouts;
     delete[] slugEntries;

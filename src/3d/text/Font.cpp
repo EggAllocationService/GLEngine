@@ -154,13 +154,6 @@ std::shared_ptr<glengine::pipeline::wgpu::GPUMesh> Font::PrepareText(const char 
             vertexOffset + 0, vertexOffset + 2, vertexOffset + 3
         });
 
-        // back side so we have double-sided text
-        indices.insert(indices.end(), {
-            vertexOffset + 2, vertexOffset + 1, vertexOffset + 0,
-            vertexOffset + 3, vertexOffset + 2, vertexOffset + 0
-        });
-
-
         offset.x += positions[i].x_advance * scale.x;
     }
     // we want to center the text on 0,0
