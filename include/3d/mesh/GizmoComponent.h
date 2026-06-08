@@ -8,9 +8,9 @@
 namespace glengine::world::mesh {
     class GizmoComponent : public ActorSceneComponent {
     public:
-        GizmoComponent(const std::shared_ptr<StaticMesh>& mesh);
-        GizmoComponent(std::string_view modelName);
-        void Render(const pipeline::wgpu::RenderBundle &, MatrixStack &stack) override;
+        GLENGINE_EXPORT GizmoComponent(const std::shared_ptr<StaticMesh>& mesh);
+        GLENGINE_EXPORT GizmoComponent(std::string_view modelName);
+        GLENGINE_EXPORT void Render(const pipeline::wgpu::RenderBundle &, MatrixStack &stack) override;
 
         float4 Color;
     private:

@@ -33,7 +33,7 @@ namespace glengine::pipeline::wgpu {
     };
 
     template <typename T>
-    class GLENGINE_EXPORT GPUPointer {
+    class GPUPointer {
     public:
         GPUPointer() {
             internals = nullptr;

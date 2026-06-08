@@ -28,14 +28,14 @@ namespace glengine::pipeline::wgpu {
 		unsigned int capacity;
 	};
 
-	class GLENGINE_EXPORT TransferSession {
+	class TransferSession {
 
 	public:
 		TransferSession(std::string name, TransferManager* manager, WGPUDevice device, WGPUQueue queue, std::unique_ptr<StagingBuffer> buffer);
 
-		void Transfer(WGPUBuffer target, unsigned int offset, const void* data, unsigned int length);
+		GLENGINE_EXPORT void Transfer(WGPUBuffer target, unsigned int offset, const void* data, unsigned int length);
 
-		void Commit();
+		GLENGINE_EXPORT void Commit();
 	private:
 		std::vector<TransferInfo> transfers;
 		std::string name;
@@ -46,18 +46,18 @@ namespace glengine::pipeline::wgpu {
 		std::vector<unsigned int> usedCapacity;
 	};
 
-	class GLENGINE_EXPORT TransferManager {
+	class TransferManager {
 	public:
 		TransferManager(WGPURenderer* renderer);
 
-		std::unique_ptr<TransferSession> CreateSession(std::string name, unsigned int estimatedTotalSize);
+		GLENGINE_EXPORT std::unique_ptr<TransferSession> CreateSession(std::string name, unsigned int estimatedTotalSize);
 
-		void Transfer(WGPUBuffer target, unsigned int offset, const void* data, unsigned int length);
+		GLENGINE_EXPORT void Transfer(WGPUBuffer target, unsigned int offset, const void* data, unsigned int length);
 
-		void Return(std::unique_ptr<StagingBuffer> buffer);
-		std::unique_ptr<StagingBuffer> TakeWithoutAllocating(unsigned int minSize);
-		std::unique_ptr<StagingBuffer> Take(unsigned int minSize);
-		std::unique_ptr<StagingBuffer> AllocateNew(unsigned int capacity);
+		GLENGINE_EXPORT void Return(std::unique_ptr<StagingBuffer> buffer);
+		GLENGINE_EXPORT std::unique_ptr<StagingBuffer> TakeWithoutAllocating(unsigned int minSize);
+		GLENGINE_EXPORT std::unique_ptr<StagingBuffer> Take(unsigned int minSize);
+		GLENGINE_EXPORT std::unique_ptr<StagingBuffer> AllocateNew(unsigned int capacity);
 
 	private:
 		std::vector<std::unique_ptr<StagingBuffer>> availableBuffers;

@@ -126,7 +126,7 @@ glengine::ResourceManager::ResourceManager(pipeline::wgpu::WGPURenderer *rendere
 
 void glengine::ResourceManager::MountPak(std::string_view path, std::string_view fileName) {
     std::ifstream file;
-    file.open(std::filesystem::path(fileName));
+    file.open(std::filesystem::path(fileName), std::ios::binary);
     if (file.is_open()) {
         MountPak(path, file);
     } else {
@@ -157,17 +157,23 @@ void glengine::ResourceManager::MountPak(std::string_view path, std::istream &da
     }
 
     for (int i = 0; i < header.entryCount; ++i) {
+        unsigned long offset = data.tellg();
+        printf("read %d\n ", offset);
         unsigned short nameLength = 0;
         data.read(reinterpret_cast<char*>(&nameLength), sizeof(nameLength));
 
+        offset = data.tellg();
         std::string name(nameLength, '\0');
         data.read(name.data(), nameLength);
 
+        offset = data.tellg();
         unsigned int length = 0;
         data.read(reinterpret_cast<char*>(&length), sizeof(length));
+        offset = data.tellg();
 
         auto buffer = new char[length];
         data.read(buffer, length);
+        offset = data.tellg();
 
         Blob blob = {
             .data = buffer,
