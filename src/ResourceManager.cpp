@@ -157,23 +157,17 @@ void glengine::ResourceManager::MountPak(std::string_view path, std::istream &da
     }
 
     for (int i = 0; i < header.entryCount; ++i) {
-        unsigned long offset = data.tellg();
-        printf("read %d\n ", offset);
         unsigned short nameLength = 0;
         data.read(reinterpret_cast<char*>(&nameLength), sizeof(nameLength));
 
-        offset = data.tellg();
         std::string name(nameLength, '\0');
         data.read(name.data(), nameLength);
 
-        offset = data.tellg();
         unsigned int length = 0;
         data.read(reinterpret_cast<char*>(&length), sizeof(length));
-        offset = data.tellg();
 
         auto buffer = new char[length];
         data.read(buffer, length);
-        offset = data.tellg();
 
         Blob blob = {
             .data = buffer,
@@ -204,6 +198,9 @@ std::unique_ptr<std::istream> glengine::ResourceManager::OpenResource(std::strin
     } else {
         auto file = std::make_unique<std::ifstream>();
         file->open(pathName);
+        if (!file->is_open()) {
+            std::cerr << "OpenResource: failed to open " << pathName << "\n";
+        }
         return file;
     }
 }
