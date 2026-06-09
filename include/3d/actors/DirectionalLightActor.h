@@ -3,11 +3,12 @@
 //
 #pragma once
 #include "3d/Actor.h"
+#include "glengine_export.h"
 
 namespace glengine::world::actors {
     class DirectionalLightActor : public Actor {
     public:
-        DirectionalLightActor();
+        GLENGINE_EXPORT DirectionalLightActor();
 
         void Update(double deltaTime) override;
 
