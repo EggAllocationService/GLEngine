@@ -71,6 +71,8 @@ add_library(glengine SHARED
         include/PakFile.h
         src/3d/mesh/GizmoComponent.cpp
         include/3d/mesh/GizmoComponent.h
+        src/3d/actors/StaticMeshActor.cpp
+        include/3d/actors/StaticMeshActor.h
 )
 
 create_resource_library(NAME Shaders SOURCES 
