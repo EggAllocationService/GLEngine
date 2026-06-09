@@ -2,7 +2,7 @@
 // Created by Kyle Smith on 2026-06-09.
 //
 
-#include "../../../include/3d/actors/StaticMeshActor.h"
+#include "3d/actors/StaticMeshActor.h"
 
 #include "Engine.h"
 #include "3d/mesh/StaticMeshComponent.h"
