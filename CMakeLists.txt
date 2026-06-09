@@ -163,19 +163,8 @@ endif()
 
 target_link_libraries(glengine glfw webgpu glfw3webgpu Shaders BuiltinAssets)
 
-function(engine_copy_freeglut_if_needed TARGETNAME)
-    if (${CMAKE_SYSTEM_NAME} MATCHES "Windows")
-        if (CMAKE_SIZEOF_VOID_P EQUAL 4)
-            # x86 libraries
-            set(FREEGLUT_LIB "C:\\Program Files\\freeglut\\lib\\freeglut.lib")
-            set(FREEGLUT_DLL "C:\\Program Files\\freeglut\\bin\\freeglut.dll")
-        else()
-            # x64 libraries
-            set(FREEGLUT_LIB "C:\\Program Files\\freeglut\\lib\\x64\\freeglut.lib")
-            set(FREEGLUT_DLL "C:\\Program Files\\freeglut\\bin\\x64\\freeglut.dll")
-        endif()
-        add_custom_command(TARGET ${TARGETNAME} POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy_if_different ${FREEGLUT_DLL} $<TARGET_FILE_DIR:${TARGETNAME}>)
-    endif()
+function(engine_copy_dll TARGETNAME)
+    add_custom_command(TARGET ${TARGETNAME} POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy_if_different $<TARGET_FILE:glengine> $<TARGET_FILE_DIR:${TARGETNAME}>)
 endfunction()
 
 function(copy_assets TARGET_NAME SOURCE_DIR)
