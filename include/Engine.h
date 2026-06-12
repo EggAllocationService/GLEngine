@@ -133,6 +133,7 @@ namespace glengine {
 
         // used for tracking deltaTime
         std::chrono::high_resolution_clock::time_point lastUpdate;
+        std::chrono::high_resolution_clock::time_point start;
 
         /// <summary>
         /// Gets the number of seconds since the last Update() call.

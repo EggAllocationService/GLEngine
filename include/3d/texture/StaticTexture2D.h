@@ -10,6 +10,9 @@ namespace glengine::world::texture {
     class GLENGINE_EXPORT StaticTexture2D : public Resource {
     public:
         StaticTexture2D(std::istream &, pipeline::wgpu::WGPURenderer*);
+        std::shared_ptr<pipeline::wgpu::GPUTexture>& GetGPUTexture() {
+            return texture;
+        }
     private:
         std::shared_ptr<pipeline::wgpu::GPUTexture> texture;
     };
