@@ -24,7 +24,7 @@ StaticTexture2D::StaticTexture2D(std::istream &stream, pipeline::wgpu::WGPURende
 
     auto textureCopyInfo = WGPUTexelCopyTextureInfo {
         .texture = *texture,
-        .mipLevel = 1,
+        .mipLevel = 0,
         .origin = {0, 0, 0},
         .aspect = WGPUTextureAspect_All
     };
@@ -40,5 +40,5 @@ StaticTexture2D::StaticTexture2D(std::istream &stream, pipeline::wgpu::WGPURende
         .depthOrArrayLayers = 1
     };;
 
-    wgpuQueueWriteTexture(wgpuDeviceGetQueue(renderer->GetDevice()), &textureCopyInfo, decoded, x * y * n, &bufferInfo, &extent);
+    wgpuQueueWriteTexture(wgpuDeviceGetQueue(renderer->GetDevice()), &textureCopyInfo, decoded, x * y * 4, &bufferInfo, &extent);
 }

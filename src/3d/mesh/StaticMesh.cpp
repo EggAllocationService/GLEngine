@@ -42,7 +42,7 @@ StaticMesh::StaticMesh(std::istream &file, pipeline::wgpu::WGPURenderer *rendere
                 vertices_.resize((vtPos + 1) * 2);
             }
 
-            vertices_[vtPos++].uv = float2(x, -y);
+            vertices_[vtPos++].uv = float2(x, y);
             hasTexCoords_ = true;
         } else if (line.starts_with("vn ")) {
             // vertex normal
