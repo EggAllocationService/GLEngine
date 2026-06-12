@@ -84,6 +84,7 @@ namespace glengine {
         // if text rendering is enabled, add default fonts
         resourceManager->MountPak("/builtin/fonts", embed_fonts_pak, embed_fonts_pak_length);
 #endif
+        start = std::chrono::high_resolution_clock::now();
     }
 
     Engine::~Engine() {
@@ -261,7 +262,6 @@ namespace glengine {
             return; // before first update
         }
 
-
         auto viewTarget = possessedPawn.lock();
         auto viewCamera = viewTarget->GetActiveCamera();
         auto cameraTransformMatrix = viewTarget->GetTransformMatrix() * viewCamera->GetTransformMatrix();
@@ -270,11 +270,14 @@ namespace glengine {
         // first load the camera's projection matrix
         auto projectionMatrix = viewCamera->GetProjectionMatrix();
 
+        const auto elapsed = std::chrono::high_resolution_clock::now() - start;
+        const auto time = std::chrono::duration_cast<std::chrono::duration<float>>(elapsed);
         pipeline::wgpu::RenderUniforms uniforms = {
             .projectionViewMatrix = projectionMatrix * viewMatrix,
             .projectionMatrix = projectionMatrix,
             .viewMatrix = viewMatrix,
             .lightCount = renderObjectManager->GetObject<world::objects::LightTracker>()->GetLightCount(),
+            .time = time.count()
         };
         // set matrices
         auto bundle = renderer->BeginRendering(uniforms);
