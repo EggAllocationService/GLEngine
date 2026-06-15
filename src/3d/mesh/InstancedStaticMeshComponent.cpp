@@ -19,7 +19,11 @@ void glengine::world::mesh::InstancedStaticMeshComponent::SetMesh(std::shared_pt
 
 void glengine::world::mesh::InstancedStaticMeshComponent::Update(double deltaTime) {
     auto instanceData = objects::instanced::InstanceData {
-        .matrix = GetActor()->GetTransformMatrix() * GetTransformMatrix()
+        .matrix = GetActor()->GetTransformMatrix() * GetTransformMatrix(),
+        .diffuse = material.Diffuse,
+        .ambient = material.Ambient,
+        .specular = material.Specular,
+        .shininess = material.Shininess,
     };
     tracker_->Draw(mesh_->mesh, instanceData);
 }

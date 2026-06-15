@@ -662,7 +662,7 @@ void glengine::pipeline::wgpu::WGPURenderer::buildBuiltinPipelines() {
     WGPUBindGroupLayoutEntry basicLitInstancedBindGroupEntry = {
         .nextInChain = nullptr,
         .binding = 0,
-        .visibility = WGPUShaderStage_Vertex,
+        .visibility = WGPUShaderStage_Vertex | WGPUShaderStage_Fragment,
         .bindingArraySize = 0,
         .buffer = {
             .nextInChain = nullptr,

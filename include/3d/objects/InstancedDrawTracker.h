@@ -8,6 +8,10 @@ namespace glengine::world::objects {
     namespace instanced {
         struct InstanceData {
             mat4 matrix;
+            float4 diffuse;
+            float4 ambient;
+            float4 specular;
+            float shininess;
         };
 
         struct InstanceTracker {
