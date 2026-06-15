@@ -27,7 +27,7 @@ void glengine::pipeline::wgpu::RenderPipeline::DrawMesh(const RenderBundle &bund
         wgpuRenderPassEncoderDrawIndexed(pass, mesh.GetIndexCount(), 1, 0, 0, 0);
     }
     else {
-        wgpuRenderPassEncoderDraw(pass, mesh.GetVertexCount(), 0, 0, 0);
+        wgpuRenderPassEncoderDraw(pass, mesh.GetVertexCount(), 1, 0, 0);
     }
 }
 
