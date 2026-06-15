@@ -46,6 +46,7 @@ namespace glengine::pipeline::wgpu {
         WGPUPolygonMode polygonMode;
         WGPUCompareFunction depthMode;
         WGPUCullMode cullMode;
+        WGPUPrimitiveTopology primitiveTopology = WGPUPrimitiveTopology_TriangleList;
     };
 
     class GLENGINE_EXPORT WGPURenderer {

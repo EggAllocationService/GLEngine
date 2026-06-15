@@ -335,7 +335,7 @@ std::shared_ptr<glengine::pipeline::wgpu::RenderPipeline> glengine::pipeline::wg
         },
         .primitive = {
             .nextInChain = &primitiveExtras.chain,
-            .topology = WGPUPrimitiveTopology_TriangleList,
+            .topology = extras != nullptr ? extras->primitiveTopology : WGPUPrimitiveTopology_TriangleList,
             .stripIndexFormat = WGPUIndexFormat_Undefined,
             .frontFace = WGPUFrontFace_CW,
             .cullMode = extras != nullptr ? extras->cullMode : WGPUCullMode_Back,
