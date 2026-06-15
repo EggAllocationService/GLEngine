@@ -6,7 +6,7 @@
 #include "pipeline/RenderObject.h"
 namespace glengine::world::objects {
     namespace instanced {
-        struct InstanceData {
+        struct alignas(16) InstanceData {
             mat4 matrix;
             float4 diffuse;
             float4 ambient;
