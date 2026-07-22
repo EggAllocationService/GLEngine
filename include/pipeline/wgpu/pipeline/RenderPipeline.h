@@ -33,7 +33,7 @@ namespace glengine::pipeline::wgpu {
         explicit RenderPipeline(RenderPipeline &other);
         ~RenderPipeline();
         void DrawMesh(const RenderBundle& bundle, const GPUMesh& mesh, const void* immediateData);
-        void DrawMeshInstanced(const RenderBundle& bundle, const GPUMesh& mesh, int instanceCount);
+        void DrawMeshInstanced(const RenderBundle& bundle, const GPUMesh& mesh, int instanceCount, const void* immediateData);
 
         void DrawMeshInstancedIndirect(const RenderBundle& bundle, const GPUMesh& mesh, WGPUBuffer indirectBuffer, void *immediateData);
 

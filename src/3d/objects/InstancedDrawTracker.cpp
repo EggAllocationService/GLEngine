@@ -37,7 +37,7 @@ namespace glengine::world::objects {
     void InstancedDrawTracker::RenderStart(pipeline::wgpu::RenderBundle &bundle) {
         for (auto& mesh : buffers) {
             auto& tracker = mesh.second;
-            tracker.pipeline->DrawMeshInstanced(bundle, *tracker.mesh, tracker.data->GetSize());
+            tracker.pipeline->DrawMeshInstanced(bundle, *tracker.mesh, tracker.data->GetSize(), nullptr);
             tracker.data->Clear();
         }
     }
