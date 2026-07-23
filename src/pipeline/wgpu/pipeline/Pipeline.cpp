@@ -50,6 +50,42 @@ namespace glengine::pipeline::wgpu {
         _dirty[group] = true;
     }
 
+    void Pipeline::SetBinding(int group, unsigned int slot, WGPUBuffer buffer) {
+        SetBinding(group, {
+            .nextInChain = nullptr,
+            .binding = slot,
+            .buffer = buffer,
+            .offset = 0,
+            .size = 0,
+            .sampler = nullptr,
+            .textureView = nullptr
+        });
+    }
+
+    void Pipeline::SetBinding(int group, unsigned int slot, WGPUBuffer buffer, unsigned int offset, unsigned int size) {
+        SetBinding(group, {
+            .nextInChain = nullptr,
+            .binding = slot,
+            .buffer = buffer,
+            .offset = offset,
+            .size = size,
+            .sampler = nullptr,
+            .textureView = nullptr
+        });
+    }
+
+    void Pipeline::SetBinding(int group, unsigned int slot, WGPUTextureView texture) {
+        SetBinding(group, {
+            .nextInChain = nullptr,
+            .binding = slot,
+            .buffer = nullptr,
+            .offset = 0,
+            .size = 0,
+            .sampler = nullptr,
+            .textureView = texture
+        });
+    }
+
     void Pipeline::CommitBindings() {
         for (int i = 0; i < _groups.size(); i++) {
             if (!_dirty[i]) continue;

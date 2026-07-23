@@ -13,6 +13,10 @@ namespace glengine::pipeline::wgpu {
         Pipeline(Pipeline& other);
         ~Pipeline();
         void SetBinding(int group, WGPUBindGroupEntry entry);
+
+        void SetBinding(int group, unsigned int slot, WGPUBuffer buffer);
+        void SetBinding(int group, unsigned int slot, WGPUBuffer buffer, unsigned int offset, unsigned int size);
+        void SetBinding(int group, unsigned int slot, WGPUTextureView texture);
         void CommitBindings();
     protected:
         std::vector<WGPUBindGroup> _groups;
