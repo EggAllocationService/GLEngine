@@ -56,7 +56,7 @@ namespace glengine::pipeline::wgpu {
             .binding = slot,
             .buffer = buffer,
             .offset = 0,
-            .size = 0,
+            .size = WGPU_WHOLE_SIZE,
             .sampler = nullptr,
             .textureView = nullptr
         });
