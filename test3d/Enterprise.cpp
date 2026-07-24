@@ -8,6 +8,7 @@
 #include "Engine.h"
 #include "ResourceManager.h"
 #include "GLMath.h"
+#include "3d/components/AxesComponent.h"
 #include "3d/mesh/GizmoComponent.h"
 #include "3d/mesh/InstancedStaticMeshComponent.h"
 #include "3d/text/SlugTextComponent.h"
@@ -52,6 +53,9 @@ Enterprise::Enterprise()
 
 	auto textGizmo = CreateComponent<GizmoComponent>("/builtin/models/cube.obj");
 	textGizmo->SetupAttachment(text->GetTransform());
+
+	CreateComponent<components::AxesComponent>()->SetupAttachment(textGizmo->GetTransform());
+	CreateComponent<components::AxesComponent>()->SetupAttachment(mesh->GetTransform());
 }
 
 inline float clampf(float a, float m, float M) {

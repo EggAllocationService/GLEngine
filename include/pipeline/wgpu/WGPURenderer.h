@@ -19,6 +19,10 @@
 #include "pipeline/ComputePipeline.h"
 
 
+namespace glengine {
+    class Engine;
+}
+
 namespace glengine::pipeline::wgpu {
     struct alignas(16) RenderUniforms {
         mat4 projectionViewMatrix;
@@ -52,9 +56,22 @@ namespace glengine::pipeline::wgpu {
 
     class GLENGINE_EXPORT WGPURenderer {
     public:
-        WGPURenderer(GLFWwindow* window);
+        WGPURenderer(GLFWwindow* window, Engine* engine);
         WGPUShaderModule CompileShader(const char* shaders);
-        std::shared_ptr<GPUMesh> UploadMesh(const std::vector<Vertex>& vertices);
+        template <typename T>
+        std::shared_ptr<GPUMesh> UploadMesh(const std::vector<T>& vertices) {
+            auto bufferDesc = WGPUBufferDescriptor {
+                .nextInChain = nullptr,
+                .label = {},
+                .usage = WGPUBufferUsage_Vertex | WGPUBufferUsage_CopyDst,
+                .size = sizeof(T) * vertices.size(),
+                .mappedAtCreation = false
+            };
+            auto buffer = wgpuDeviceCreateBuffer(device, &bufferDesc);
+            wgpuQueueWriteBuffer(queue, buffer, 0, vertices.data(), vertices.size() * sizeof(T));
+
+            return std::make_shared<GPUMesh>(buffer, nullptr, vertices.size(), sizeof(T), 0, meshIdTracker++);
+        }
 
         template<typename T>
         std::shared_ptr<GPUMesh> UploadIndexedMesh(const std::vector<T>& vertices, const std::vector<unsigned int>& indices) {
@@ -141,9 +158,8 @@ namespace glengine::pipeline::wgpu {
             return transferManager;
         }
 
+        void BuildBuiltinPipelines();
     private:
-        void buildBuiltinPipelines();
-
         void rebuildUniversalBindGroup();
 
         WGPUSurfaceConfiguration surfConfig;
@@ -162,6 +178,7 @@ namespace glengine::pipeline::wgpu {
         WGPUBuffer renderUniformsBuffer;
         WGPUSubmissionIndex lastFrame = 0;
         TransferManager* transferManager;
+        Engine* engine;
         std::atomic<int> meshIdTracker = 0;
 
         bool universalDirty;

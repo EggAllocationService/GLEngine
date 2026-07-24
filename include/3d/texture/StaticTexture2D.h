@@ -5,6 +5,7 @@
 
 #include "glengine_export.h"
 #include "Resource.h"
+#include "pipeline/wgpu/WGPURenderer.h"
 
 namespace glengine::world::texture {
     class GLENGINE_EXPORT StaticTexture2D : public Resource {

@@ -18,7 +18,6 @@
 #endif
 #include "BuiltinAssets.h"
 #include "3d/objects/LightTracker.h"
-#include "pipeline/gl/GLRenderer.h"
 
 namespace glengine {
 
@@ -57,8 +56,9 @@ namespace glengine {
         mouseManager = new input::MouseManager(this);
         inputManager = new input::InputManager(this);
         pawnInputManager = new input::InputManager(this);
-        renderer = new pipeline::wgpu::WGPURenderer(window);
+        renderer = new pipeline::wgpu::WGPURenderer(window, this);
         resourceManager = new ResourceManager(renderer);
+        renderer->BuildBuiltinPipelines();
 
         glfwSetWindowUserPointer(window, this);
 

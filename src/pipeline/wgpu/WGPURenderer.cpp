@@ -9,6 +9,7 @@
 #include <atomic>
 #include <bit>
 
+#include "Engine.h"
 #include "glfw3webgpu.h"
 
 #ifdef GLENGINE_TEXT_RENDERING
@@ -37,7 +38,8 @@ static void handle_request_device(WGPURequestDeviceStatus status,
     }
 }
 
-glengine::pipeline::wgpu::WGPURenderer::WGPURenderer(GLFWwindow *window) {
+glengine::pipeline::wgpu::WGPURenderer::WGPURenderer(GLFWwindow *window, Engine* engine) {
+    this->engine = engine;
     depthTexture = nullptr;
     surfConfig = WGPU_SURFACE_CONFIGURATION_INIT;
 
@@ -162,8 +164,6 @@ glengine::pipeline::wgpu::WGPURenderer::WGPURenderer(GLFWwindow *window) {
     glfwGetWindowSize(window, &size.x, &size.y);
     Resize(size);
 
-    buildBuiltinPipelines();
-
     transferManager = new TransferManager(this);
     universalDirty = true;
 }
@@ -186,19 +186,6 @@ WGPUShaderModule glengine::pipeline::wgpu::WGPURenderer::CompileShader(const cha
     return wgpuDeviceCreateShaderModule(device, &desc);
 }
 
-std::shared_ptr<glengine::pipeline::wgpu::GPUMesh> glengine::pipeline::wgpu::WGPURenderer::UploadMesh(const std::vector<Vertex>& vertices) {
-    auto bufferDesc = WGPUBufferDescriptor {
-        .nextInChain = nullptr,
-        .label = {},
-        .usage = WGPUBufferUsage_Vertex | WGPUBufferUsage_CopyDst,
-        .size = sizeof(Vertex) * vertices.size(),
-        .mappedAtCreation = false
-    };
-    auto buffer = wgpuDeviceCreateBuffer(device, &bufferDesc);
-    wgpuQueueWriteBuffer(queue, buffer, 0, vertices.data(), vertices.size() * sizeof(Vertex));
-
-    return std::make_shared<GPUMesh>(buffer, nullptr, vertices.size(), sizeof(Vertex), 0, meshIdTracker++);
-}
 
 std::shared_ptr<glengine::pipeline::wgpu::RenderPipeline> glengine::pipeline::wgpu::WGPURenderer::
 GetRenderPipelineByName(const std::string &name) {
@@ -615,6 +602,11 @@ std::shared_ptr<glengine::pipeline::wgpu::GPUTexture> glengine::pipeline::wgpu::
     return std::make_shared<GPUTexture>(wgpuDeviceCreateTexture(device, &desc), format, width, height);
 }
 
+struct PosColorVertex {
+    float3 position;
+    float3 color;
+};
+
 glengine::pipeline::wgpu::WrappedBuffer glengine::pipeline::wgpu::WGPURenderer::CreateRawBuffer(std::string_view name,
                                                                                                 WGPUBufferUsage usage, unsigned int size) const {
 
@@ -633,7 +625,7 @@ glengine::pipeline::wgpu::WrappedBuffer glengine::pipeline::wgpu::WGPURenderer::
 
 #include "Shaders.h"
 
-void glengine::pipeline::wgpu::WGPURenderer::buildBuiltinPipelines() {
+void glengine::pipeline::wgpu::WGPURenderer::BuildBuiltinPipelines() {
     auto basicLitShaders = CompileShader(embed_BasicLit_wgsl);
     WGPUBindGroupLayoutEntry basicLitBindGroupEntry = {
         .nextInChain = nullptr,
@@ -791,4 +783,50 @@ void glengine::pipeline::wgpu::WGPURenderer::buildBuiltinPipelines() {
         .cullMode = WGPUCullMode_Back
     };
     BuildRenderPipeline("BuiltinGizmo", gizmoShaders, nullptr, {}, sizeof(mat4) + sizeof(float4), &extras);
+
+    auto axesShaders = CompileShader(embed_Axes_wgsl);
+    auto axesExtras = RenderPipelineExtras {
+        .polygonMode = WGPUPolygonMode_Fill,
+        .depthMode = WGPUCompareFunction_LessEqual,
+        .cullMode = WGPUCullMode_None,
+        .primitiveTopology = WGPUPrimitiveTopology_LineList
+    };
+    WGPUVertexAttribute axesAttributes[2] = {
+        {
+            .nextInChain = nullptr,
+            .format = WGPUVertexFormat_Float32x3,
+            .offset = 0,
+            .shaderLocation = 0
+        },
+    {
+            .nextInChain = nullptr,
+            .format = WGPUVertexFormat_Float32x3,
+            .offset = sizeof(float) * 3,
+            .shaderLocation = 1
+        }
+    };
+    auto axesLayout = WGPUVertexBufferLayout {
+        .nextInChain = nullptr,
+        .stepMode = WGPUVertexStepMode_Vertex,
+        .arrayStride = sizeof(float) * 6,
+        .attributeCount = 2,
+        .attributes = axesAttributes
+    };
+    BuildRenderPipeline("BuiltinAxes", axesShaders, &axesLayout, {}, sizeof(mat4), &axesExtras);
+
+    // upload axes mesh
+    const float3 positions[] = {{1, 0, 0}, {0, 1, 0}, {0, 0, 1}};
+    std::vector<PosColorVertex> vertices;
+    for (auto x : positions) {
+        vertices.push_back({
+            .position = {0, 0, 0},
+            .color = x
+        });
+        vertices.push_back({
+            .position = x,
+            .color = x
+        });
+    }
+    auto msh = std::dynamic_pointer_cast<Resource>(UploadMesh(vertices));
+    this->engine->GetResourceManager()->InsertResource("/builtin/models/axes.obj", msh);
 }

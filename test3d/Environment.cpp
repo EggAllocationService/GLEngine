@@ -7,9 +7,11 @@
 #include "Engine.h"
 #include "3d/components/DirectionalLightComponent.h"
 #include "GLMath.h"
+#include "3d/components/AxesComponent.h"
 #include "3d/mesh/StaticMeshComponent.h"
 
 Environment::Environment() {
+    CreateComponent<glengine::world::components::AxesComponent>();
     auto sun = CreateComponent<glengine::world::components::DirectionalLightComponent>();
     sun->GetTransform()->SetRotation({-PI / 4, PI / 4, 0});
     sun->Ambient = float4(0.1, 0.1, 0.1, 1);

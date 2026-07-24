@@ -6,6 +6,7 @@
 
 #include "glengine_export.h"
 #include "Resource.h"
+#include "pipeline/wgpu/WGPURenderer.h"
 
 namespace glengine {
     namespace internal {
@@ -65,18 +66,22 @@ consteval std::string_view GetTypeName() {
         template <typename T>
         std::shared_ptr<T> GetResource(std::string_view path) {
             static_assert(std::is_base_of_v<Resource, T>, "T must derive from Resource");
-            static_assert(std::is_constructible_v<T, std::istream&, pipeline::wgpu::WGPURenderer*>, "T must have a standard resource constructor");
 
             const auto name = std::string(path);
-
             const auto found = resources.find(name);
+
             if (found == resources.end()) {
-                // create then add to map
-                auto data = OpenResource(path);
-                auto resource = internal::ConstructResource<T>(*data, renderer);
-                resources[name] = resource;
-                return resource;
+                if constexpr (std::is_constructible_v<T, std::istream&, pipeline::wgpu::WGPURenderer*>) {
+                    // create then add to map
+                    auto data = OpenResource(path);
+                    auto resource = internal::ConstructResource<T>(*data, renderer);
+                    resources[name] = resource;
+                    return resource;
+                } else {
+                    return nullptr;
+                }
             }
+
 
             return std::dynamic_pointer_cast<T>(found->second);
         }
@@ -109,6 +114,8 @@ consteval std::string_view GetTypeName() {
                 return std::dynamic_pointer_cast<Resource>(internal::ConstructResource<T>(stream, renderer));
             };
         }
+
+        void InsertResource(std::string_view path, std::shared_ptr<Resource>& resource);
 
         void MountPak(std::string_view path, std::string_view fileName);
         void MountPak(std::string_view path, std::istream& data);

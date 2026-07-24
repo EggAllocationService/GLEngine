@@ -124,6 +124,11 @@ glengine::ResourceManager::ResourceManager(pipeline::wgpu::WGPURenderer *rendere
 #endif
 }
 
+void glengine::ResourceManager::InsertResource(std::string_view path, std::shared_ptr<Resource>& resource) {
+    std::string name(path);
+    resources[name] = resource;
+}
+
 void glengine::ResourceManager::MountPak(std::string_view path, std::string_view fileName) {
     std::ifstream file;
     file.open(std::filesystem::path(fileName), std::ios::binary);

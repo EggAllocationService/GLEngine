@@ -5,7 +5,6 @@
 #include <fstream>
 
 #include "glengine_export.h"
-#include "pipeline/wgpu/WGPURenderer.h"
 
 namespace glengine {
     class GLENGINE_EXPORT Resource {
