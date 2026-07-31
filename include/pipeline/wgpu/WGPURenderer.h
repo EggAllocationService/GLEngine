@@ -129,6 +129,8 @@ namespace glengine::pipeline::wgpu {
 
         std::shared_ptr<GPUTexture> CreateTexture(std::string_view name, WGPUTextureUsage usage, WGPUTextureFormat format,
             unsigned int width, unsigned int height);
+        std::shared_ptr<GPUTexture> CreateTexture(std::string_view name, WGPUTextureUsage usage, WGPUTextureFormat format,
+    unsigned int width, unsigned int height, unsigned int depth);
 
         WrappedBuffer CreateRawBuffer(std::string_view name, WGPUBufferUsage usage, unsigned int size) const;
 

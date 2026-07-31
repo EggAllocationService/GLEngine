@@ -599,7 +599,33 @@ std::shared_ptr<glengine::pipeline::wgpu::GPUTexture> glengine::pipeline::wgpu::
         .viewFormats = nullptr
     };
 
-    return std::make_shared<GPUTexture>(wgpuDeviceCreateTexture(device, &desc), format, width, height);
+    return std::make_shared<GPUTexture>(wgpuDeviceCreateTexture(device, &desc), format, width, height, 1);
+}
+
+std::shared_ptr<glengine::pipeline::wgpu::GPUTexture> glengine::pipeline::wgpu::WGPURenderer::CreateTexture(std::string_view name,
+    WGPUTextureUsage usage, WGPUTextureFormat format, unsigned int width, unsigned int height, unsigned int depth) {
+
+    auto desc = WGPUTextureDescriptor {
+        .nextInChain = nullptr,
+        .label = {
+            .data = name.data(),
+            .length = name.length(),
+        },
+        .usage = usage,
+        .dimension = WGPUTextureDimension_3D,
+        .size = {
+            .width = width,
+            .height = height,
+            .depthOrArrayLayers = depth
+          },
+          .format = format,
+          .mipLevelCount = 1,
+          .sampleCount = 1,
+          .viewFormatCount = 0,
+          .viewFormats = nullptr
+      };
+
+    return std::make_shared<GPUTexture>(wgpuDeviceCreateTexture(device, &desc), format, width, height, depth);
 }
 
 struct PosColorVertex {
