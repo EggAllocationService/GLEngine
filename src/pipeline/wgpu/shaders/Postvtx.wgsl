@@ -13,10 +13,10 @@ const POSITIONS = array(
 );
 
 const UVs = array(
-    vec2f(0, 0),
     vec2f(0, 1),
-    vec2f(1, 0),
-    vec2f(1, 1)
+    vec2f(0, 0),
+    vec2f(1, 1),
+    vec2f(1, 0)
 );
 
 @vertex

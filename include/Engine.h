@@ -19,6 +19,10 @@
 #include "pipeline/wgpu/WGPURenderer.h"
 
 namespace glengine {
+    struct PostProcessEntry {
+        std::shared_ptr<pipeline::wgpu::post::PostProcessEffect> effect;
+        void* data;
+    };
     struct EnginePerformanceStats { double update, render; };
 
     class GLENGINE_EXPORT Engine {
@@ -69,6 +73,9 @@ namespace glengine {
             return std::ranges::views::transform(actors, [](std::shared_ptr<world::Actor> actor) {return dynamic_pointer_cast<T>(actor); })
                 | std::ranges::views::filter([](std::shared_ptr<T> transformed) {return transformed != nullptr; });
         }
+
+        int PushPostEffect(std::shared_ptr<pipeline::wgpu::post::PostProcessEffect> effect);
+        void SetPostData(int index, void* data);
 
 #pragma region Getters/Setters
 
@@ -147,6 +154,8 @@ namespace glengine {
 
         void renderWorld(pipeline::wgpu::FrameBundle& frame) const;
 
+        void applyPostEffects(pipeline::wgpu::FrameBundle& frame) const;
+
         input::MouseManager* mouseManager;
 
         // Two input managers are needed, one for global keybinds and one for the currently possessed pawn
@@ -161,6 +170,7 @@ namespace glengine {
         std::vector<std::shared_ptr<world::Actor>> actors;
 
         std::weak_ptr<world::Pawn> possessedPawn;
+        std::vector<PostProcessEntry> postEffects;
 
         double lastUpdateTime = 0.0;
         double lastRenderTime = 0.0;

@@ -161,7 +161,7 @@ glengine::pipeline::wgpu::WGPURenderer::WGPURenderer(GLFWwindow *window, Engine*
     universalBindGroup = nullptr;
 
 
-    postManager = new post::PostManager(this, universalBindGroupLayout);
+    postManager = new post::PostManager(this, universalBindGroupLayout, surfConfig.format);
 
     int2 size;
     glfwGetWindowSize(window, &size.x, &size.y);
@@ -521,7 +521,7 @@ void glengine::pipeline::wgpu::WGPURenderer::EndPostProcessing(post::PostPass &p
 }
 
 std::shared_ptr<glengine::pipeline::wgpu::post::PostProcessEffect> glengine::pipeline::wgpu::WGPURenderer::
-CompilePostEffect(char *shader, unsigned int immediateSize) {
+CompilePostEffect(const char *shader, unsigned int immediateSize) {
     return postManager->Compile(shader, immediateSize);
 }
 
@@ -624,8 +624,8 @@ void glengine::pipeline::wgpu::WGPURenderer::Resize(int2 size) {
     wgpuSurfaceConfigure(surface, &surfConfig);
 
     depthTexture = CreateTexture("Main Depth", WGPUTextureUsage_RenderAttachment | WGPUTextureUsage_TextureBinding, WGPUTextureFormat_Depth24Plus, size.x, size.y);
-    colorTextures[0] = CreateTexture("Main Depth", WGPUTextureUsage_RenderAttachment | WGPUTextureUsage_TextureBinding | WGPUTextureUsage_CopySrc, surfConfig.format, size.x, size.y);
-    colorTextures[1] = CreateTexture("Aux Depth", WGPUTextureUsage_RenderAttachment | WGPUTextureUsage_TextureBinding | WGPUTextureUsage_CopySrc, surfConfig.format, size.x, size.y);
+    colorTextures[0] = CreateTexture("Main Depth", WGPUTextureUsage_RenderAttachment | WGPUTextureUsage_TextureBinding | WGPUTextureUsage_CopySrc | WGPUTextureUsage_CopyDst, surfConfig.format, size.x, size.y);
+    colorTextures[1] = CreateTexture("Aux Depth", WGPUTextureUsage_RenderAttachment | WGPUTextureUsage_TextureBinding | WGPUTextureUsage_CopySrc | WGPUTextureUsage_CopyDst, surfConfig.format, size.x, size.y);
 
     postManager->HandleResize(colorTextures, depthTexture);
 }

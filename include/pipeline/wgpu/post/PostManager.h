@@ -17,7 +17,7 @@ namespace glengine::pipeline::wgpu {
 namespace glengine::pipeline::wgpu::post {
     class GLENGINE_EXPORT PostManager {
     public:
-        PostManager(WGPURenderer* renderer, WGPUBindGroupLayout universalLayout);
+        PostManager(WGPURenderer* renderer, WGPUBindGroupLayout universalLayout, WGPUTextureFormat colorFormat);
         std::shared_ptr<PostProcessEffect> Compile(const char* shader, unsigned int immediateSize);
         void HandleResize(std::shared_ptr<GPUTexture> colorTexture[2], std::shared_ptr<GPUTexture>& depthTexture);
 
@@ -27,7 +27,7 @@ namespace glengine::pipeline::wgpu::post {
         WGPUShaderModule vertexShader;
         WGPUBindGroupLayout layouts[2];
         WGPUSampler sampler;
-
+        WGPUTextureFormat colorFormat;
     };
 }
 

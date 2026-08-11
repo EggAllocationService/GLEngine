@@ -11,9 +11,9 @@ void glengine::pipeline::wgpu::post::PostPass::Execute(PostProcessEffect &effect
     WGPURenderPassColorAttachment attachment = {
         .nextInChain = nullptr,
         .view = *this->colorTextures[(this->source + 1) % 2],
-        .depthSlice = 0,
+        .depthSlice = WGPU_DEPTH_SLICE_UNDEFINED,
         .resolveTarget = nullptr,
-        .loadOp = WGPULoadOp_Undefined,
+        .loadOp = WGPULoadOp_Clear,
         .storeOp = WGPUStoreOp_Store,
         .clearValue = {0, 0, 0, 0}
     };

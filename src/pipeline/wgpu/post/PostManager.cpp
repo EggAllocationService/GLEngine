@@ -7,7 +7,7 @@
 #include "Shaders.h"
 
 namespace glengine::pipeline::wgpu::post {
-    PostManager::PostManager(WGPURenderer *renderer, WGPUBindGroupLayout universalLayout) {
+    PostManager::PostManager(WGPURenderer *renderer, WGPUBindGroupLayout universalLayout, WGPUTextureFormat colorFormat) {
         WGPUBindGroupLayoutEntry sceneEntries[3] = {WGPU_BIND_GROUP_LAYOUT_ENTRY_INIT, WGPU_BIND_GROUP_LAYOUT_ENTRY_INIT, WGPU_BIND_GROUP_LAYOUT_ENTRY_INIT};
         sceneEntries[0].texture = {
             .nextInChain = nullptr,
@@ -64,6 +64,8 @@ namespace glengine::pipeline::wgpu::post {
 
         this->SceneGroups[0] = nullptr;
         this->SceneGroups[1] = nullptr;
+
+        this->colorFormat = colorFormat;
     }
 
     std::shared_ptr<PostProcessEffect> PostManager::Compile(const char *shader, unsigned int immediateSize) {
@@ -79,7 +81,7 @@ namespace glengine::pipeline::wgpu::post {
 
         auto colorState = WGPUColorTargetState {
             .nextInChain = nullptr,
-            .format = WGPUTextureFormat_BGRA8Unorm,
+            .format = colorFormat,
             .blend = nullptr,
             .writeMask = WGPUColorWriteMask_All
         };

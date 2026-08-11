@@ -132,7 +132,7 @@ namespace glengine::pipeline::wgpu {
         post::PostPass BeginPostProcessPass(FrameBundle& bundle);
         void EndPostProcessing(post::PostPass& pass);
 
-        std::shared_ptr<post::PostProcessEffect> CompilePostEffect(char* shader, unsigned int immediateSize);
+        std::shared_ptr<post::PostProcessEffect> CompilePostEffect(const char* shader, unsigned int immediateSize);
 
         RenderBundle BeginRendering(FrameBundle& frame, RenderUniforms& uniforms);
         void FinishRendering(RenderBundle bundle);

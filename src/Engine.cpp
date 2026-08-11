@@ -188,6 +188,19 @@ namespace glengine {
         }
     }
 
+    int Engine::PushPostEffect(std::shared_ptr<pipeline::wgpu::post::PostProcessEffect> effect) {
+        postEffects.emplace_back(effect, nullptr);
+        return postEffects.size() - 1;
+    }
+
+    void Engine::SetPostData(int index, void *data) {
+        if (postEffects.size() >= index) {
+            return;
+        }
+
+        postEffects[index].data = data;
+    }
+
     void Engine::SetWindowSize(int2 size) {
         // update stored size and viewport
         windowSize = size;
@@ -209,6 +222,7 @@ namespace glengine {
         // render 3d world
         renderWorld(frame);
 
+        applyPostEffects(frame);
 
         // present
         renderer->PresentFrame(frame);
@@ -319,4 +333,15 @@ namespace glengine {
 
        renderer->FinishRendering(pass);
     }
+
+    void Engine::applyPostEffects(pipeline::wgpu::FrameBundle &frame) const {
+        auto pass = renderer->BeginPostProcessPass(frame);
+
+        for (const auto& effect : postEffects) {
+            pass.Execute(*effect.effect, effect.data);
+        }
+
+        renderer->EndPostProcessing(pass);
+    }
+
 } // glengine

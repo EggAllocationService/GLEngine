@@ -16,6 +16,8 @@
 #include "windows.h"
 #endif
 
+#include "DemoShaders.h"
+
 using namespace glengine;
 
 float frand(float min, float max) {
@@ -41,6 +43,10 @@ int main(int argc, char** argv) {
     auto engine = new Engine("3D Test", int2(1280, 720));
     engine->GetResourceManager()->MountPak("/assets", "assets.pak");
     engine->SetAllowNonFocusedPawnInput(true);
+
+    auto invert = engine->GetRenderer()->CompilePostEffect(embed_invert_wgsl, 0);
+    engine->PushPostEffect(invert);
+
     auto ship = engine->SpawnActor<Enterprise>();
 
     engine->SpawnActor<Environment>();
