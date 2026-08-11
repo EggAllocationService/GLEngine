@@ -77,6 +77,10 @@ add_library(glengine SHARED
         include/3d/actors/DirectionalLightActor.h
         src/3d/components/AxesComponent.cpp
         include/3d/components/AxesComponent.h
+        src/pipeline/wgpu/post/PostPass.cpp
+        include/pipeline/wgpu/post/PostPass.h
+        src/pipeline/wgpu/post/PostManager.cpp
+        include/pipeline/wgpu/post/PostManager.h
 )
 
 create_resource_library(NAME Shaders SOURCES 
@@ -84,6 +88,7 @@ create_resource_library(NAME Shaders SOURCES
     src/pipeline/wgpu/shaders/BasicLitInstanced.wgsl
     src/pipeline/wgpu/shaders/Gizmo.wgsl
     src/pipeline/wgpu/shaders/Axes.wgsl
+    src/pipeline/wgpu/shaders/Postvtx.wgsl
 )
 
 build_pak(

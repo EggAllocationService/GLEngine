@@ -160,6 +160,9 @@ glengine::pipeline::wgpu::WGPURenderer::WGPURenderer(GLFWwindow *window, Engine*
 
     universalBindGroup = nullptr;
 
+
+    postManager = new post::PostManager(this, universalBindGroupLayout);
+
     int2 size;
     glfwGetWindowSize(window, &size.x, &size.y);
     Resize(size);
@@ -416,82 +419,24 @@ void glengine::pipeline::wgpu::WGPURenderer::SetUniversalBindGroupEntry(WGPUBind
     universalDirty = true;
 }
 
-void glengine::pipeline::wgpu::WGPURenderer::rebuildUniversalBindGroup() {
-    if (universalBindGroup != nullptr) {
-        wgpuBindGroupRelease(universalBindGroup);
-    }
-
-    WGPUBindGroupDescriptor desc = {
+glengine::pipeline::wgpu::FrameBundle glengine::pipeline::wgpu::WGPURenderer::BeginFrame() {
+    std::string encoderName = std::format("Encoder: Frame #{}", frameCounter++);
+    WGPUCommandEncoderDescriptor desc {
         .nextInChain = nullptr,
         .label = {
-            .data = "GLEngine: Universal Group",
-            .length = WGPU_STRLEN
-        },
-        .layout = universalBindGroupLayout,
-        .entryCount = universalEntries.size(),
-        .entries = universalEntries.data()
+            .data = encoderName.data(),
+            .length = encoderName.length()
+        }
     };
-
-    universalBindGroup = wgpuDeviceCreateBindGroup(device, &desc);
-
-    universalDirty = false;
-}
-
-glengine::pipeline::wgpu::RenderBundle glengine::pipeline::wgpu::WGPURenderer::BeginRendering(RenderUniforms& uniforms) {
-    // upload uniforms for this frame and submit any in-flight writes
-    transferManager->Transfer(renderUniformsBuffer, 0, &uniforms, sizeof(uniforms));
-
-    if (universalDirty) {
-        rebuildUniversalBindGroup();
-    }
-
-    // clear textures
-    auto encoder = wgpuDeviceCreateCommandEncoder(device, nullptr);
-
-    WGPURenderPassDescriptor descriptor = WGPU_RENDER_PASS_DESCRIPTOR_INIT;
-    auto attachment = WGPURenderPassDepthStencilAttachment {
-        .nextInChain = nullptr,
-        .view = *depthTexture,
-        .depthLoadOp = WGPULoadOp_Clear,
-        .depthStoreOp = WGPUStoreOp_Store,
-        .depthClearValue = 1.0,
-        .depthReadOnly = false,
-        .stencilLoadOp = WGPULoadOp_Clear,
-        .stencilStoreOp = WGPUStoreOp_Store,
-        .stencilClearValue = 0,
-        .stencilReadOnly = false
-    };
-    auto colorAttachment = WGPURenderPassColorAttachment {
-        .nextInChain = nullptr,
-        .view = *colorTextures[0],
-        .depthSlice = WGPU_DEPTH_SLICE_UNDEFINED,
-        .resolveTarget = nullptr,
-        .loadOp = WGPULoadOp_Clear,
-        .storeOp = WGPUStoreOp_Store,
-        .clearValue = WGPUColor(0, 0, 0, 1)
-    };
-    descriptor.depthStencilAttachment = &attachment;
-    descriptor.colorAttachmentCount = 1;
-    descriptor.colorAttachments = &colorAttachment;
-
-    auto pass = wgpuCommandEncoderBeginRenderPass(encoder, &descriptor);
-    wgpuRenderPassEncoderSetBindGroup(pass, 0, universalBindGroup, 0, nullptr);
-
-    return {
-        .encoder = encoder,
-        .passEncoder = pass,
-        .targetTexture = *colorTextures[0],
-        .depthTexture = *depthTexture,
-        .surfaceTexture = *colorTextures[0],
-        .valid = true
+    return FrameBundle {
+        .encoder = wgpuDeviceCreateCommandEncoder(device, &desc),
+        .colorTextures = {colorTextures[0], colorTextures[1]},
+        .depthTexture = depthTexture,
+        .presentIndex = 0
     };
 }
 
-void glengine::pipeline::wgpu::WGPURenderer::FinishRendering(RenderBundle bundle) {
-    if (!bundle.valid) return;
-    wgpuRenderPassEncoderEnd(bundle.passEncoder);
-    wgpuRenderPassEncoderRelease(bundle.passEncoder);
-
+void glengine::pipeline::wgpu::WGPURenderer::PresentFrame(FrameBundle &bundle) {
     // get surface texture
     CONFIGURE:
     WGPUSurfaceTexture surfaceTexture;
@@ -510,7 +455,7 @@ void glengine::pipeline::wgpu::WGPURenderer::FinishRendering(RenderBundle bundle
     }
 
     WGPUTexelCopyTextureInfo src = {
-        .texture = *colorTextures[0],
+        .texture = *bundle.colorTextures[bundle.presentIndex],
         .mipLevel = 0,
         .origin = { .x = 0, .y = 0, .z = 0},
         .aspect = WGPUTextureAspect_All
@@ -536,6 +481,121 @@ void glengine::pipeline::wgpu::WGPURenderer::FinishRendering(RenderBundle bundle
 
     wgpuSurfacePresent(surface);
     wgpuTextureRelease(surfaceTexture.texture);
+}
+
+glengine::pipeline::wgpu::post::PostPass glengine::pipeline::wgpu::WGPURenderer::BeginPostProcessPass(
+    FrameBundle &bundle) {
+    return {
+        .colorTextures = {colorTextures[0], colorTextures[1]},
+        .depthTexture = depthTexture,
+        .sceneBindGroups = {postManager->SceneGroups[0], postManager->SceneGroups[1]},
+        .universalBindGroup = universalBindGroup,
+        .encoder = bundle.encoder,
+        .source = bundle.presentIndex
+    };
+
+}
+
+void glengine::pipeline::wgpu::WGPURenderer::EndPostProcessing(post::PostPass &pass) {
+    if (pass.source != 0) {
+        WGPUTexelCopyTextureInfo src = {
+            .texture = *pass.colorTextures[pass.source],
+            .mipLevel = 0,
+            .origin = { .x = 0, .y = 0, .z = 0},
+            .aspect = WGPUTextureAspect_All
+        };
+
+        WGPUTexelCopyTextureInfo dst = {
+            .texture = *colorTextures[0],
+            .mipLevel = 0,
+            .origin = { .x = 0, .y = 0, .z = 0},
+            .aspect = WGPUTextureAspect_All
+        };
+        WGPUExtent3D size = {
+            .width = surfConfig.width,
+            .height = surfConfig.height,
+            .depthOrArrayLayers = 1
+        };
+        wgpuCommandEncoderCopyTextureToTexture(pass.encoder, &src, &dst, &size);
+    }
+}
+
+std::shared_ptr<glengine::pipeline::wgpu::post::PostProcessEffect> glengine::pipeline::wgpu::WGPURenderer::
+CompilePostEffect(char *shader, unsigned int immediateSize) {
+    return postManager->Compile(shader, immediateSize);
+}
+
+void glengine::pipeline::wgpu::WGPURenderer::rebuildUniversalBindGroup() {
+    if (universalBindGroup != nullptr) {
+        wgpuBindGroupRelease(universalBindGroup);
+    }
+
+    WGPUBindGroupDescriptor desc = {
+        .nextInChain = nullptr,
+        .label = {
+            .data = "GLEngine: Universal Group",
+            .length = WGPU_STRLEN
+        },
+        .layout = universalBindGroupLayout,
+        .entryCount = universalEntries.size(),
+        .entries = universalEntries.data()
+    };
+
+    universalBindGroup = wgpuDeviceCreateBindGroup(device, &desc);
+
+    universalDirty = false;
+}
+
+glengine::pipeline::wgpu::RenderBundle glengine::pipeline::wgpu::WGPURenderer::BeginRendering(FrameBundle& frame, RenderUniforms& uniforms) {
+    // upload uniforms for this frame and submit any in-flight writes
+    transferManager->Transfer(renderUniformsBuffer, 0, &uniforms, sizeof(uniforms));
+
+    if (universalDirty) {
+        rebuildUniversalBindGroup();
+    }
+
+    WGPURenderPassDescriptor descriptor = WGPU_RENDER_PASS_DESCRIPTOR_INIT;
+    auto attachment = WGPURenderPassDepthStencilAttachment {
+        .nextInChain = nullptr,
+        .view = *frame.depthTexture,
+        .depthLoadOp = WGPULoadOp_Clear,
+        .depthStoreOp = WGPUStoreOp_Store,
+        .depthClearValue = 1.0,
+        .depthReadOnly = false,
+        .stencilLoadOp = WGPULoadOp_Clear,
+        .stencilStoreOp = WGPUStoreOp_Store,
+        .stencilClearValue = 0,
+        .stencilReadOnly = false
+    };
+    auto colorAttachment = WGPURenderPassColorAttachment {
+        .nextInChain = nullptr,
+        .view = *frame.colorTextures[0],
+        .depthSlice = WGPU_DEPTH_SLICE_UNDEFINED,
+        .resolveTarget = nullptr,
+        .loadOp = WGPULoadOp_Clear,
+        .storeOp = WGPUStoreOp_Store,
+        .clearValue = WGPUColor(0, 0, 0, 1)
+    };
+    descriptor.depthStencilAttachment = &attachment;
+    descriptor.colorAttachmentCount = 1;
+    descriptor.colorAttachments = &colorAttachment;
+
+    auto pass = wgpuCommandEncoderBeginRenderPass(frame.encoder, &descriptor);
+    wgpuRenderPassEncoderSetBindGroup(pass, 0, universalBindGroup, 0, nullptr);
+
+    return {
+        .passEncoder = pass,
+        .targetTexture = *frame.colorTextures[0],
+        .depthTexture = *frame.depthTexture,
+        .valid = true
+    };
+}
+
+void glengine::pipeline::wgpu::WGPURenderer::FinishRendering(RenderBundle bundle) {
+    if (!bundle.valid) return;
+    wgpuRenderPassEncoderEnd(bundle.passEncoder);
+    wgpuRenderPassEncoderRelease(bundle.passEncoder);
+    bundle.valid = false;
 }
 
 glengine::pipeline::wgpu::ComputeBundle glengine::pipeline::wgpu::WGPURenderer::BeginComputePass() {
@@ -567,6 +627,7 @@ void glengine::pipeline::wgpu::WGPURenderer::Resize(int2 size) {
     colorTextures[0] = CreateTexture("Main Depth", WGPUTextureUsage_RenderAttachment | WGPUTextureUsage_TextureBinding | WGPUTextureUsage_CopySrc, surfConfig.format, size.x, size.y);
     colorTextures[1] = CreateTexture("Aux Depth", WGPUTextureUsage_RenderAttachment | WGPUTextureUsage_TextureBinding | WGPUTextureUsage_CopySrc, surfConfig.format, size.x, size.y);
 
+    postManager->HandleResize(colorTextures, depthTexture);
 }
 
 std::shared_ptr<glengine::pipeline::wgpu::GPUTexture> glengine::pipeline::wgpu::WGPURenderer::CreateTexture(std::string_view name,

@@ -17,6 +17,8 @@
 #include "TransferManager.h"
 #include "WrappedBuffer.h"
 #include "pipeline/ComputePipeline.h"
+#include "post/PostManager.h"
+#include "post/PostPass.h"
 
 
 namespace glengine {
@@ -39,12 +41,17 @@ namespace glengine::pipeline::wgpu {
     };
 
     struct RenderBundle {
-        WGPUCommandEncoder encoder;
         WGPURenderPassEncoder passEncoder;
         WGPUTextureView targetTexture;
         WGPUTextureView depthTexture;
-        WGPUTexture surfaceTexture;
         bool valid;
+    };
+
+    struct FrameBundle {
+        WGPUCommandEncoder encoder;
+        std::shared_ptr<GPUTexture> colorTextures[2];
+        std::shared_ptr<GPUTexture> depthTexture;
+        int presentIndex; // which color texture to present from
     };
 
     struct RenderPipelineExtras {
@@ -119,7 +126,15 @@ namespace glengine::pipeline::wgpu {
 
         void SetUniversalBindGroupEntry(WGPUBindGroupEntry entry);
 
-        RenderBundle BeginRendering(RenderUniforms& uniforms);
+        FrameBundle BeginFrame();
+        void PresentFrame(FrameBundle& bundle);
+
+        post::PostPass BeginPostProcessPass(FrameBundle& bundle);
+        void EndPostProcessing(post::PostPass& pass);
+
+        std::shared_ptr<post::PostProcessEffect> CompilePostEffect(char* shader, unsigned int immediateSize);
+
+        RenderBundle BeginRendering(FrameBundle& frame, RenderUniforms& uniforms);
         void FinishRendering(RenderBundle bundle);
 
         ComputeBundle BeginComputePass();
@@ -183,7 +198,9 @@ namespace glengine::pipeline::wgpu {
         WGPUSubmissionIndex lastFrame = 0;
         TransferManager* transferManager;
         Engine* engine;
+        post::PostManager *postManager;
         std::atomic<int> meshIdTracker = 0;
+        unsigned long frameCounter = 0;
 
         bool universalDirty;
 

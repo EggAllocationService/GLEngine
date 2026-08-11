@@ -145,7 +145,7 @@ namespace glengine {
 
         void updateActors(double deltaTime);
 
-        void renderWorld() const;
+        void renderWorld(pipeline::wgpu::FrameBundle& frame) const;
 
         input::MouseManager* mouseManager;
 

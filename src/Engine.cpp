@@ -204,9 +204,14 @@ namespace glengine {
         // track Render time
         auto start = std::chrono::steady_clock::now();
 
-        // render 3d world
-        renderWorld();
+        auto frame = renderer->BeginFrame();
 
+        // render 3d world
+        renderWorld(frame);
+
+
+        // present
+        renderer->PresentFrame(frame);
 
         // update last render time variable
         auto end = std::chrono::steady_clock::now();
@@ -250,7 +255,7 @@ namespace glengine {
         );
     }
 
-    void Engine::renderWorld() const {
+    void Engine::renderWorld(pipeline::wgpu::FrameBundle& frame) const {
         if (possessedPawn.expired()) {
             return; // before first update
         }
@@ -273,15 +278,16 @@ namespace glengine {
             .time = time.count()
         };
         // set matrices
-        auto bundle = renderer->BeginRendering(uniforms);
+        auto pass = renderer->BeginRendering(frame, uniforms);
 
-        if (!bundle.valid) {
+        if (!pass.valid) {
             std::this_thread::sleep_for(std::chrono::milliseconds(10));
+            return;
         }
 
         // before rendering actors, run all renderObjects
         for (const auto& object : renderObjectManager->objects) {
-            object->RenderStart(bundle);
+            object->RenderStart(pass);
         }
 
         auto stack = MatrixStack();
@@ -303,7 +309,7 @@ namespace glengine {
                     // push component transform matrix
                     stack.Push(sceneComponent->GetTransformMatrix());
 
-                    sceneComponent->Render(bundle, stack);
+                    sceneComponent->Render(pass, stack);
 
                     stack.Pop();
                 }
@@ -311,6 +317,6 @@ namespace glengine {
             stack.Pop();
         }
 
-       renderer->FinishRendering(bundle);
+       renderer->FinishRendering(pass);
     }
 } // glengine
