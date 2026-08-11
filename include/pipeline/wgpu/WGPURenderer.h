@@ -172,8 +172,10 @@ namespace glengine::pipeline::wgpu {
         WGPUQueue queue;
         WGPUSurface surface;
 
-        WGPUTexture depthTexture;
-        WGPUTextureView depthTextureView;
+        // need two for ping-pong post-processing
+        // all rendering targets texture 0
+        std::shared_ptr<GPUTexture> colorTextures[2];
+        std::shared_ptr<GPUTexture> depthTexture;
 
         WGPUBindGroupLayout universalBindGroupLayout;
         WGPUBindGroup universalBindGroup;

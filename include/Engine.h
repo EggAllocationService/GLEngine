@@ -141,8 +141,6 @@ namespace glengine {
         /// </summary>
         [[nodiscard]] double calculateDeltaTime() const;
 
-        void clearBuffers();
-
         void setLastUpdate();
 
         void updateActors(double deltaTime);

@@ -221,13 +221,6 @@ namespace glengine {
         return time.count();
     }
 
-    void Engine::clearBuffers() {
-        glClearColor(0, 0, 0, 1);
-        glClearDepth(0.0f); // using LH coordinate system, so 0 depth = far plane
-        glDepthFunc(GL_GEQUAL);
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-    }
-
     void Engine::setLastUpdate() {
         lastUpdate = std::chrono::high_resolution_clock::now();
     }

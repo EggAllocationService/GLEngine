@@ -108,7 +108,7 @@ glengine::pipeline::wgpu::WGPURenderer::WGPURenderer(GLFWwindow *window, Engine*
 
     surfConfig.nextInChain = &surfExtras->chain;
     surfConfig.format = caps.formats[0]; // set preferred format
-    surfConfig.usage = WGPUTextureUsage_RenderAttachment;
+    surfConfig.usage = WGPUTextureUsage_CopyDst;
     surfConfig.presentMode = WGPUPresentMode_Fifo;
     surfConfig.alphaMode = WGPUCompositeAlphaMode_Auto;
     surfConfig.device = device;
@@ -445,32 +445,13 @@ glengine::pipeline::wgpu::RenderBundle glengine::pipeline::wgpu::WGPURenderer::B
         rebuildUniversalBindGroup();
     }
 
-    // get surface texture
-    CONFIGURE:
-    WGPUSurfaceTexture texture;
-    WGPUTextureView textureView;
-    wgpuSurfaceGetCurrentTexture(surface, &texture);
-    switch (texture.status) {
-        case WGPUSurfaceGetCurrentTextureStatus_SuccessOptimal:
-            textureView = wgpuTextureCreateView(texture.texture, nullptr);
-            break;
-        case WGPUSurfaceGetCurrentTextureStatus_SuccessSuboptimal:
-        case WGPUSurfaceGetCurrentTextureStatus_Outdated:
-            wgpuSurfaceConfigure(surface, &surfConfig);
-            goto CONFIGURE;
-        case WGPUSurfaceGetCurrentTextureStatus_Timeout:
-            // happens on macos when window is obscured. We won't bother rendering then
-        default:
-            return {};
-    }
-
     // clear textures
     auto encoder = wgpuDeviceCreateCommandEncoder(device, nullptr);
 
     WGPURenderPassDescriptor descriptor = WGPU_RENDER_PASS_DESCRIPTOR_INIT;
     auto attachment = WGPURenderPassDepthStencilAttachment {
         .nextInChain = nullptr,
-        .view = depthTextureView,
+        .view = *depthTexture,
         .depthLoadOp = WGPULoadOp_Clear,
         .depthStoreOp = WGPUStoreOp_Store,
         .depthClearValue = 1.0,
@@ -482,7 +463,7 @@ glengine::pipeline::wgpu::RenderBundle glengine::pipeline::wgpu::WGPURenderer::B
     };
     auto colorAttachment = WGPURenderPassColorAttachment {
         .nextInChain = nullptr,
-        .view = textureView,
+        .view = *colorTextures[0],
         .depthSlice = WGPU_DEPTH_SLICE_UNDEFINED,
         .resolveTarget = nullptr,
         .loadOp = WGPULoadOp_Clear,
@@ -499,9 +480,9 @@ glengine::pipeline::wgpu::RenderBundle glengine::pipeline::wgpu::WGPURenderer::B
     return {
         .encoder = encoder,
         .passEncoder = pass,
-        .targetTexture = textureView,
-        .depthTexture = depthTextureView,
-        .surfaceTexture = texture.texture,
+        .targetTexture = *colorTextures[0],
+        .depthTexture = *depthTexture,
+        .surfaceTexture = *colorTextures[0],
         .valid = true
     };
 }
@@ -511,15 +492,50 @@ void glengine::pipeline::wgpu::WGPURenderer::FinishRendering(RenderBundle bundle
     wgpuRenderPassEncoderEnd(bundle.passEncoder);
     wgpuRenderPassEncoderRelease(bundle.passEncoder);
 
+    // get surface texture
+    CONFIGURE:
+    WGPUSurfaceTexture surfaceTexture;
+    wgpuSurfaceGetCurrentTexture(surface, &surfaceTexture);
+    switch (surfaceTexture.status) {
+        case WGPUSurfaceGetCurrentTextureStatus_SuccessOptimal:
+            break;
+        case WGPUSurfaceGetCurrentTextureStatus_SuccessSuboptimal:
+        case WGPUSurfaceGetCurrentTextureStatus_Outdated:
+            wgpuSurfaceConfigure(surface, &surfConfig);
+            goto CONFIGURE;
+        case WGPUSurfaceGetCurrentTextureStatus_Timeout:
+            // happens on macos when window is obscured. We won't bother rendering then
+        default:
+            return;
+    }
+
+    WGPUTexelCopyTextureInfo src = {
+        .texture = *colorTextures[0],
+        .mipLevel = 0,
+        .origin = { .x = 0, .y = 0, .z = 0},
+        .aspect = WGPUTextureAspect_All
+    };
+
+    WGPUTexelCopyTextureInfo dst = {
+        .texture = surfaceTexture.texture,
+        .mipLevel = 0,
+        .origin = { .x = 0, .y = 0, .z = 0},
+        .aspect = WGPUTextureAspect_All
+    };
+    WGPUExtent3D size = {
+        .width = surfConfig.width,
+        .height = surfConfig.height,
+        .depthOrArrayLayers = 1
+    };
+    wgpuCommandEncoderCopyTextureToTexture(bundle.encoder, &src, &dst, &size);
     auto command = wgpuCommandEncoderFinish(bundle.encoder, nullptr);
 
     lastFrame = wgpuQueueSubmitForIndex(queue, 1, &command);
     wgpuCommandBufferRelease(command);
     wgpuCommandEncoderRelease(bundle.encoder);
 
-    wgpuTextureViewRelease(bundle.targetTexture);
     wgpuSurfacePresent(surface);
-    wgpuTextureRelease(bundle.surfaceTexture);
+    wgpuTextureRelease(surfaceTexture.texture);
 }
 
 glengine::pipeline::wgpu::ComputeBundle glengine::pipeline::wgpu::WGPURenderer::BeginComputePass() {
@@ -547,33 +563,10 @@ void glengine::pipeline::wgpu::WGPURenderer::Resize(int2 size) {
 
     wgpuSurfaceConfigure(surface, &surfConfig);
 
-    if (depthTexture != nullptr) {
-        wgpuTextureRelease(depthTexture);
-        wgpuTextureViewRelease(depthTextureView);
-    }
+    depthTexture = CreateTexture("Main Depth", WGPUTextureUsage_RenderAttachment | WGPUTextureUsage_TextureBinding, WGPUTextureFormat_Depth24Plus, size.x, size.y);
+    colorTextures[0] = CreateTexture("Main Depth", WGPUTextureUsage_RenderAttachment | WGPUTextureUsage_TextureBinding | WGPUTextureUsage_CopySrc, surfConfig.format, size.x, size.y);
+    colorTextures[1] = CreateTexture("Aux Depth", WGPUTextureUsage_RenderAttachment | WGPUTextureUsage_TextureBinding | WGPUTextureUsage_CopySrc, surfConfig.format, size.x, size.y);
 
-    auto desc = WGPUTextureDescriptor {
-        .nextInChain = nullptr,
-        .label = {
-           .data = "Main Depth Target",
-           .length = WGPU_STRLEN
-        },
-        .usage = WGPUTextureUsage_RenderAttachment,
-        .dimension = WGPUTextureDimension_2D,
-        .size = {
-           .width = surfConfig.width,
-           .height = surfConfig.height,
-           .depthOrArrayLayers = 1
-        },
-        .format = WGPUTextureFormat_Depth24Plus,
-        .mipLevelCount = 1,
-        .sampleCount = 1,
-        .viewFormatCount = 0,
-        .viewFormats = nullptr
-    };
-
-    depthTexture = wgpuDeviceCreateTexture(device, &desc);
-    depthTextureView = wgpuTextureCreateView(depthTexture, nullptr);
 }
 
 std::shared_ptr<glengine::pipeline::wgpu::GPUTexture> glengine::pipeline::wgpu::WGPURenderer::CreateTexture(std::string_view name,
