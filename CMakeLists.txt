@@ -89,6 +89,7 @@ create_resource_library(NAME Shaders SOURCES
     src/pipeline/wgpu/shaders/Gizmo.wgsl
     src/pipeline/wgpu/shaders/Axes.wgsl
     src/pipeline/wgpu/shaders/Postvtx.wgsl
+    src/pipeline/wgpu/shaders/Postpre.wgsl
 )
 
 build_pak(

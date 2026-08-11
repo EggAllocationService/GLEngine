@@ -69,6 +69,9 @@ namespace glengine::pipeline::wgpu::post {
     }
 
     std::shared_ptr<PostProcessEffect> PostManager::Compile(const char *shader, unsigned int immediateSize) {
+        std::string preamble(embed_Postpre_wgsl, embed_Postpre_wgsl_length);
+        auto combined = preamble + std::string(shader);
+
 
         auto layoutDesc = WGPUPipelineLayoutDescriptor {
             .nextInChain = nullptr,
@@ -87,7 +90,7 @@ namespace glengine::pipeline::wgpu::post {
         };
         auto fragmentState = WGPUFragmentState {
             .nextInChain = nullptr,
-            .module = renderer->CompileShader(shader),
+            .module = renderer->CompileShader(combined.data()),
             .entryPoint = {
                 .data = "post",
                 .length = 4

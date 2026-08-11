@@ -9,6 +9,10 @@
 #include "PostProcessEffect.h"
 #include "pipeline/wgpu/GPUTexture.h"
 
+namespace glengine::pipeline::wgpu {
+    struct FrameBundle;
+}
+
 namespace glengine::pipeline::wgpu::post {
 
     struct GLENGINE_EXPORT PostPass {
@@ -17,6 +21,7 @@ namespace glengine::pipeline::wgpu::post {
         WGPUBindGroup sceneBindGroups[2];
         WGPUBindGroup universalBindGroup;
         WGPUCommandEncoder encoder;
+        FrameBundle& bundle;
         int source;
 
         void Execute(PostProcessEffect& effect, const void *immediateData);

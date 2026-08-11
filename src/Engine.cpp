@@ -299,11 +299,15 @@ namespace glengine {
             return;
         }
 
+        pass.PushDebug("RenderObjects: Pre");
         // before rendering actors, run all renderObjects
         for (const auto& object : renderObjectManager->objects) {
             object->RenderStart(pass);
         }
+        pass.PopDebug();
 
+
+        pass.PushDebug("Actors");
         auto stack = MatrixStack();
 
         // render all scene components
@@ -330,6 +334,7 @@ namespace glengine {
             }
             stack.Pop();
         }
+        pass.PopDebug();
 
        renderer->FinishRendering(pass);
     }

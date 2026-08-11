@@ -45,13 +45,21 @@ namespace glengine::pipeline::wgpu {
         WGPUTextureView targetTexture;
         WGPUTextureView depthTexture;
         bool valid;
+
+        void PushDebug(const char* name);
+        void PopDebug();
     };
 
     struct FrameBundle {
         WGPUCommandEncoder encoder;
         std::shared_ptr<GPUTexture> colorTextures[2];
         std::shared_ptr<GPUTexture> depthTexture;
+        unsigned long frameId;
+        unsigned int renderPasses;
         int presentIndex; // which color texture to present from
+
+        void PushDebug(const char* name);
+        void PopDebug();
     };
 
     struct RenderPipelineExtras {
