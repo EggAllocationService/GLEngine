@@ -194,7 +194,7 @@ namespace glengine {
     }
 
     void Engine::SetPostData(int index, void *data) {
-        if (postEffects.size() >= index) {
+        if (postEffects.size() <= index) {
             return;
         }
 
