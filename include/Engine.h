@@ -22,6 +22,7 @@ namespace glengine {
     struct PostProcessEntry {
         std::shared_ptr<pipeline::wgpu::post::PostProcessEffect> effect;
         void* data;
+        bool enabled;
     };
     struct EnginePerformanceStats { double update, render; };
 
@@ -75,7 +76,10 @@ namespace glengine {
         }
 
         int PushPostEffect(std::shared_ptr<pipeline::wgpu::post::PostProcessEffect> effect);
+
         void SetPostData(int index, void* data);
+
+        void SetPostEffectEnabled(int index, bool enabled);
 
 #pragma region Getters/Setters
 

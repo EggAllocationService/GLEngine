@@ -189,7 +189,7 @@ namespace glengine {
     }
 
     int Engine::PushPostEffect(std::shared_ptr<pipeline::wgpu::post::PostProcessEffect> effect) {
-        postEffects.emplace_back(effect, nullptr);
+        postEffects.emplace_back(effect, nullptr, true);
         return postEffects.size() - 1;
     }
 
@@ -199,6 +199,10 @@ namespace glengine {
         }
 
         postEffects[index].data = data;
+    }
+
+    void Engine::SetPostEffectEnabled(int index, bool enabled) {
+        postEffects[index].enabled = enabled;
     }
 
     void Engine::SetWindowSize(int2 size) {
@@ -254,11 +258,14 @@ namespace glengine {
 
         // for each actor
         for (const auto& actor : actors) {
+            if (!actor->IsEnabled()) continue;
+
             // update actor
             actor->Update(deltaTime);
             
             // update components
             for (const auto& component : actor->GetComponents()) {
+                if (!component->IsEnabled()) continue;
                 component->Update(deltaTime);
             }
         }
@@ -314,7 +321,8 @@ namespace glengine {
         for (const auto& actor : actors) {
             // check if actor has any renderable components
             // skip if nothing to do, so we don't waste time matrix multiplying
-            if (!actor->GetComponent<world::ActorSceneComponent>()) {
+            // also skip if actor is not enabled
+            if (!actor->GetComponent<world::ActorSceneComponent>() || !actor->IsEnabled()) {
                 continue;
             }
 
@@ -323,6 +331,8 @@ namespace glengine {
 
             // render actor scene components
             for (const auto& component : actor->GetComponents()) {
+                if (!component->IsEnabled()) continue;
+
                 if (auto sceneComponent = std::dynamic_pointer_cast<world::ActorSceneComponent>(component)) {
                     // push component transform matrix
                     stack.Push(sceneComponent->GetTransformMatrix());
@@ -343,7 +353,9 @@ namespace glengine {
         auto pass = renderer->BeginPostProcessPass(frame);
 
         for (const auto& effect : postEffects) {
-            pass.Execute(*effect.effect, effect.data);
+            if (effect.enabled) {
+                pass.Execute(*effect.effect, effect.data);
+            }
         }
 
         renderer->EndPostProcessing(pass);

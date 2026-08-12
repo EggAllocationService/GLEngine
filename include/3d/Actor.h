@@ -62,6 +62,14 @@ namespace glengine::world {
             return destroyed_;
         }
 
+        [[nodiscard]] bool IsEnabled() const {
+            return enabled_;
+        }
+
+        void SetEnabled(bool enabled) {
+            enabled_ = enabled;
+        }
+
         Transform *GetTransform() {
             return &transform_;
         }
@@ -84,6 +92,7 @@ namespace glengine::world {
         Engine *engine_= nullptr;
 
         bool destroyed_ = false;
+        bool enabled_ = true;
     };
 }
 

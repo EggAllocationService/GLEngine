@@ -29,9 +29,18 @@ namespace glengine::world {
 
         [[nodiscard]] Engine* GetEngine() const;
 
+        [[nodiscard]] bool IsEnabled() const {
+            return enabled_;
+        }
+
+        void SetEnabled(bool enabled) {
+            enabled_ = enabled;
+        }
+
     private:
         /// Reference to the owning actor for this component
         /// Will always be valid, as an actor will always outlive its components
         Actor* actor_ = nullptr;
+        bool enabled_ = true;
     };
 }
