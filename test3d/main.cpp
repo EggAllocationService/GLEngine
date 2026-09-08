@@ -44,8 +44,8 @@ int main(int argc, char** argv) {
     engine->GetResourceManager()->MountPak("/assets", "assets.pak");
     engine->SetAllowNonFocusedPawnInput(true);
 
-    auto invert = engine->GetRenderer()->CompilePostEffect(embed_invert_wgsl, 0);
-    engine->PushPostEffect(invert);
+    //auto invert = engine->GetRenderer()->CompilePostEffect(embed_invert_wgsl, 0);
+    //engine->PushPostEffect(invert);
 
     auto ship = engine->SpawnActor<Enterprise>();
 

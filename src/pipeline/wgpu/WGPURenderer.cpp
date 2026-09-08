@@ -27,15 +27,8 @@ static void handle_request_device(WGPURequestDeviceStatus status,
                                   void *userdata1, void *userdata2) {
     *(WGPUDevice *)userdata1 = device;
 
-    std::cout << std::string_view(message.data, message.length) << std::endl;
-
     WGPUSupportedFeatures supportedFeatures;
     wgpuDeviceGetFeatures(device, &supportedFeatures);
-    printf("Features enabled: %lu", supportedFeatures.featureCount);
-
-    for (int i = 0; i < supportedFeatures.featureCount; i++) {
-        printf("\t 0x%08x \n", supportedFeatures.features[i]);
-    }
 }
 
 void glengine::pipeline::wgpu::RenderBundle::PushDebug(const char *name) {
