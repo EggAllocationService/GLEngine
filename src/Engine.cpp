@@ -208,7 +208,9 @@ namespace glengine {
     void Engine::SetWindowSize(int2 size) {
         // update stored size and viewport
         windowSize = size;
-        renderer->Resize(size);
+        int fbX, fbY;
+        glfwGetFramebufferSize(window, &fbX, &fbY);
+        renderer->Resize(int2(fbX, fbY));
     }
 
     void Engine::Render() {
