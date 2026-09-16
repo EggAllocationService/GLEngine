@@ -5,6 +5,7 @@
 #include "pipeline/wgpu/post/PostManager.h"
 #include "pipeline/wgpu/WGPURenderer.h"
 #include "Shaders.h"
+#include <bit>
 
 namespace glengine::pipeline::wgpu::post {
     PostManager::PostManager(WGPURenderer *renderer, WGPUBindGroupLayout universalLayout, WGPUTextureFormat colorFormat) {
