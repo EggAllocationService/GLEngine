@@ -32,6 +32,6 @@ namespace Colors {
     }
 
     float4 blend(const float4 bottom, const float4 top) {
-        return (bottom * (1 - top.a)) + (top * top.a);
+        return (bottom * (1 - top.a)) + float4(top.xyz * top.a, top.a);
     }
 }

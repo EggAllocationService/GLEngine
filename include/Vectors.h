@@ -50,7 +50,7 @@ struct vec_swizzle {
     /********
     * Vector arithmatic operations
     *********/
-#define SWIZVARITHMATICOP(op) vector operator op (vector rhs) { \
+#define SWIZVARITHMATICOP(op) vector operator op (vector rhs) const { \
         vector result; \
         int i = 0; \
         ((result.data[indices] = data[indices] op rhs[i++]), ...); \
@@ -65,11 +65,16 @@ struct vec_swizzle {
     /********
     * Scalar assignment operations
     *********/
-#define SWIZSCALAROP(op) vector operator op (primitive rhs) { \
+#define SWIZSCALAROP(op) vector operator op (const primitive rhs) { \
         return vector((data[indices] op rhs)...); \
     }
 
-    vec_swizzle& operator=(primitive rhs) {
+    #define SWIZSCALAROPCONST(op) vector operator op (const primitive rhs) const { \
+        return vector((data[indices] op rhs)...); \
+    }
+
+
+    vec_swizzle& operator=(const primitive rhs) {
         vector((data[indices] = rhs)...);
         return *this;
     }
@@ -81,10 +86,10 @@ struct vec_swizzle {
     /********
     * Scalar arithmatic operations
     *********/
-    SWIZSCALAROP(+)
-    SWIZSCALAROP(-)
-    SWIZSCALAROP(*)
-    SWIZSCALAROP(/)
+    SWIZSCALAROPCONST(+)
+    SWIZSCALAROPCONST(-)
+    SWIZSCALAROPCONST(*)
+    SWIZSCALAROPCONST(/)
 
     /// <summary>
     /// Converts this swizzled view to a vector
@@ -484,9 +489,11 @@ struct vec4 {
 // define some basic vector types for convenience
 typedef vec4<float> float4;
 typedef vec4<int> int4;
+typedef vec4<unsigned int> uint4;
 
 typedef vec3<float> float3;
 typedef vec3<int> int3;
+typedef vec3<unsigned int> uint3;
 
 typedef vec2<float> float2;
 typedef vec2<int> int2;
