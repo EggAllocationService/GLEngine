@@ -31,6 +31,8 @@ static void error_callback(int error, const char* description)
     fprintf(stderr, "Error: %s\n", description);
 }
 
+static bool inverted = false;
+
 int main(int argc, char** argv) {
     glfwSetErrorCallback(error_callback);
     int result = glfwInit();
@@ -44,8 +46,9 @@ int main(int argc, char** argv) {
     engine->GetResourceManager()->MountPak("/assets", "assets.pak");
     engine->SetAllowNonFocusedPawnInput(true);
 
-    //auto invert = engine->GetRenderer()->CompilePostEffect(embed_invert_wgsl, 0);
-    //engine->PushPostEffect(invert);
+    auto invert = engine->GetRenderer()->CompilePostEffect(embed_invert_wgsl, 0);
+    auto invertIndex = engine->PushPostEffect(invert);
+    engine->SetPostEffectEnabled(invertIndex, inverted);
 
     auto ship = engine->SpawnActor<Enterprise>();
 
@@ -64,12 +67,16 @@ int main(int argc, char** argv) {
     });
 
     engine->GetInputManager()->AddAction(KEY_ESCAPE, [=]() {
-            engine->GetMouseManager()->SetMouseMode(glengine::input::MouseMode::FREE);
-        });
+        engine->GetMouseManager()->SetMouseMode(glengine::input::MouseMode::FREE);
+    });
 
     engine->GetInputManager()->AddAction('v', [=]() {
-            engine->GetMouseManager()->SetMouseMode(glengine::input::MouseMode::CAPTIVE);
-        });
-    
+        engine->GetMouseManager()->SetMouseMode(glengine::input::MouseMode::CAPTIVE);
+    });
+
+    engine->GetInputManager()->AddAction('i', [=]() {
+        engine->SetPostEffectEnabled(invertIndex, inverted = !inverted);
+    });
+
     engine->MainLoop();
 }
