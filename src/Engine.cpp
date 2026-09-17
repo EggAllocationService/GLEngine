@@ -217,9 +217,6 @@ namespace glengine {
         // dont' render before at least one update call
         if (!flags.didUpdate) return;
 
-        // perform all rendering then swap the double-buffered view
-        // clearBuffers();
-
         // track Render time
         auto start = std::chrono::steady_clock::now();
 
