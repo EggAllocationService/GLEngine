@@ -33,6 +33,10 @@ void StaticMeshComponent::SetMesh(std::shared_ptr<StaticMesh> mesh) {
     mesh_ = std::move(mesh);
 }
 
+void StaticMeshComponent::SetMesh(const std::string_view& meshName) {
+    mesh_ = GetEngine()->GetResourceManager()->GetResource<StaticMesh>(meshName);
+}
+
 void StaticMeshComponent::SetTexture(std::shared_ptr<texture::StaticTexture2D> texture) {
     texture_ = std::move(texture);
 }

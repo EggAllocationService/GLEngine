@@ -14,6 +14,7 @@ namespace glengine::world::mesh {
         void Render(const pipeline::wgpu::RenderBundle&, MatrixStack&) override;
 
         void SetMesh(std::shared_ptr<StaticMesh>);
+        void SetMesh(const std::string_view& mesh);
         void SetTexture(std::shared_ptr<texture::StaticTexture2D>);
         pipeline::wgpu::GPUPointer<Material> material;
 

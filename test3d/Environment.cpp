@@ -18,8 +18,7 @@ Environment::Environment() {
     sun->Diffuse = float4(1, 1, 1, 1);
 
     auto floor = CreateComponent<glengine::world::mesh::StaticMeshComponent>();
-    auto floorMesh = GetEngine()->GetResourceManager()->GetResource<glengine::world::mesh::StaticMesh>("/builtin/models/plane.obj");
-    floor->SetMesh(floorMesh);
+    floor->SetMesh("/builtin/models/plane.obj");
     floor->material->Diffuse = float4(0, 0.3, 0, 1);
     floor->GetTransform()->SetPosition({0, -1, 0});
 
@@ -31,8 +30,7 @@ Environment::Environment() {
     light->GetTransform()->SetPosition({3, 1, 0});
 
     auto sphere = CreateComponent<glengine::world::mesh::StaticMeshComponent>();
-    auto sphereMesh = GetEngine()->GetResourceManager()->GetResource<glengine::world::mesh::StaticMesh>("/builtin/models/sphere.obj");
-    sphere->SetMesh(sphereMesh);
+    sphere->SetMesh("/builtin/models/sphere.obj");
     sphere->GetTransform()->SetScale({0.3, 0.3, 0.3});
     sphere->material->Ambient = float4(1, 0, 0, 1);
 

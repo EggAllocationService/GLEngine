@@ -31,14 +31,9 @@ Enterprise::Enterprise()
 	auto root = CreateComponent<ActorPrimitiveComponent>();
 	root->GetTransform()->SetRotation(float3(0, PI, 0));
 
-	// load mesh
-	auto model = GetEngine()
-		->GetResourceManager()
-		->GetResource<StaticMesh>("/assets/enterprise.obj");
-
 	mesh = CreateComponent<StaticMeshComponent>();
 	mesh->SetupAttachment(root->GetTransform());
-	mesh->SetMesh(model);
+	mesh->SetMesh("/assets/enterprise.obj");
 
 	auto text = CreateComponent<font::SlugTextComponent>();
 	text->GetTransform()->SetPosition(float3(0, 0.12, 0.8));
