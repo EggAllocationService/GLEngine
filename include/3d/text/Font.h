@@ -6,7 +6,7 @@
 #include <hb.h>
 
 #include "Resource.h"
-#include "truetype.h"
+#include "util/truetype.h"
 #include "pipeline/wgpu/TypedGPUBuffer.h"
 #include "pipeline/wgpu/pipeline/RenderPipeline.h"
 #include "pipeline/wgpu/GPUMesh.h"
