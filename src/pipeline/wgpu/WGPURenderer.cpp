@@ -75,7 +75,6 @@ glengine::pipeline::wgpu::WGPURenderer::WGPURenderer(GLFWwindow *window, Engine*
             .next = nullptr,
             .sType = static_cast<WGPUSType>(WGPUSType_NativeLimits)
         },
-        .maxImmediateSize = 128,
         .maxNonSamplerBindings = WGPU_LIMIT_U32_UNDEFINED,
         .maxBindingArrayElementsPerShaderStage = WGPU_LIMIT_U32_UNDEFINED
     };
@@ -220,16 +219,8 @@ std::shared_ptr<glengine::pipeline::wgpu::RenderPipeline> glengine::pipeline::wg
         bindGroupLayouts[i + 1] = wgpuDeviceCreateBindGroupLayout(device, &bindGroups[i]);
     }
 
-    WGPUPipelineLayoutExtras layoutExtras = {
-        .chain = {
-            .next = nullptr,
-            .sType = static_cast<WGPUSType>(WGPUSType_PipelineLayoutExtras),
-        },
-        .immediateDataSize = static_cast<uint32_t>(immediateDataBytes),
-    };
-
     auto layoutDesc = WGPUPipelineLayoutDescriptor {
-        .nextInChain = &layoutExtras.chain,
+        .nextInChain = nullptr,
         .label = {
            .data = name.data(),
            .length = name.length(),
@@ -377,16 +368,8 @@ std::shared_ptr<glengine::pipeline::wgpu::ComputePipeline> glengine::pipeline::w
         bindGroupLayouts[i] = wgpuDeviceCreateBindGroupLayout(device, &bindGroups[i]);
     }
 
-    WGPUPipelineLayoutExtras extras = {
-        .chain = {
-            .next = nullptr,
-            .sType = static_cast<WGPUSType>(WGPUSType_PipelineLayoutExtras),
-        },
-        .immediateDataSize = static_cast<uint32_t>(immediateDataBytes),
-    };
-
     auto layoutDesc = WGPUPipelineLayoutDescriptor {
-        .nextInChain = &extras.chain,
+        .nextInChain = nullptr,
         .label = {},
         .bindGroupLayoutCount = bindGroups.size(),
         .bindGroupLayouts = bindGroupLayouts.data(),
@@ -567,8 +550,8 @@ glengine::pipeline::wgpu::RenderBundle glengine::pipeline::wgpu::WGPURenderer::B
         .depthStoreOp = WGPUStoreOp_Store,
         .depthClearValue = 1.0,
         .depthReadOnly = false,
-        .stencilLoadOp = WGPULoadOp_Clear,
-        .stencilStoreOp = WGPUStoreOp_Store,
+        .stencilLoadOp = WGPULoadOp_Undefined,
+        .stencilStoreOp = WGPUStoreOp_Undefined,
         .stencilClearValue = 0,
         .stencilReadOnly = false
     };

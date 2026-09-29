@@ -31,7 +31,7 @@ void glengine::pipeline::wgpu::post::PostPass::Execute(PostProcessEffect &effect
     wgpuRenderPassEncoderSetBindGroup(pass, 0, universalBindGroup, 0, nullptr);
     wgpuRenderPassEncoderSetBindGroup(pass, 1, this->sceneBindGroups[this->source], 0, nullptr);
     if (effect.GetImmediateDataSize() > 0) {
-        wgpuRenderPassEncoderSetImmediates(pass, 0, effect.GetImmediateDataSize(), immediateData);
+        wgpuRenderPassEncoderSetImmediates(pass, 0, immediateData, effect.GetImmediateDataSize());
     }
     wgpuRenderPassEncoderDraw(pass, 4, 1, 0, 0);
     wgpuRenderPassEncoderEnd(pass);

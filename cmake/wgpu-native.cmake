@@ -39,7 +39,7 @@ function(provide_wgpu_native WGPU_VERSION)
     endif()
 
     set(WGPU_ARCHIVE_NAME "wgpu-${WGPU_PLATFORM}-${WGPU_ARCH}${WGPU_ABI}-${WGPU_BUILD_TYPE}.zip")
-    set(WGPU_URL "https://github.com/gfx-rs/wgpu-native/releases/download/v${WGPU_VERSION}/${WGPU_ARCHIVE_NAME}")
+    set(WGPU_URL "https://github.com/EggAllocationService/wgpu-native/releases/download/v${WGPU_VERSION}/${WGPU_ARCHIVE_NAME}")
 
     include(FetchContent)
     FetchContent_Declare(
@@ -64,7 +64,7 @@ function(provide_wgpu_native WGPU_VERSION)
     elseif(UNIX AND NOT APPLE)
         set(OS_LIBRARIES "-lm -ldl")
     elseif(APPLE)
-        set(OS_LIBRARIES "-framework Foundation -framework CoreFoundation -framework QuartzCore -framework Metal")
+        set(OS_LIBRARIES "-framework Foundation -framework CoreFoundation -framework QuartzCore -framework Metal -framework CoreGraphics")
     endif()
 
     set(wgpu-native_LIBRARIES "${WGPU_NATIVE_LIB}" ${OS_LIBRARIES} PARENT_SCOPE)

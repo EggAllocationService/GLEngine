@@ -9,6 +9,7 @@ function(provide_harfbuzz HB_VERSION)
         harfbuzz-s
         GIT_REPOSITORY https://github.com/harfbuzz/harfbuzz.git
         GIT_TAG ${HB_VERSION}
+        GIT_SHALLOW TRUE
     )
 
     FetchContent_MakeAvailable(harfbuzz-s)

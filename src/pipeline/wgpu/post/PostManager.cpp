@@ -73,15 +73,8 @@ namespace glengine::pipeline::wgpu::post {
         std::string preamble(embed_Postpre_wgsl, embed_Postpre_wgsl_length);
         auto combined = preamble + std::string(shader);
 
-        auto extras = WGPUPipelineLayoutExtras {
-            .chain = {
-                .next = nullptr,
-                .sType = std::bit_cast<WGPUSType>(WGPUSType_PipelineLayoutExtras)
-            },
-            .immediateDataSize = immediateSize
-        };
         auto layoutDesc = WGPUPipelineLayoutDescriptor {
-            .nextInChain = &extras.chain,
+            .nextInChain = nullptr,
             .label = {},
             .bindGroupLayoutCount = 2,
             .bindGroupLayouts = &layouts[0],

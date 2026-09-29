@@ -30,7 +30,7 @@ namespace glengine::pipeline::wgpu {
             wgpuComputePassEncoderSetBindGroup(bundle.encoder, i, _groups[i], 0, nullptr);
         }
         if (_immediateDataSize > 0) {
-            wgpuComputePassEncoderSetImmediates(bundle.encoder, 0, _immediateDataSize, immediateData);
+            wgpuComputePassEncoderSetImmediates(bundle.encoder, 0, immediateData, _immediateDataSize);
         }
 
         wgpuComputePassEncoderDispatchWorkgroups(bundle.encoder, x, y, z);
@@ -42,7 +42,7 @@ namespace glengine::pipeline::wgpu {
             wgpuComputePassEncoderSetBindGroup(bundle.encoder, i, _groups[i], 0, nullptr);
         }
         if (_immediateDataSize > 0) {
-            wgpuComputePassEncoderSetImmediates(bundle.encoder, 0, _immediateDataSize, immediateData);
+            wgpuComputePassEncoderSetImmediates(bundle.encoder, 0, immediateData, _immediateDataSize);
         }
 
         wgpuComputePassEncoderDispatchWorkgroupsIndirect(bundle.encoder, indirectArgs, offset);
