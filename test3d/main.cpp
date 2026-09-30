@@ -8,6 +8,7 @@
 #include "Engine.h"
 #include "Enterprise.h"
 #include "Environment.h"
+#include "MeshDemoComponent.h"
 #include "SpinnyCube.h"
 #include "../include/3d/text/Font.h"
 #include "3d/mesh/StaticMesh.h"
@@ -45,6 +46,8 @@ int main(int argc, char** argv) {
     auto engine = new Engine("3D Test", int2(1280, 720));
     engine->GetResourceManager()->MountPak("/assets", "assets.pak");
     engine->SetAllowNonFocusedPawnInput(true);
+
+    //MeshDemoComponent::RegisterPipeline(engine);
 
     auto invert = engine->GetRenderer()->CompilePostEffect(embed_invert_wgsl, 0);
     auto invertIndex = engine->PushPostEffect(invert);
