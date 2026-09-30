@@ -135,7 +135,7 @@ glengine::pipeline::wgpu::WGPURenderer::WGPURenderer(GLFWwindow *window, Engine*
         .hasDynamicOffset = false,
         .minBindingSize = sizeof(RenderUniforms)
     };
-    universalEntryDescs[0].visibility = WGPUShaderStage_Fragment | WGPUShaderStage_Vertex  | GL_WGPUShaderStage_Mesh | GL_WGPUShaderStage_Task;
+    universalEntryDescs[0].visibility = WGPUShaderStage_Fragment | WGPUShaderStage_Vertex | GL_WGPUShaderStage_Mesh | GL_WGPUShaderStage_Task;
 
     universalEntryDescs[1].binding = 1;
     universalEntryDescs[1].buffer = WGPUBufferBindingLayout { // lighting info
@@ -144,7 +144,7 @@ glengine::pipeline::wgpu::WGPURenderer::WGPURenderer(GLFWwindow *window, Engine*
         .hasDynamicOffset = false,
         .minBindingSize = 0
     };
-    universalEntryDescs[1].visibility = WGPUShaderStage_Fragment;
+    universalEntryDescs[1].visibility = WGPUShaderStage_Fragment | GL_WGPUShaderStage_Mesh;
 
     auto universalLayoutDescriptor = WGPUBindGroupLayoutDescriptor {
         .nextInChain = nullptr,
