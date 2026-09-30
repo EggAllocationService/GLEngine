@@ -349,6 +349,132 @@ std::shared_ptr<glengine::pipeline::wgpu::RenderPipeline> glengine::pipeline::wg
     return built;
 }
 
+std::shared_ptr<glengine::pipeline::wgpu::MeshPipeline> glengine::pipeline::wgpu::WGPURenderer::GetMeshPipelineByName(
+    const std::string &name) {
+    if (meshPipelines.contains(name)) {
+        return meshPipelines[name];
+    }
+
+    return nullptr;
+}
+
+std::shared_ptr<glengine::pipeline::wgpu::MeshPipeline> glengine::pipeline::wgpu::WGPURenderer::BuildMeshPipeline(
+    std::string name, WGPUShaderModule shaders, bool useTaskShaders, std::span<WGPUBindGroupLayoutDescriptor> bindGroups,
+    int immediateDataBytes, RenderPipelineExtras *extras) {
+
+    // manually build pipeline layout
+    std::vector<WGPUBindGroupLayout> bindGroupLayouts(bindGroups.size() + 1);
+
+    bindGroupLayouts[0] = universalBindGroupLayout;
+    for (int i = 0; i < bindGroups.size(); i++) {
+        bindGroupLayouts[i + 1] = wgpuDeviceCreateBindGroupLayout(device, &bindGroups[i]);
+    }
+
+    auto layoutDesc = WGPUPipelineLayoutDescriptor {
+        .nextInChain = nullptr,
+        .label = {
+            .data = name.data(),
+            .length = name.length(),
+         },
+         .bindGroupLayoutCount = bindGroups.size() + 1,
+         .bindGroupLayouts = bindGroupLayouts.data(),
+         .immediateSize = static_cast<uint32_t>(immediateDataBytes),
+     };
+
+    auto layout = wgpuDeviceCreatePipelineLayout(device, &layoutDesc);
+
+    WGPUBlendState blend = WGPU_BLEND_STATE_INIT;
+    blend.color.dstFactor = WGPUBlendFactor_OneMinusSrcAlpha;
+    blend.color.srcFactor = WGPUBlendFactor_SrcAlpha;
+    blend.color.operation = WGPUBlendOperation_Add;
+    auto target = WGPUColorTargetState {
+        .nextInChain = nullptr,
+        .format = surfConfig.format,
+        .blend = &blend,
+        .writeMask = WGPUColorWriteMask_All
+    };
+    auto fragmentState = WGPUFragmentState {
+        .nextInChain = nullptr,
+        .module = shaders,
+        .entryPoint = {},
+        .constantCount = 0,
+        .constants = nullptr,
+        .targetCount = 1,
+        .targets = &target
+    };
+
+    auto depthStencilState = WGPUDepthStencilState {
+        .nextInChain = nullptr,
+        .format = WGPUTextureFormat_Depth24Plus,
+        .depthWriteEnabled = WGPUOptionalBool_True,
+        .depthCompare = extras != nullptr ? extras->depthMode : WGPUCompareFunction_LessEqual,
+        .stencilFront = {},
+        .stencilBack = {},
+        .stencilReadMask = 0,
+        .stencilWriteMask = 0,
+        .depthBias = 0,
+        .depthBiasSlopeScale = 0,
+        .depthBiasClamp = 0
+    };
+
+    auto primitiveExtras = WGPUPrimitiveStateExtras {
+        .chain = {
+           .next = nullptr,
+           .sType = std::bit_cast<WGPUSType>(WGPUSType_PrimitiveStateExtras),
+        },
+        .polygonMode = extras != nullptr ? extras->polygonMode : WGPUPolygonMode_Fill,
+        .conservative = false
+    };
+
+    auto taskState = WGPUTaskState {
+        .nextInChain = nullptr,
+        .module = shaders,
+        .entryPoint = {},
+        .constantCount = 0,
+        .constants = nullptr
+    };
+
+    auto desc = WGPUMeshPipelineDescriptor {
+        .nextInChain = nullptr,
+        .label = {
+           .data = name.data(),
+           .length = name.length(),
+        },
+        .layout = layout,
+        .task = useTaskShaders ? &taskState : nullptr,
+        .mesh = {
+            .nextInChain = nullptr,
+            .module = shaders,
+            .entryPoint = {},
+            .constantCount = 0,
+            .constants = nullptr
+        },
+        .primitive = {
+            .nextInChain = &primitiveExtras.chain,
+            .topology = extras != nullptr ? extras->primitiveTopology : WGPUPrimitiveTopology_TriangleList,
+            .stripIndexFormat = WGPUIndexFormat_Undefined,
+            .frontFace = WGPUFrontFace_CW,
+            .cullMode = extras != nullptr ? extras->cullMode : WGPUCullMode_Back,
+            .unclippedDepth = false
+        },
+        .depthStencil = &depthStencilState,
+        .multisample = {
+            .nextInChain = nullptr,
+            .count = 1,
+            .mask = 0xFFFFFFFF,
+            .alphaToCoverageEnabled = false
+        },
+        .fragment = &fragmentState,
+    };
+
+    auto pipeline = wgpuDeviceCreateMeshPipeline(device, &desc);
+
+    auto built = std::make_shared<MeshPipeline>(device, pipeline, std::move(bindGroupLayouts), nullptr, immediateDataBytes);
+    meshPipelines.insert_or_assign(name, built);
+
+    return built;
+}
+
 std::shared_ptr<glengine::pipeline::wgpu::ComputePipeline> glengine::pipeline::wgpu::WGPURenderer::
 GetComputePipelineByName(const std::string &name) {
     if (computePipelines.contains(name)) {

@@ -15,7 +15,7 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS ON)
 
-provide_wgpu_native("30.0.1-kyle")
+provide_wgpu_native("30.0.1-kyle.2")
 
 set(GLFW_BUILD_DOCS OFF)
 set(GLFW_BUILD_EXAMPLES OFF)
@@ -81,6 +81,8 @@ add_library(glengine SHARED
         include/pipeline/wgpu/post/PostPass.h
         src/pipeline/wgpu/post/PostManager.cpp
         include/pipeline/wgpu/post/PostManager.h
+        src/pipeline/wgpu/pipeline/MeshPipeline.cpp
+        include/pipeline/wgpu/pipeline/MeshPipeline.h
 )
 
 create_resource_library(NAME Shaders SOURCES 
