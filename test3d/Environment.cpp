@@ -7,6 +7,7 @@
 #include "Engine.h"
 #include "3d/components/DirectionalLightComponent.h"
 #include "GLMath.h"
+#include "MeshDemoComponent.h"
 #include "3d/components/AxesComponent.h"
 #include "3d/mesh/StaticMeshComponent.h"
 
@@ -17,9 +18,7 @@ Environment::Environment() {
     sun->Ambient = float4(0.1, 0.1, 0.1, 1);
     sun->Diffuse = float4(1, 1, 1, 1);
 
-    auto floor = CreateComponent<glengine::world::mesh::StaticMeshComponent>();
-    floor->SetMesh("/builtin/models/plane.obj");
-    floor->material->Diffuse = float4(0, 0.3, 0, 1);
+    auto floor = CreateComponent<MeshDemoComponent>();
     floor->GetTransform()->SetPosition({0, -1, 0});
 
     auto light = CreateComponent<glengine::world::components::PointLightComponent>();
