@@ -17,6 +17,7 @@
 #include "TransferManager.h"
 #include "WrappedBuffer.h"
 #include "pipeline/ComputePipeline.h"
+#include "pipeline/MeshPipeline.h"
 #include "post/PostManager.h"
 #include "post/PostPass.h"
 
@@ -123,6 +124,16 @@ namespace glengine::pipeline::wgpu {
             RenderPipelineExtras *extras
         );
 
+        std::shared_ptr<MeshPipeline> GetMeshPipelineByName(const std::string& name);
+        std::shared_ptr<MeshPipeline> BuildMeshPipeline(
+            std::string name,
+            WGPUShaderModule shaders,
+            bool useTaskShaders,
+            std::span<WGPUBindGroupLayoutDescriptor> bindGroups,
+            int immediateDataBytes,
+            RenderPipelineExtras *extras
+        );
+
         std::shared_ptr<ComputePipeline> GetComputePipelineByName(const std::string& name);
         std::shared_ptr<ComputePipeline> BuildComputePipeline(
             std::string name,
@@ -190,6 +201,7 @@ namespace glengine::pipeline::wgpu {
         WGPUSurfaceConfiguration surfConfig;
         std::vector<WGPUBindGroupEntry> universalEntries;
         std::unordered_map<std::string, std::shared_ptr<RenderPipeline>> pipelines;
+        std::unordered_map<std::string, std::shared_ptr<MeshPipeline>> meshPipelines;
         std::unordered_map<std::string, std::shared_ptr<ComputePipeline>> computePipelines;
         WGPUDevice device;
         WGPUQueue queue;
