@@ -207,7 +207,7 @@ if (${PROJECT_IS_TOP_LEVEL})
                 /enterprise.obj
     )
 
-    create_resource_library(NAME DemoShaders SOURCES test3d/invert.wgsl)
+    create_resource_library(NAME DemoShaders SOURCES test3d/invert.wgsl test3d/mesh.wgsl)
 
     add_executable(test3d test3d/main.cpp
             test3d/SpinnyCube.cpp
@@ -216,6 +216,8 @@ if (${PROJECT_IS_TOP_LEVEL})
             test3d/Enterprise.cpp
             test3d/Environment.cpp
             test3d/Environment.h
+            test3d/MeshDemoComponent.cpp
+            test3d/MeshDemoComponent.h
     )
 
     target_link_libraries(test3d PRIVATE glengine DemoShaders)

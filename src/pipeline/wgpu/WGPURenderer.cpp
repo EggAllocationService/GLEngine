@@ -17,6 +17,9 @@
 #include "TextRenderingResources.h"
 #endif
 
+static const WGPUShaderStage GL_WGPUShaderStage_Task = 0x0000000000000008;
+static const WGPUShaderStage GL_WGPUShaderStage_Mesh = 0x0000000000000010;
+
 static void handle_request_adapter(WGPURequestAdapterStatus status,
     WGPUAdapter adapter, WGPUStringView message,
     void* userdata1, void* userdata2) {
@@ -81,13 +84,16 @@ glengine::pipeline::wgpu::WGPURenderer::WGPURenderer(GLFWwindow *window, Engine*
 
     WGPULimits requiredLimits = WGPU_LIMITS_INIT;
     requiredLimits.nextInChain = &nativeLimits.chain;
+    wgpuAdapterGetLimits(adapter, &requiredLimits);
+
     requiredLimits.maxImmediateSize = 128;
 
-    auto features = new WGPUNativeFeature[2] { WGPUNativeFeature_Immediates, WGPUNativeFeature_PolygonModeLine };
+
+    auto features = new WGPUNativeFeature[3] { WGPUNativeFeature_Immediates, WGPUNativeFeature_PolygonModeLine, WGPUNativeFeature_MeshShader };
     WGPUDeviceDescriptor deviceDescriptor = WGPU_DEVICE_DESCRIPTOR_INIT;
     deviceDescriptor.requiredLimits = &requiredLimits;
     deviceDescriptor.requiredFeatures = reinterpret_cast<WGPUFeatureName*>(&features[0]);
-    deviceDescriptor.requiredFeatureCount = 2;
+    deviceDescriptor.requiredFeatureCount = 3;
 
     device = nullptr;
 
@@ -129,7 +135,7 @@ glengine::pipeline::wgpu::WGPURenderer::WGPURenderer(GLFWwindow *window, Engine*
         .hasDynamicOffset = false,
         .minBindingSize = sizeof(RenderUniforms)
     };
-    universalEntryDescs[0].visibility = WGPUShaderStage_Fragment | WGPUShaderStage_Vertex,
+    universalEntryDescs[0].visibility = WGPUShaderStage_Fragment | WGPUShaderStage_Vertex  | GL_WGPUShaderStage_Mesh | GL_WGPUShaderStage_Task;
 
     universalEntryDescs[1].binding = 1;
     universalEntryDescs[1].buffer = WGPUBufferBindingLayout { // lighting info
@@ -396,7 +402,7 @@ std::shared_ptr<glengine::pipeline::wgpu::MeshPipeline> glengine::pipeline::wgpu
     auto fragmentState = WGPUFragmentState {
         .nextInChain = nullptr,
         .module = shaders,
-        .entryPoint = {},
+        .entryPoint = {"fs", 2},
         .constantCount = 0,
         .constants = nullptr,
         .targetCount = 1,
@@ -429,7 +435,7 @@ std::shared_ptr<glengine::pipeline::wgpu::MeshPipeline> glengine::pipeline::wgpu
     auto taskState = WGPUTaskState {
         .nextInChain = nullptr,
         .module = shaders,
-        .entryPoint = {},
+        .entryPoint = {"task", WGPU_STRLEN},
         .constantCount = 0,
         .constants = nullptr
     };
@@ -445,7 +451,7 @@ std::shared_ptr<glengine::pipeline::wgpu::MeshPipeline> glengine::pipeline::wgpu
         .mesh = {
             .nextInChain = nullptr,
             .module = shaders,
-            .entryPoint = {},
+            .entryPoint = {"mesh", WGPU_STRLEN},
             .constantCount = 0,
             .constants = nullptr
         },
