@@ -47,7 +47,7 @@ int main(int argc, char** argv) {
     engine->GetResourceManager()->MountPak("/assets", "assets.pak");
     engine->SetAllowNonFocusedPawnInput(true);
 
-    //MeshDemoComponent::RegisterPipeline(engine);
+    MeshDemoComponent::RegisterPipeline(engine);
 
     auto invert = engine->GetRenderer()->CompilePostEffect(embed_invert_wgsl, 0);
     auto invertIndex = engine->PushPostEffect(invert);
