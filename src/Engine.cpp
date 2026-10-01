@@ -18,8 +18,10 @@
 #endif
 #include "BuiltinAssets.h"
 #include "3d/objects/LightTracker.h"
+#include "3d/objects/OptimizedDrawTracker.h"
 
 namespace glengine {
+    static Engine* CURRENT_ENGINE = nullptr;
 
 #pragma region event handlers
     /// These event handlers are needed because we can't pass state-owning functions (i.e. lambdas) to C as
@@ -49,6 +51,7 @@ namespace glengine {
 #pragma endregion
 
     Engine::Engine(const std::string &windowName, int2 size) {
+        CURRENT_ENGINE = this;
         windowSize = size;
         glfwInit();
         glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
@@ -78,6 +81,7 @@ namespace glengine {
         renderObjectManager = new rendering::RenderObjects(renderer);
         renderObjectManager->Create<world::objects::InstancedDrawTracker>();
         renderObjectManager->Create<world::objects::LightTracker>();
+        renderObjectManager->Create<world::objects::OptimizedDrawTracker>();
 
         resourceManager->MountPak("/builtin", embed_builtin_pak, embed_builtin_pak_length);
 #ifdef GLENGINE_TEXT_RENDERING
@@ -109,6 +113,7 @@ namespace glengine {
     }
 
     void Engine::Update() {
+        CURRENT_ENGINE = this;
         // main update loop
         flags.didUpdate = true;
 
@@ -165,6 +170,7 @@ namespace glengine {
     }
 
     void Engine::Possess(const std::shared_ptr<world::Pawn>& target) {
+        CURRENT_ENGINE = this;
         // clear existing input bindings
         pawnInputManager->Reset();
 
@@ -214,6 +220,7 @@ namespace glengine {
     }
 
     void Engine::Render() {
+        CURRENT_ENGINE = this;
         // dont' render before at least one update call
         if (!flags.didUpdate) return;
 
@@ -234,6 +241,10 @@ namespace glengine {
         auto end = std::chrono::steady_clock::now();
         auto timeMs = std::chrono::duration_cast<std::chrono::duration<double, std::milli>>(end - start);
         lastRenderTime = timeMs.count();
+    }
+
+    Engine * Engine::GetCurrentEngine() {
+        return CURRENT_ENGINE;
     }
 
     double Engine::calculateDeltaTime() const {

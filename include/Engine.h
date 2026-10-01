@@ -136,6 +136,8 @@ namespace glengine {
         [[nodiscard]] GLFWwindow* GetWindow() const {
             return window;
         }
+
+        [[nodiscard]] static Engine* GetCurrentEngine();
 #pragma endregion
 
     private:
