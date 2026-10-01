@@ -77,23 +77,24 @@ fn task(
     @builtin(global_invocation_id) globalIdx: vec3<u32>
 ) -> @builtin(mesh_task_size) vec3<u32> {
     let instance = globalIdx.y;
-    let baseMeshlet = globalIdx.x * 96;
+    let baseMeshlet = globalIdx.x;
     let meshlet = localIdx.x;
 
-    if (baseMeshlet + meshlet > arrayLength(&meshlets)) {
+    /*if (baseMeshlet + meshlet > arrayLength(&meshlets)) {
         return vec3u(0,0,0); // last batch will be out of bounds
-    }
+    }*/
 
-    let cameraForward = camera.viewMatrix[2].xyz;
+   /* let cameraForward = camera.viewMatrix[2].xyz;
     let cameraOrigin = camera.viewMatrix[3].xyz;
-    let meshletOrigin = (instances[instance].transform * vec4f(meshlets[meshlet].origin, 1.0)).xyz;
-    let meshletDir = normalize(cameraOrigin - meshletOrigin);
+    let meshletOrigin = (instances[instance].transform * vec4f(meshlets[baseMeshlet + meshlet].origin, 1.0)).xyz;
+    let meshletDir = normalize(cameraOrigin - meshletOrigin);*/
 
-    if (dot(cameraForward, meshletDir) < 0 && dot(normalize(meshlets[meshlet].coneApex - cameraOrigin), meshlets[meshlet].coneAxis) < 0.25) {
+   /* if (dot(cameraForward, meshletDir) < 0 && dot(normalize(meshlets[meshlet].coneApex - cameraOrigin), meshlets[meshlet].coneAxis) < 0.25) {
         // meshlet should be drawn
-        let idx = atomicAdd(&scratch.meshletCount, 1);
-        scratch.meshlets[idx] = meshlet;
-    }
+
+    }*/
+    let idx = atomicAdd(&scratch.meshletCount, 1);
+    scratch.meshlets[idx] = meshlet;
     workgroupBarrier();
 
 
@@ -125,13 +126,13 @@ var<workgroup> mesh_output: MeshOutput;
 @mesh(mesh_output)
 @payload(payload)
 @workgroup_size(64, 1, 1)
-fn mesh(@builtin(global_invocation_id) globalIdx: vec3u, @builtin(local_invocation_id) localIdx: vec3u) {
-    let mvp = camera.projectionViewMatrix * instances[payload.instance].transform;
+fn mesh(@builtin(workgroup_id) globalIdx: vec3u, @builtin(local_invocation_id) localIdx: vec3u) {
+    let mvp = camera.projectionViewMatrix * instances[0].transform;
 
     // fetch meshlet id from packed ids in payload
     let payloadIdx = globalIdx.x / 4;
     let payloadOffset = globalIdx.x % 4;
-    let meshlet = unpack4xU8(payload.meshlets[payloadIdx])[payloadOffset];
+    let meshlet = payload.meshletOffset + unpack4xU8(payload.meshlets[payloadIdx])[payloadOffset];
 
     if (localIdx.x < meshlets[meshlet].verticesCount) {
         let v = vertices[meshlets[meshlet].verticesOffset + localIdx.x];

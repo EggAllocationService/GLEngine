@@ -106,6 +106,17 @@ std::string optimizeMesh(const char* fileName) {
     meshopt_optimizeVertexCache(indices.data(), indices.data(), indices.size(), vertices.size());
     meshopt_optimizeOverdraw(indices.data(), indices.data(), indices.size(), &vertices[0].position.x, vertices.size(), sizeof(MeshVertex), 1.05f);
 
+    // scale vertices
+    float scale = 0;
+    for (const auto& vertex : vertices) {
+        scale = std::max(scale, vertex.position.x);
+        scale = std::max(scale, vertex.position.y);
+        scale = std::max(scale, vertex.position.z);
+    }
+
+    for (auto& vertex : vertices) {
+        vertex.position = vertex.position / scale;
+    }
 
     // generate meshlets
     const size_t max_vertices = 64;
