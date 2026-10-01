@@ -19,8 +19,13 @@ Environment::Environment() {
     sun->Ambient = float4(0.1, 0.1, 0.1, 1);
     sun->Diffuse = float4(1, 1, 1, 1);
 
-    auto floor = CreateComponent<glengine::world::mesh::OptimizedMeshComponent>("/assets/statue.mesh");
-    floor->GetTransform()->SetPosition({0, -1, 0});
+    for (int x = -5; x < 5; x++) {
+        for (int z = -5; z < 5; z++) {
+            auto floor = CreateComponent<glengine::world::mesh::OptimizedMeshComponent>("/assets/statue.mesh");
+            floor->GetTransform()->SetPosition({(float)x, -1, (float)z});
+            floor->GetTransform()->SetRotation({-PI/2, 0, 0});
+        }
+    }
 
     auto light = CreateComponent<glengine::world::components::PointLightComponent>();
     light->Diffuse = float4(1, 0, 0, 1);
