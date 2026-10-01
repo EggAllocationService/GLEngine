@@ -5,6 +5,7 @@
 #include "3d/mesh/OptimizedMesh.h"
 
 #include "Engine.h"
+#include <cstring>
 #include "3d/objects/OptimizedDrawTracker.h"
 
 struct MeshHeader {
