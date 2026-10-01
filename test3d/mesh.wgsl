@@ -15,11 +15,11 @@ var<uniform> camera: RenderUniforms;
 const positions = array(
     vec4f(1, 0, 0, 1),
     vec4f(0, 0, 0, 1),
-    vec4f(0, 0, 1, 0),
+    vec4f(0, 0, 1, 1),
     vec4f(1, 0, 1, 1),
     vec4f(1, 1, 0, 1),
     vec4f(0, 1, 0, 1),
-    vec4f(0, 1, 1, 0),
+    vec4f(0, 1, 1, 1),
     vec4f(1, 1, 1, 1),
 );
 struct Vertex {
@@ -49,7 +49,7 @@ fn mesh(@builtin(local_invocation_id) idx: vec3u) {
         mesh_output.vertex_count = 4;
         mesh_output.primitive_count = 2;
         mesh_output.primitives[0].indices = vec3u(0, 1, 2);
-        mesh_output.primitives[1].indices = vec3u(1, 2, 3);
+        mesh_output.primitives[1].indices = vec3u(0, 2, 3);
     }
 }
 
