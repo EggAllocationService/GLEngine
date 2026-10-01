@@ -55,31 +55,34 @@ struct Primitive {
     @builtin(triangle_indices) indices: vec3<u32>
 }
 
+const TASK_MESHLET_GROUP_SIZE: u32 = 96;
+const TASK_PAYLOAD_MESHLET_ARR: u32 = TASK_MESHLET_GROUP_SIZE / 4;
+
 struct TaskPayload {
     instance: u32,
     meshletOffset: u32,
     meshletCount: u32,
-    meshlets: array<u32, 24>
+    meshlets: array<u32, TASK_PAYLOAD_MESHLET_ARR>
 }
 var<task_payload> payload: TaskPayload;
 
 struct TaskScratch {
     meshletCount: atomic<u32>,
-    meshlets: array<u32, 96>
+    meshlets: array<u32, TASK_MESHLET_GROUP_SIZE>
 }
 
 var<workgroup> scratch: TaskScratch;
 
 @task
 @payload(payload)
-@workgroup_size(96, 1, 1)
+@workgroup_size(TASK_MESHLET_GROUP_SIZE, 1, 1)
 fn task(
     @builtin(local_invocation_id) localIdx: vec3<u32>,
     @builtin(global_invocation_id) globalIdx: vec3<u32>,
     @builtin(workgroup_id) workgroupIdx: vec3<u32>
 ) -> @builtin(mesh_task_size) vec3<u32> {
     let instance = globalIdx.y;
-    let baseMeshlet = workgroupIdx.x * 96;
+    let baseMeshlet = workgroupIdx.x * TASK_MESHLET_GROUP_SIZE;
     let meshlet = localIdx.x;
 
 
@@ -95,22 +98,21 @@ fn task(
     if (globalIdx.x < arrayLength(&meshlets)) {
         let idx = atomicAdd(&scratch.meshletCount, 1);
         scratch.meshlets[idx] = meshlet;
-        workgroupBarrier();
+    }
+    workgroupBarrier();
 
 
-        if (localIdx.x < 24) {
-            let idxBase = localIdx.x * 4;
-            let idxs = vec4u(scratch.meshlets[idxBase + 0], scratch.meshlets[idxBase + 1], scratch.meshlets[idxBase + 2], scratch.meshlets[idxBase + 3]);
-            payload.meshlets[localIdx.x] = pack4xU8(idxs);
-        }
-
-        if (localIdx.x == 0) {
-            payload.instance = instance;
-            payload.meshletOffset = baseMeshlet;
-            payload.meshletCount = atomicLoad(&scratch.meshletCount);
-        }
+    if (localIdx.x < TASK_PAYLOAD_MESHLET_ARR) {
+        let idxBase = localIdx.x * 4;
+        let idxs = vec4u(scratch.meshlets[idxBase + 0], scratch.meshlets[idxBase + 1], scratch.meshlets[idxBase + 2], scratch.meshlets[idxBase + 3]);
+        payload.meshlets[localIdx.x] = pack4xU8(idxs);
     }
 
+    if (localIdx.x == 0) {
+        payload.instance = instance;
+        payload.meshletOffset = baseMeshlet;
+        payload.meshletCount = atomicLoad(&scratch.meshletCount);
+    }
 
     return vec3u(payload.meshletCount, 1, 1);
 }
