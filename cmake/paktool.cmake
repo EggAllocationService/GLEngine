@@ -11,9 +11,15 @@ FetchContent_Declare(meshoptimizer
 set(MESHOPT_INSTALL OFF)
 
 FetchContent_MakeAvailable(meshoptimizer)
-add_executable(paktool "cmake/paktool.cpp" "cmake/tiny_obj_loader.h")
-target_link_libraries(paktool meshoptimizer)
 
+add_library(optimizer STATIC cmake/optimizer.cpp cmake/optimizer.h "cmake/tiny_obj_loader.h")
+target_link_libraries(optimizer PRIVATE meshoptimizer)
+
+add_executable(paktool "cmake/paktool.cpp")
+target_link_libraries(paktool optimizer)
+
+add_executable(opttool "cmake/opttool.cpp")
+target_link_libraries(opttool optimizer)
 
 function(build_pak)
     set(options "")
