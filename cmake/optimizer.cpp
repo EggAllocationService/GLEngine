@@ -54,6 +54,42 @@ namespace std {
     };
 }
 
+std::vector<float3> computeAllSmoothingNormals(const tinyobj::attrib_t& attrib, const std::vector<tinyobj::shape_t>& shapes) {
+    std::vector<float3> accumulated(attrib.vertices.size() / 3, float3(0, 0, 0));
+
+    for (auto& shape : shapes) {
+        for (size_t f = 0; f < shape.mesh.num_face_vertices.size(); f += 1) {
+            bool missing = false;
+            for (int i = 0; i < 3; ++i) {
+                if (shape.mesh.indices[(3 * f) + i].normal_index < 0) {
+                    missing = true;
+                    break;
+                }
+            }
+            if (!missing) {
+                continue;
+            }
+
+            const float3 p0 = *reinterpret_cast<const float3*>(&attrib.vertices[3 * size_t(shape.mesh.indices[(3 * f) + 0].vertex_index)]);
+            const float3 p1 = *reinterpret_cast<const float3*>(&attrib.vertices[3 * size_t(shape.mesh.indices[(3 * f) + 1].vertex_index)]);
+            const float3 p2 = *reinterpret_cast<const float3*>(&attrib.vertices[3 * size_t(shape.mesh.indices[(3 * f) + 2].vertex_index)]);
+            const float3 faceNormal = (p1 - p0).cross(p2 - p0);
+
+            for (int i = 0; i < 3; ++i) {
+                auto& slot = accumulated[shape.mesh.indices[(3 * f) + i].vertex_index];
+                slot = slot + faceNormal;
+            }
+        }
+    }
+
+    std::vector<float3> normals(accumulated.size());
+    for (size_t i = 0; i < accumulated.size(); ++i) {
+        const float len = accumulated[i].len();
+        normals[i] = len > 0 ? accumulated[i] / len : float3(0, 1, 0);
+    }
+    return normals;
+}
+
 std::string optimizeMesh(const char* fileName) {
     tinyobj::ObjReaderConfig config;
     config.triangulation_method = "simple";
@@ -72,8 +108,10 @@ std::string optimizeMesh(const char* fileName) {
         std::cout << "TinyObjReader: " << reader.Warning();
     }
 
-    auto& shapes = reader.GetShapes();
-    auto& attrib = reader.GetAttrib();
+    auto shapes = reader.GetShapes();
+    auto attrib = reader.GetAttrib();
+    auto computedNormals = computeAllSmoothingNormals(attrib, shapes);
+
     std::vector<MeshVertex> vertices;
     std::vector<unsigned int> indices;
     std::unordered_map<MeshVertex, uint32_t> vertex_indices{};
@@ -81,12 +119,14 @@ std::string optimizeMesh(const char* fileName) {
     for (auto& shape : shapes) {
         for (size_t f = 0; f < shape.mesh.num_face_vertices.size(); f += 1) {
             for (int i = 0; i < 3; ++i) {
-                MeshVertex vertex;
+                MeshVertex vertex{};
                 tinyobj::index_t idx = shape.mesh.indices[(3 * f) + i];
 
                 vertex.position = *reinterpret_cast<const float3*>(&attrib.vertices[3 * size_t(idx.vertex_index)]);
                 if (idx.normal_index >= 0) {
                     vertex.normal = *reinterpret_cast<const float3*>(&attrib.normals[3 * size_t(idx.normal_index)]);
+                } else {
+                    vertex.normal = computedNormals[size_t(idx.vertex_index)];
                 }
 
                 if (idx.texcoord_index >= 0) {
@@ -113,9 +153,9 @@ std::string optimizeMesh(const char* fileName) {
     // scale vertices
     float scale = 0;
     for (const auto& vertex : vertices) {
-        scale = std::max(scale, vertex.position.x);
-        scale = std::max(scale, vertex.position.y);
-        scale = std::max(scale, vertex.position.z);
+        scale = std::max(scale, std::abs(vertex.position.x));
+        scale = std::max(scale, std::abs(vertex.position.y));
+        scale = std::max(scale, std::abs(vertex.position.z));
     }
 
     for (auto& vertex : vertices) {
@@ -124,7 +164,7 @@ std::string optimizeMesh(const char* fileName) {
 
     // generate meshlets
     const size_t max_vertices = 64;
-    const size_t max_triangles = 96;
+    const size_t max_triangles = 64;
     const float cone_weight = 0.25;
 
     size_t maxMeshlets = meshopt_buildMeshletsBound(indices.size(), max_vertices, max_triangles);
@@ -186,7 +226,7 @@ std::string optimizeMesh(const char* fileName) {
             .verticesOffset = meshlet.vertex_offset,
             .verticesSize = meshlet.vertex_count,
             .indicesOffset = meshlet.triangle_offset,
-            .indicesSize = meshlet.triangle_count
+            .indicesSize = meshlet.triangle_count * 3
         };
         output.write(reinterpret_cast<const std::ostream::char_type *>(&result), sizeof(result));
     }
