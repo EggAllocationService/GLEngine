@@ -4,6 +4,8 @@
 
 #include "3d/objects/OptimizedDrawTracker.h"
 #include "Shaders.h"
+#include <format>
+#include <cstring>
 
 namespace glengine::world::objects {
     OptimizedDrawTracker::OptimizedDrawTracker() {

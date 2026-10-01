@@ -2,9 +2,11 @@
 // Created by Kyle Smith on 2026-10-01.
 //
 #define TINYOBJLOADER_IMPLEMENTATION
+#include <format>
+
 #include "tiny_obj_loader.h"
 
-#include <fstream>
+#include <unordered_map>
 #include <iostream>
 #include <string>
 #include <vector>
@@ -54,7 +56,7 @@ namespace std {
 
 std::string optimizeMesh(const char* fileName) {
     tinyobj::ObjReaderConfig config;
-    config.triangulation_method = "earcut";
+    config.triangulation_method = "simple";
     config.vertex_color = false;
     config.triangulate = true;
 
@@ -77,10 +79,10 @@ std::string optimizeMesh(const char* fileName) {
     std::unordered_map<MeshVertex, uint32_t> vertex_indices{};
 
     for (auto& shape : shapes) {
-        for (size_t f = 0; f < shape.mesh.num_face_vertices.size(); f += 3) {
+        for (size_t f = 0; f < shape.mesh.num_face_vertices.size(); f += 1) {
             for (int i = 0; i < 3; ++i) {
                 MeshVertex vertex;
-                tinyobj::index_t idx = shape.mesh.indices[f + i];
+                tinyobj::index_t idx = shape.mesh.indices[(3 * f) + i];
 
                 vertex.position = *reinterpret_cast<const float3*>(&attrib.vertices[3 * size_t(idx.vertex_index)]);
                 if (idx.normal_index >= 0) {
@@ -101,6 +103,8 @@ std::string optimizeMesh(const char* fileName) {
             }
         }
     }
+
+    std::cout << std::format("Vertices: {}, Triangles: {}", vertices.size(), indices.size() / 3) << std::endl;
 
     // perform optimization passes
     meshopt_optimizeVertexCache(indices.data(), indices.data(), indices.size(), vertices.size());
@@ -151,7 +155,7 @@ std::string optimizeMesh(const char* fileName) {
         meshlet_indices_u16[i] = meshlet_indices[i];
     }
     if (meshlet_indices_u16.size() % 2 == 1) {
-        meshlet_indices_u16.push_back(0);
+        meshlet_indices_u16.push_back(0); // pad to multiple of 4
     }
 
     std::ostringstream output;

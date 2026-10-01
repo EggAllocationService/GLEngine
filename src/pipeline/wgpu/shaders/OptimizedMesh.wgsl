@@ -74,15 +74,13 @@ var<workgroup> scratch: TaskScratch;
 @workgroup_size(96, 1, 1)
 fn task(
     @builtin(local_invocation_id) localIdx: vec3<u32>,
-    @builtin(global_invocation_id) globalIdx: vec3<u32>
+    @builtin(global_invocation_id) globalIdx: vec3<u32>,
+    @builtin(workgroup_id) workgroupIdx: vec3<u32>
 ) -> @builtin(mesh_task_size) vec3<u32> {
     let instance = globalIdx.y;
-    let baseMeshlet = globalIdx.x;
+    let baseMeshlet = workgroupIdx.x * 96;
     let meshlet = localIdx.x;
 
-    /*if (baseMeshlet + meshlet > arrayLength(&meshlets)) {
-        return vec3u(0,0,0); // last batch will be out of bounds
-    }*/
 
    /* let cameraForward = camera.viewMatrix[2].xyz;
     let cameraOrigin = camera.viewMatrix[3].xyz;
@@ -109,6 +107,7 @@ fn task(
         payload.meshletOffset = baseMeshlet;
         payload.meshletCount = atomicLoad(&scratch.meshletCount);
     }
+
 
     return vec3u(payload.meshletCount, 1, 1);
 }
