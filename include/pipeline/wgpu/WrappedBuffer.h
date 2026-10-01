@@ -12,7 +12,7 @@ namespace glengine::pipeline::wgpu {
         WrappedBuffer(const WrappedBuffer&);
         WrappedBuffer& operator=(const WrappedBuffer&);
 
-        operator WGPUBuffer() {
+        operator WGPUBuffer() const {
             return buffer;
         }
     private:

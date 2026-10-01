@@ -20,7 +20,8 @@ namespace glengine::world::objects {
         OptimizedDrawTracker();
         void UpdateEnd(double deltaTime) override;
         void RenderStart(pipeline::wgpu::RenderBundle &bundle) override;
-        [[nodiscard]] std::shared_ptr<pipeline::wgpu::MeshPipeline> GetPipeline() const;
+
+        void Draw(const std::shared_ptr<mesh::OptimizedMesh>& mesh, OptimizedMeshInstance& instance);
     private:
         std::unordered_map<int, OptimizedInstanceTracker> trackers;
         std::shared_ptr<pipeline::wgpu::MeshPipeline> pipeline;

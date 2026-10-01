@@ -139,6 +139,9 @@ std::string optimizeMesh(const char* fileName) {
     for (int i = 0; i < meshlet_indices.size(); ++i) {
         meshlet_indices_u16[i] = meshlet_indices[i];
     }
+    if (meshlet_indices_u16.size() % 2 == 1) {
+        meshlet_indices_u16.push_back(0);
+    }
 
     std::ostringstream output;
     MeshHeader header = {
@@ -146,7 +149,7 @@ std::string optimizeMesh(const char* fileName) {
         meshletCount,
         meshletCount * sizeof(Meshlet),
         meshlet_vertices.size() * sizeof(MeshVertex),
-        meshlet_indices.size() * sizeof(unsigned short)
+        meshlet_indices_u16.size() * sizeof(unsigned short)
     };
 
     output.write(reinterpret_cast<const std::ostream::char_type *>(&header), sizeof(header));
@@ -182,7 +185,7 @@ std::string optimizeMesh(const char* fileName) {
     output.write(reinterpret_cast<char*>(mapped_vertices.data()), mapped_vertices.size() * sizeof(MeshVertex));
 
     // write meshlet indices
-    output.write(reinterpret_cast<char*>(meshlet_indices_u16.data()), indices.size() * sizeof(unsigned short));
+    output.write(reinterpret_cast<char*>(meshlet_indices_u16.data()), meshlet_indices_u16.size() * sizeof(unsigned short));
 
     return output.str();
 }
