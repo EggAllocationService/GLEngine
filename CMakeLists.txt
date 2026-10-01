@@ -83,6 +83,8 @@ add_library(glengine SHARED
         include/pipeline/wgpu/post/PostManager.h
         src/pipeline/wgpu/pipeline/MeshPipeline.cpp
         include/pipeline/wgpu/pipeline/MeshPipeline.h
+        src/3d/objects/OptimizedDrawTracker.cpp
+        include/3d/objects/OptimizedDrawTracker.h
 )
 
 create_resource_library(NAME Shaders SOURCES 
@@ -92,6 +94,7 @@ create_resource_library(NAME Shaders SOURCES
     src/pipeline/wgpu/shaders/Axes.wgsl
     src/pipeline/wgpu/shaders/Postvtx.wgsl
     src/pipeline/wgpu/shaders/Postpre.wgsl
+    src/pipeline/wgpu/shaders/OptimizedMesh.wgsl
 )
 
 build_pak(

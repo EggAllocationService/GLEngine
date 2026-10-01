@@ -15,6 +15,7 @@
 
 struct MeshHeader {
     char magic[4];
+    size_t meshletCount;
     size_t meshletsSize;
     size_t meshletVerticesSize;
     size_t meshletIndicesSize;
@@ -134,14 +135,18 @@ std::string optimizeMesh(const char* fileName) {
     const meshopt_Meshlet& last = meshlets[meshletCount - 1];
     meshlet_vertices.resize(last.vertex_offset + last.vertex_count);
     meshlet_indices.resize(last.triangle_offset + last.triangle_count * 3);
-
+    std::vector<unsigned short> meshlet_indices_u16(meshlet_indices.size());
+    for (int i = 0; i < meshlet_indices.size(); ++i) {
+        meshlet_indices_u16[i] = meshlet_indices[i];
+    }
 
     std::ostringstream output;
     MeshHeader header = {
         {'G', 'M', 'S', 'H'},
+        meshletCount,
         meshletCount * sizeof(Meshlet),
         meshlet_vertices.size() * sizeof(MeshVertex),
-        meshlet_indices.size() * sizeof(char)
+        meshlet_indices.size() * sizeof(unsigned short)
     };
 
     output.write(reinterpret_cast<const std::ostream::char_type *>(&header), sizeof(header));
@@ -177,7 +182,7 @@ std::string optimizeMesh(const char* fileName) {
     output.write(reinterpret_cast<char*>(mapped_vertices.data()), mapped_vertices.size() * sizeof(MeshVertex));
 
     // write meshlet indices
-    output.write(reinterpret_cast<char*>(meshlet_indices.data()), indices.size() * sizeof(char));
+    output.write(reinterpret_cast<char*>(meshlet_indices_u16.data()), indices.size() * sizeof(unsigned short));
 
     return output.str();
 }

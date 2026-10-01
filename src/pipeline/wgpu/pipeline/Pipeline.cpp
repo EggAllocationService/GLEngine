@@ -106,4 +106,16 @@ namespace glengine::pipeline::wgpu {
             _dirty[i] = false;
         }
     }
+
+    WGPUBindGroupLayout Pipeline::GetBindGroupLayout(int group) {
+        return _layouts[group];
+    }
+
+    WGPUBindGroup Pipeline::GetBindGroup(int group) {
+        return _groups[group];
+    }
+
+    void Pipeline::SetBindGroup(int idx, WGPUBindGroup group) {
+        _groups[idx] = group;
+    }
 }
