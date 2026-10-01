@@ -88,7 +88,6 @@ glengine::pipeline::wgpu::WGPURenderer::WGPURenderer(GLFWwindow *window, Engine*
 
     requiredLimits.maxImmediateSize = 128;
 
-
     auto features = new WGPUNativeFeature[4] { WGPUNativeFeature_Immediates, WGPUNativeFeature_PolygonModeLine, WGPUNativeFeature_MeshShader, WGPUNativeFeature_ShaderI16 };
     WGPUDeviceDescriptor deviceDescriptor = WGPU_DEVICE_DESCRIPTOR_INIT;
     deviceDescriptor.requiredLimits = &requiredLimits;
@@ -100,6 +99,9 @@ glengine::pipeline::wgpu::WGPURenderer::WGPURenderer(GLFWwindow *window, Engine*
     WGPURequestDeviceCallbackInfo deviceCb = WGPU_REQUEST_DEVICE_CALLBACK_INFO_INIT;
     deviceCb.callback = handle_request_device;
     deviceCb.userdata1 = &device;
+
+    nativeLimits.maxTaskWorkgroupsPerDimension = 1024;
+    nativeLimits.maxTaskWorkgroupsTotalCount = 1024 * 1024;
 
     wgpuAdapterRequestDevice(adapter, &deviceDescriptor, deviceCb);
     assert(device);
