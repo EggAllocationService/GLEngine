@@ -1,7 +1,18 @@
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
-add_executable(paktool "cmake/paktool.cpp")
+
+include(FetchContent)
+FetchContent_Declare(meshoptimizer
+    GIT_REPOSITORY https://github.com/zeux/meshoptimizer.git
+    GIT_TAG v1.3
+    GIT_SHALLOW TRUE
+)
+set(MESHOPT_INSTALL OFF)
+
+FetchContent_MakeAvailable(meshoptimizer)
+add_executable(paktool "cmake/paktool.cpp" "cmake/tiny_obj_loader.h")
+target_link_libraries(paktool meshoptimizer)
 
 
 function(build_pak)
