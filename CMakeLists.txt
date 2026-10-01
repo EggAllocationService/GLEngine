@@ -85,6 +85,10 @@ add_library(glengine SHARED
         include/pipeline/wgpu/pipeline/MeshPipeline.h
         src/3d/objects/OptimizedDrawTracker.cpp
         include/3d/objects/OptimizedDrawTracker.h
+        src/3d/mesh/OptimizedMesh.cpp
+        include/3d/mesh/OptimizedMesh.h
+        src/3d/mesh/OptimizedMeshComponent.cpp
+        include/3d/mesh/OptimizedMeshComponent.h
 )
 
 create_resource_library(NAME Shaders SOURCES 
@@ -205,9 +209,11 @@ if (${PROJECT_IS_TOP_LEVEL})
             SOURCES
                 test3d/assets/cube-tex.obj
                 test3d/assets/enterprise.obj
+                test3d/assets/statue.mesh
             NAMES
                 /cube.obj
                 /enterprise.obj
+                /statue.mesh
     )
 
     create_resource_library(NAME DemoShaders SOURCES test3d/invert.wgsl test3d/mesh.wgsl)

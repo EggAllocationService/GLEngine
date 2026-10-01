@@ -9,6 +9,7 @@
 #include "GLMath.h"
 #include "MeshDemoComponent.h"
 #include "3d/components/AxesComponent.h"
+#include "3d/mesh/OptimizedMeshComponent.h"
 #include "3d/mesh/StaticMeshComponent.h"
 
 Environment::Environment() {
@@ -18,7 +19,7 @@ Environment::Environment() {
     sun->Ambient = float4(0.1, 0.1, 0.1, 1);
     sun->Diffuse = float4(1, 1, 1, 1);
 
-    auto floor = CreateComponent<MeshDemoComponent>();
+    auto floor = CreateComponent<glengine::world::mesh::OptimizedMeshComponent>("/assets/statue.mesh");
     floor->GetTransform()->SetPosition({0, -1, 0});
 
     auto light = CreateComponent<glengine::world::components::PointLightComponent>();

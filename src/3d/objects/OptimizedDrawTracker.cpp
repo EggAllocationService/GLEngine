@@ -51,12 +51,45 @@ namespace glengine::world::objects {
     }
 
     void OptimizedDrawTracker::UpdateEnd(double deltaTime) {
+        auto session = GetRenderer()->GetTransferManager()->CreateSession("Optimized Draw Data", 0);
+        for (auto& x : trackers) {
+            auto& tracker = x.second;
+            tracker.instances->Commit(session, [&](WGPUBuffer newBuffer) {
+                tracker.pipeline->SetBinding(2, 0, newBuffer);
+                tracker.pipeline->CommitBindings();
+            });
+        }
+        session->Commit();
     }
 
+    unsigned int ceildiv(unsigned int a, unsigned int b) {
+        return (a + (b - 1)) / b;
+    }
     void OptimizedDrawTracker::RenderStart(pipeline::wgpu::RenderBundle &bundle) {
+        for (auto& x : trackers) {
+            auto& tracker = x.second;
+            unsigned int meshletGroupsCount = ceildiv(tracker.mesh->GetMeshletCount(), 96);
+            tracker.pipeline->DispatchMeshTasks(bundle, meshletGroupsCount, tracker.instances->GetSize(), 1, nullptr);
+            tracker.instances->Clear();
+        }
     }
 
-    std::shared_ptr<pipeline::wgpu::MeshPipeline> OptimizedDrawTracker::GetPipeline() const {
-        return pipeline;
+    void OptimizedDrawTracker::Draw(const std::shared_ptr<mesh::OptimizedMesh>& mesh, OptimizedMeshInstance &instance) {
+        auto id = mesh->GetId();
+
+        if (!trackers.contains(id)) {
+            trackers[id] = OptimizedInstanceTracker {
+                .instances = GetRenderer()->CreateBuffer<OptimizedMeshInstance>(std::format("OptMesh {} instances", id), WGPUBufferUsage_Storage, 64),
+                .mesh = mesh,
+                .pipeline = pipeline->CreateInstance()
+            };
+            trackers[id].pipeline->SetBinding(1, 0, mesh->GetMeshlets());
+            trackers[id].pipeline->SetBinding(1, 1, mesh->GetVertices());
+            trackers[id].pipeline->SetBinding(1, 2, mesh->GetIndices());
+            trackers[id].pipeline->SetBinding(2, 0, *trackers[id].instances);
+            trackers[id].pipeline->CommitBindings();
+        }
+
+        trackers[id].instances->Push(instance);
     }
 }

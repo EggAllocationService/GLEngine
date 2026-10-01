@@ -11,7 +11,18 @@ namespace glengine::world::mesh {
         OptimizedMesh(std::istream& file, pipeline::wgpu::WGPURenderer* renderer);
         ~OptimizedMesh() override;
         [[nodiscard]] int GetId() const;
-        WGPUBindGroup GetBindGroup();
+
+        [[nodiscard]] const pipeline::wgpu::WrappedBuffer& GetMeshlets() const {
+            return meshlets;
+        }
+
+        [[nodiscard]] const pipeline::wgpu::WrappedBuffer& GetVertices() const {
+            return vertices;
+        }
+
+        [[nodiscard]] const pipeline::wgpu::WrappedBuffer& GetIndices() const {
+            return indices;
+        }
 
         [[nodiscard]] unsigned int GetMeshletCount() const {
             return meshletCount;
