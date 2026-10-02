@@ -6,6 +6,8 @@
 
 #include "Engine.h"
 #include <cstring>
+#include <zstd.h>
+
 #include "3d/objects/OptimizedDrawTracker.h"
 
 struct MeshHeader {
@@ -22,9 +24,24 @@ namespace glengine::world::mesh {
     OptimizedMesh::OptimizedMesh(std::istream &file, pipeline::wgpu::WGPURenderer *renderer) {
         auto engine = Engine::GetCurrentEngine();
 
+        // load file into memory to decompress
+        file.seekg(0, std::ios::end);
+        auto len = file.tellg();
+        file.seekg(0, std::ios::beg);
+
+        auto compressed = new char[len];
+        file.read(compressed, len);
+
+        auto decompressedSize = ZSTD_getFrameContentSize(compressed, len);
+
+        std::string decompressed;
+        decompressed.resize(decompressedSize);
+        ZSTD_decompress(decompressed.data(), decompressedSize, compressed, len);
+
+        delete[] compressed;
+
         // first, load header
-        MeshHeader header;
-        file.read((char*)&header, sizeof(MeshHeader));
+        auto header = *reinterpret_cast<MeshHeader*>(decompressed.data());
         if (memcmp(header.magic, "GMSH", 4) != 0) {
             std::cerr << "Invalid mesh data" << std::endl;
             return;
@@ -35,23 +52,15 @@ namespace glengine::world::mesh {
         vertices = renderer->CreateRawBuffer(std::format("OptMesh {} vertex data", id), WGPUBufferUsage_CopyDst | WGPUBufferUsage_Storage, header.meshletVerticesSize);
         indices = renderer->CreateRawBuffer(std::format("OptMesh {} index data", id), WGPUBufferUsage_CopyDst | WGPUBufferUsage_Storage, header.meshletIndicesSize);
 
-        char* mesh_data = new char[header.meshletsSize];
-        char* vert_data = new char[header.meshletVerticesSize];
-        char* ind_data = new char[header.meshletIndicesSize];
-
-        file.read(mesh_data, header.meshletsSize);
-        file.read(vert_data, header.meshletVerticesSize);
-        file.read(ind_data, header.meshletIndicesSize);
-
         auto queue = wgpuDeviceGetQueue(renderer->GetDevice());
 
-        wgpuQueueWriteBuffer(queue,meshlets, 0, mesh_data, header.meshletsSize);
-        wgpuQueueWriteBuffer(queue,vertices, 0, vert_data, header.meshletVerticesSize);
-        wgpuQueueWriteBuffer(queue,indices, 0, ind_data, header.meshletIndicesSize);
+        auto meshPtr = decompressed.data() + sizeof(MeshHeader);
+        auto vertPtr = meshPtr + header.meshletsSize;
+        auto indPtr = vertPtr + header.meshletVerticesSize;
 
-        delete[] mesh_data;
-        delete[] vert_data;
-        delete[] ind_data;
+        wgpuQueueWriteBuffer(queue,meshlets, 0, meshPtr, header.meshletsSize);
+        wgpuQueueWriteBuffer(queue,vertices, 0, vertPtr, header.meshletVerticesSize);
+        wgpuQueueWriteBuffer(queue,indices, 0, indPtr, header.meshletIndicesSize);
 
         meshletCount = header.meshletCount;
     }

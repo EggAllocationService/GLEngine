@@ -5,6 +5,19 @@ option(TEXT_RENDERING "Compile builtin text rendering library (requires harfbuzz
 
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
+include(FetchContent)
+FetchContent_Declare(zstd
+        GIT_REPOSITORY https://github.com/facebook/zstd.git
+        GIT_TAG v1.5.7
+        GIT_SHALLOW TRUE
+)
+set(ZSTD_BUILD_STATIC ON CACHE INTERNAL "")
+set(ZSTD_BUILD_SHARED OFF CACHE INTERNAL "")
+set(ZSTD_BUILD_PROGRAMS OFF CACHE INTERNAL "")
+set(ZSTD_BUILD_TESTS OFF CACHE INTERNAL "")
+FetchContent_MakeAvailable(zstd)
+
+
 include(wgpu-native)
 include(embed)
 include(paktool)
@@ -179,7 +192,7 @@ elseif(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
     target_link_libraries(glengine "GLU")
 endif()
 
-target_link_libraries(glengine glfw webgpu glfw3webgpu Shaders BuiltinAssets)
+target_link_libraries(glengine glfw webgpu glfw3webgpu Shaders BuiltinAssets zstd)
 
 function(engine_copy_dll TARGETNAME)
     add_custom_command(TARGET ${TARGETNAME} POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy_if_different $<TARGET_FILE:glengine> $<TARGET_FILE_DIR:${TARGETNAME}>)
