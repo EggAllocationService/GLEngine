@@ -29,7 +29,7 @@ namespace glengine {
 namespace glengine::pipeline::wgpu {
     struct alignas(16) RenderUniforms {
         mat4 projectionViewMatrix;
-        mat4 projectionMatrix;
+        mat4 cameraMatrix;
         mat4 viewMatrix;
         int lightCount;
         float time;

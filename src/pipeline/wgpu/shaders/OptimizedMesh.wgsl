@@ -3,16 +3,16 @@ enable wgpu_int16;
 
 struct RenderUniforms {
     projectionViewMatrix: mat4x4<f32>,
-    projectionMatrix: mat4x4<f32>,
+    cameraMatrix: mat4x4<f32>,
     viewMatrix: mat4x4<f32>,
     lightCount: i32,
     time: f32
 }
 
 struct Meshlet {
-    origin: vec3<f32>,
-    coneApex: vec3<f32>,
-    coneAxis: vec3<f32>,
+    origin: vec4<f32>,
+    coneApex: vec4<f32>,
+    coneAxis: vec4<f32>,
     verticesOffset: u32,
     verticesCount: u32,
     indicesOffset: u32,
@@ -52,7 +52,8 @@ struct Vertex {
     @location(0) normal: vec3<f32>
 }
 struct Primitive {
-    @builtin(triangle_indices) indices: vec3<u32>
+    @builtin(triangle_indices) indices: vec3<u32>,
+    @per_primitive @location(1) meshlet_normal: vec3<f32>
 }
 
 const TASK_MESHLET_GROUP_SIZE: u32 = 96;
@@ -84,20 +85,30 @@ fn task(
     let instance = globalIdx.y;
     let baseMeshlet = workgroupIdx.x * TASK_MESHLET_GROUP_SIZE;
     let meshlet = localIdx.x;
+    if (localIdx.x == 0) {
+        atomicStore(&scratch.meshletCount, 0);
+    }
+    workgroupBarrier();
 
-
-   /* let cameraForward = camera.viewMatrix[2].xyz;
-    let cameraOrigin = camera.viewMatrix[3].xyz;
-    let meshletOrigin = (instances[instance].transform * vec4f(meshlets[baseMeshlet + meshlet].origin, 1.0)).xyz;
-    let meshletDir = normalize(cameraOrigin - meshletOrigin);*/
-
-   /* if (dot(cameraForward, meshletDir) < 0 && dot(normalize(meshlets[meshlet].coneApex - cameraOrigin), meshlets[meshlet].coneAxis) < 0.25) {
-        // meshlet should be drawn
-
-    }*/
     if (globalIdx.x < arrayLength(&meshlets)) {
-        let idx = atomicAdd(&scratch.meshletCount, 1);
-        scratch.meshlets[idx] = meshlet;
+        let cameraForward = camera.cameraMatrix[2].xyz;
+        let cameraOrigin = camera.cameraMatrix[3].xyz;
+        let meshletOrigin = (instances[instance].transform * vec4f(meshlets[meshlet].origin.xyz, 1.0)).xyz;
+        let meshletApex = (instances[instance].transform * vec4f(meshlets[meshlet].coneApex.xyz, 1.0)).xyz;
+
+        let meshletDir = cameraOrigin - meshletOrigin;
+
+        let m = mat3x3f(
+            instances[instance].transform[0].xyz,
+            instances[instance].transform[1].xyz,
+            instances[instance].transform[2].xyz,
+        );
+        let worldConeAxis = normalize(m * meshlets[meshlet].coneAxis.xyz);
+
+        if (dot(cameraForward, normalize(meshletDir)) < 0) { //&& dot(normalize(meshletApex - cameraOrigin), worldConeAxis) < meshlets[meshlet].coneAxis.w) {
+            let idx = atomicAdd(&scratch.meshletCount, 1);
+            scratch.meshlets[idx] = meshlet;
+        }
     }
     workgroupBarrier();
 
@@ -141,7 +152,7 @@ fn mesh(@builtin(workgroup_id) globalIdx: vec3u, @builtin(local_invocation_id) l
     if (localIdx.x < meshlets[meshlet].verticesCount) {
         let v = vertices[meshlets[meshlet].verticesOffset + localIdx.x];
         mesh_output.vertices[localIdx.x].position = mvp * vec4f(v.position, 1.0);
-        mesh_output.vertices[localIdx.x].normal = (mvp * vec4f(v.normal, 0.0)).xyz;
+        mesh_output.vertices[localIdx.x].normal = (instances[payload.instance].transform * vec4f(v.normal, 0.0)).xyz;
         // TODO: normal/uv
     }
 
