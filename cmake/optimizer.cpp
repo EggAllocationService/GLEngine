@@ -13,7 +13,7 @@
 
 #include "../include/Vectors.h"
 #include "meshoptimizer.h"
-
+#include "zstd.h"
 
 struct MeshHeader {
     char magic[4];
@@ -242,5 +242,16 @@ std::string optimizeMesh(const char* fileName) {
     // write meshlet indices
     output.write(reinterpret_cast<char*>(meshlet_indices_u16.data()), meshlet_indices_u16.size() * sizeof(unsigned short));
 
-    return output.str();
+    auto result = output.str();
+
+    std::cout << "Compressing... " << result << std::endl;
+
+    auto compressBound = ZSTD_compressBound(result.size());
+    std::string compressed;
+    compressed.resize(compressBound);
+
+    auto actualSize = ZSTD_compress(compressed.data(), compressBound, result.data(), result.size(), 18);
+
+    compressed.resize(actualSize);
+    return compressed;
 }
