@@ -244,7 +244,7 @@ std::string optimizeMesh(const char* fileName) {
 
     auto result = output.str();
 
-    std::cout << "Compressing... " << result << std::endl;
+    std::cout << "Compressing... " << std::endl;
 
     auto compressBound = ZSTD_compressBound(result.size());
     std::string compressed;
