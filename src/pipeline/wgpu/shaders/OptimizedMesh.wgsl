@@ -91,14 +91,16 @@ fn task(
     workgroupBarrier();
 
     if (globalIdx.x < arrayLength(&meshlets)) {
+        let transform = instances[instance].transform;
+        let ml = meshlets[baseMeshlet + meshlet];
         let cameraForward = camera.cameraMatrix[2].xyz;
         let cameraOrigin = camera.cameraMatrix[3].xyz;
-        let meshletOrigin = (instances[instance].transform * vec4f(meshlets[baseMeshlet + meshlet].origin.xyz, 1.0)).xyz;
-        let meshletApex = (instances[instance].transform * vec4f(meshlets[baseMeshlet + meshlet].coneApex.xyz, 1.0)).xyz;
-        let meshletAxis= normalize((instances[instance].transform * vec4f(meshlets[baseMeshlet + meshlet].coneAxis.xyz, 0.0)).xyz);
+        let meshletOrigin = (transform * vec4f(ml.origin.xyz, 1.0)).xyz;
+        let meshletApex = (transform * vec4f(ml.coneApex.xyz, 1.0)).xyz;
+        let meshletAxis= normalize((transform * vec4f(ml.coneAxis.xyz, 0.0)).xyz);
         let meshletDir = meshletOrigin - cameraOrigin;
 
-        let normalConeCulled = dot(normalize(meshletApex - cameraOrigin), meshletAxis) > meshlets[meshlet + baseMeshlet].coneAxis.w;
+        let normalConeCulled = dot(normalize(meshletApex - cameraOrigin), meshletAxis) > ml.coneAxis.w;
         let frustrumCulled = dot(normalize(cameraForward), normalize(meshletDir)) < cos(70.0 * 3.14159/180.0);
 
         if (!frustrumCulled && !normalConeCulled) {
@@ -138,34 +140,35 @@ var<workgroup> mesh_output: MeshOutput;
 @payload(payload)
 @workgroup_size(64, 1, 1)
 fn mesh(@builtin(workgroup_id) globalIdx: vec3u, @builtin(local_invocation_id) localIdx: vec3u) {
-    let mvp = camera.projectionViewMatrix * instances[payload.instance].transform;
+    let transform = instances[payload.instance].transform;
+    let mvp = camera.projectionViewMatrix * transform;
 
     // fetch meshlet id from packed ids in payload
     let payloadIdx = globalIdx.x / 4;
     let payloadOffset = globalIdx.x % 4;
     let meshlet = payload.meshletOffset + unpack4xU8(payload.meshlets[payloadIdx])[payloadOffset];
+    let meshletData = meshlets[meshlet];
 
-    if (localIdx.x < meshlets[meshlet].verticesCount) {
-        let v = vertices[meshlets[meshlet].verticesOffset + localIdx.x];
+    if (localIdx.x < meshletData.verticesCount) {
+        let v = vertices[meshletData.verticesOffset + localIdx.x];
         mesh_output.vertices[localIdx.x].position = mvp * vec4f(v.position, 1.0);
-        mesh_output.vertices[localIdx.x].normal = (instances[payload.instance].transform * vec4f(v.normal, 0.0)).xyz;
+        mesh_output.vertices[localIdx.x].normal = (transform * vec4f(v.normal, 0.0)).xyz;
         // TODO: normal/uv
     }
 
-    if (localIdx.x < meshlets[meshlet].indicesCount / 3) {
+    if (localIdx.x < meshletData.indicesCount / 3) {
         let base = localIdx.x * 3;
         mesh_output.primitives[localIdx.x].indices = vec3u(
-            u32(indices[meshlets[meshlet].indicesOffset + base + 0]),
-            u32(indices[meshlets[meshlet].indicesOffset + base + 1]),
-            u32(indices[meshlets[meshlet].indicesOffset + base + 2])
+            u32(indices[meshletData.indicesOffset + base + 0]),
+            u32(indices[meshletData.indicesOffset + base + 1]),
+            u32(indices[meshletData.indicesOffset + base + 2])
         );
-        mesh_output.primitives[localIdx.x].meshlet_normal = (instances[payload.instance].transform * vec4f(meshlets[meshlet].coneAxis.xyz, 0)).xyz;
+        mesh_output.primitives[localIdx.x].meshlet_normal = (transform * vec4f(meshletData.coneAxis.xyz, 0)).xyz;
     }
-    workgroupBarrier();
 
     if (localIdx.x == 0) {
-        mesh_output.vertex_count = meshlets[meshlet].verticesCount;
-        mesh_output.primitive_count = meshlets[meshlet].indicesCount / 3;
+        mesh_output.vertex_count = meshletData.verticesCount;
+        mesh_output.primitive_count = meshletData.indicesCount / 3;
     }
 }
 
