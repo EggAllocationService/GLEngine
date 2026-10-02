@@ -8,7 +8,7 @@ list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 include(FetchContent)
 FetchContent_Declare(zstd
         GIT_REPOSITORY https://github.com/facebook/zstd.git
-        GIT_TAG v1.5.7
+        GIT_TAG 01b7154
         GIT_SHALLOW TRUE
 )
 set(ZSTD_BUILD_STATIC ON CACHE INTERNAL "")
@@ -192,7 +192,7 @@ elseif(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
     target_link_libraries(glengine "GLU")
 endif()
 
-target_link_libraries(glengine glfw webgpu glfw3webgpu Shaders BuiltinAssets zstd)
+target_link_libraries(glengine glfw webgpu glfw3webgpu Shaders BuiltinAssets libzstd_static)
 
 function(engine_copy_dll TARGETNAME)
     add_custom_command(TARGET ${TARGETNAME} POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy_if_different $<TARGET_FILE:glengine> $<TARGET_FILE_DIR:${TARGETNAME}>)
