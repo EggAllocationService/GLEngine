@@ -13,7 +13,7 @@ set(MESHOPT_INSTALL OFF)
 FetchContent_MakeAvailable(meshoptimizer)
 
 add_library(optimizer STATIC cmake/optimizer.cpp cmake/optimizer.h "cmake/tiny_obj_loader.h")
-target_link_libraries(optimizer PRIVATE meshoptimizer zstd)
+target_link_libraries(optimizer PRIVATE meshoptimizer libzstd_static)
 
 add_executable(paktool "cmake/paktool.cpp")
 target_link_libraries(paktool optimizer)
