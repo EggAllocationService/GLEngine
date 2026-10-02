@@ -66,6 +66,9 @@ namespace glengine {
 
         void Possess(const std::shared_ptr<world::Pawn>& target);
 
+        /// Pawn whose camera matrix will be used for culling, for debugging purposes
+        void SetFakePawn(const std::shared_ptr<world::Pawn>& pawn);
+
         /// Helper function to find all actors of a given type
         template <typename T>
         auto GetActorsOfType() {
@@ -176,6 +179,7 @@ namespace glengine {
         std::vector<std::shared_ptr<world::Actor>> actors;
 
         std::weak_ptr<world::Pawn> possessedPawn;
+        std::weak_ptr<world::Pawn> fakePawn;
         std::vector<PostProcessEntry> postEffects;
 
         double lastUpdateTime = 0.0;

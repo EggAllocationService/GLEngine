@@ -93,19 +93,15 @@ fn task(
     if (globalIdx.x < arrayLength(&meshlets)) {
         let cameraForward = camera.cameraMatrix[2].xyz;
         let cameraOrigin = camera.cameraMatrix[3].xyz;
-        let meshletOrigin = (instances[instance].transform * vec4f(meshlets[meshlet].origin.xyz, 1.0)).xyz;
-        let meshletApex = (instances[instance].transform * vec4f(meshlets[meshlet].coneApex.xyz, 1.0)).xyz;
+        let meshletOrigin = (instances[instance].transform * vec4f(meshlets[baseMeshlet + meshlet].origin.xyz, 1.0)).xyz;
+        let meshletApex = (instances[instance].transform * vec4f(meshlets[baseMeshlet + meshlet].coneApex.xyz, 1.0)).xyz;
+        let meshletAxis= normalize((instances[instance].transform * vec4f(meshlets[baseMeshlet + meshlet].coneAxis.xyz, 0.0)).xyz);
+        let meshletDir = meshletOrigin - cameraOrigin;
 
-        let meshletDir = cameraOrigin - meshletOrigin;
+        let normalConeCulled = dot(normalize(meshletApex - cameraOrigin), meshletAxis) > meshlets[meshlet + baseMeshlet].coneAxis.w;
+        let frustrumCulled = dot(normalize(cameraForward), normalize(meshletDir)) < cos(70.0 * 3.14159/180.0);
 
-        let m = mat3x3f(
-            instances[instance].transform[0].xyz,
-            instances[instance].transform[1].xyz,
-            instances[instance].transform[2].xyz,
-        );
-        let worldConeAxis = normalize(m * meshlets[meshlet].coneAxis.xyz);
-
-        if (dot(cameraForward, normalize(meshletDir)) < 0) { //&& dot(normalize(meshletApex - cameraOrigin), worldConeAxis) < meshlets[meshlet].coneAxis.w) {
+        if (!frustrumCulled && !normalConeCulled) {
             let idx = atomicAdd(&scratch.meshletCount, 1);
             scratch.meshlets[idx] = meshlet;
         }
