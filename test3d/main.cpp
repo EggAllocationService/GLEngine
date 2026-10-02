@@ -54,6 +54,7 @@ int main(int argc, char** argv) {
     engine->SetPostEffectEnabled(invertIndex, inverted);
 
     auto ship = engine->SpawnActor<Enterprise>();
+    engine->SetFakePawn(ship);
 
     engine->SpawnActor<Environment>();
 

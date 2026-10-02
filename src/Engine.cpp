@@ -194,6 +194,10 @@ namespace glengine {
         }
     }
 
+    void Engine::SetFakePawn(const std::shared_ptr<world::Pawn> &pawn) {
+        fakePawn = pawn;
+    }
+
     int Engine::PushPostEffect(std::shared_ptr<pipeline::wgpu::post::PostProcessEffect> effect) {
         postEffects.emplace_back(effect, nullptr, true);
         return postEffects.size() - 1;
@@ -301,6 +305,12 @@ namespace glengine {
 
         const auto elapsed = std::chrono::high_resolution_clock::now() - start;
         const auto time = std::chrono::duration_cast<std::chrono::duration<float>>(elapsed);
+
+        if (!fakePawn.expired()) {
+            auto fake = fakePawn.lock();
+            cameraTransformMatrix = fake->GetTransformMatrix() * fake->GetActiveCamera()->GetTransformMatrix();
+        }
+
         pipeline::wgpu::RenderUniforms uniforms = {
             .projectionViewMatrix = projectionMatrix * viewMatrix,
             .cameraMatrix = cameraTransformMatrix,

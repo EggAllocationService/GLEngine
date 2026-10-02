@@ -54,7 +54,7 @@ namespace std {
     };
 }
 
-std::vector<float3> computeAllSmoothingNormals(const tinyobj::attrib_t& attrib, const std::vector<tinyobj::shape_t>& shapes) {
+std::vector<float3> computeAllSmoothingNormals(const tinyobj::basic_attrib_t<>& attrib, const std::vector<tinyobj::basic_shape_t<>>& shapes) {
     std::vector<float3> accumulated(attrib.vertices.size() / 3, float3(0, 0, 0));
 
     for (auto& shape : shapes) {
@@ -91,25 +91,29 @@ std::vector<float3> computeAllSmoothingNormals(const tinyobj::attrib_t& attrib, 
 }
 
 std::string optimizeMesh(const char* fileName) {
-    tinyobj::ObjReaderConfig config;
-    config.triangulation_method = "simple";
-    config.vertex_color = false;
+    tinyobj::OptLoadConfig config;
+    config.num_threads = -1;
     config.triangulate = true;
 
     std::cout << "Optimizing " << fileName << std::endl;
-    tinyobj::ObjReader reader;
-    if (!reader.ParseFromFile(fileName, config)) {
-        if (!reader.Error().empty()) {
-            std::cerr << "TinyObjReader: " << reader.Error();
-        }
-        exit(1);
-    }
-    if (!reader.Warning().empty()) {
-        std::cout << "TinyObjReader: " << reader.Warning();
-    }
 
-    auto shapes = reader.GetShapes();
-    auto attrib = reader.GetAttrib();
+    tinyobj::ObjReader reader;
+    std::vector<tinyobj::basic_shape_t<>> shapes;
+    tinyobj::basic_attrib_t<> attrib;
+    std::string warn;
+    std::string err;
+
+    tinyobj::LoadObjOpt(
+        &attrib,
+        &shapes,
+        nullptr,
+        &warn,
+        &err,
+        fileName,
+        nullptr,
+        config
+    );
+
     auto computedNormals = computeAllSmoothingNormals(attrib, shapes);
 
     std::vector<MeshVertex> vertices;

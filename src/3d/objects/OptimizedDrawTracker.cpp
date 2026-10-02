@@ -39,6 +39,13 @@ namespace glengine::world::objects {
         groups[1].entries = &group2;
         groups[1].entryCount = 1;
 
+        pipeline::wgpu::RenderPipelineExtras xtra = {
+            .polygonMode = WGPUPolygonMode_Fill,
+            .depthMode = WGPUCompareFunction_LessEqual,
+            .cullMode = WGPUCullMode_None,
+            .primitiveTopology = WGPUPrimitiveTopology_TriangleList
+        };
+
         pipeline = GetRenderer()->BuildMeshPipeline(
             "BuiltinOptimizedMesh",
             shaders,

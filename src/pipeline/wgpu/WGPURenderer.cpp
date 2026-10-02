@@ -125,7 +125,7 @@ glengine::pipeline::wgpu::WGPURenderer::WGPURenderer(GLFWwindow *window, Engine*
     surfConfig.nextInChain = &surfExtras->chain;
     surfConfig.format = caps.formats[0]; // set preferred format
     surfConfig.usage = WGPUTextureUsage_CopyDst;
-    surfConfig.presentMode = WGPUPresentMode_Fifo;
+    surfConfig.presentMode = WGPUPresentMode_Immediate;
     surfConfig.alphaMode = WGPUCompositeAlphaMode_Auto;
     surfConfig.device = device;
 
