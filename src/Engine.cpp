@@ -303,7 +303,7 @@ namespace glengine {
         const auto time = std::chrono::duration_cast<std::chrono::duration<float>>(elapsed);
         pipeline::wgpu::RenderUniforms uniforms = {
             .projectionViewMatrix = projectionMatrix * viewMatrix,
-            .projectionMatrix = projectionMatrix,
+            .cameraMatrix = cameraTransformMatrix,
             .viewMatrix = viewMatrix,
             .lightCount = renderObjectManager->GetObject<world::objects::LightTracker>()->GetLightCount(),
             .time = time.count()

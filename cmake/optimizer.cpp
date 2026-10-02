@@ -32,10 +32,10 @@ struct MeshVertex {
     }
 };
 
-struct alignas(64) Meshlet {
-    alignas(16) float3 origin;
-    alignas(16) float3 coneApex;
-    alignas(16) float3 coneAxis;
+struct Meshlet {
+    float4 origin;
+    float4 coneApex;
+    float4 coneAxis;
     unsigned int verticesOffset;
     unsigned int verticesSize;
     unsigned int indicesOffset;
@@ -220,9 +220,9 @@ std::string optimizeMesh(const char* fileName) {
             sizeof(MeshVertex)
         );
         auto result = Meshlet {
-            .origin = float3(bounds.center[0], bounds.center[1], bounds.center[2]),
-            .coneApex = float3(bounds.cone_apex[0], bounds.cone_apex[1], bounds.cone_apex[2]),
-            .coneAxis = float3(bounds.cone_axis[0], bounds.cone_axis[1], bounds.cone_axis[2]),
+            .origin = float4(bounds.center[0], bounds.center[1], bounds.center[2], 0.0),
+            .coneApex = float4(bounds.cone_apex[0], bounds.cone_apex[1], bounds.cone_apex[2], 0.0),
+            .coneAxis = float4(bounds.cone_axis[0], bounds.cone_axis[1], bounds.cone_axis[2], bounds.cone_cutoff),
             .verticesOffset = meshlet.vertex_offset,
             .verticesSize = meshlet.vertex_count,
             .indicesOffset = meshlet.triangle_offset,
