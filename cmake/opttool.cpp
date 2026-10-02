@@ -10,7 +10,8 @@
 
 int main(int argc, char** argv) {
     if (argc != 3) {
-        std::cout << "Usage: ./opttool <source> <destination>" << std::endl;
+        std::cout << "Meshtool: converts .obj files to GLEngine .mesh files" << std::endl;
+        std::cout << "Usage: ./meshtool <source> <destination>" << std::endl;
         return 1;
     }
     auto result = optimizeMesh(argv[1]);

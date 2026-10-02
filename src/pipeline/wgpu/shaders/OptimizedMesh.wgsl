@@ -163,6 +163,7 @@ fn mesh(@builtin(workgroup_id) globalIdx: vec3u, @builtin(local_invocation_id) l
             u32(indices[meshlets[meshlet].indicesOffset + base + 1]),
             u32(indices[meshlets[meshlet].indicesOffset + base + 2])
         );
+        mesh_output.primitives[localIdx.x].meshlet_normal = (instances[payload.instance].transform * vec4f(meshlets[meshlet].coneAxis.xyz, 0)).xyz;
     }
     workgroupBarrier();
 
@@ -173,6 +174,6 @@ fn mesh(@builtin(workgroup_id) globalIdx: vec3u, @builtin(local_invocation_id) l
 }
 
 @fragment
-fn fs(v: Vertex) -> @location(0) vec4f {
-    return vec4f(abs(normalize(v.normal)), 1);
+fn fs(@location(0) normal: vec3f) -> @location(0) vec4f {
+    return vec4f(abs(normalize(normal)), 1);
 }
