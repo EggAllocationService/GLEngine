@@ -21,6 +21,10 @@ StaticMeshComponent::StaticMeshComponent() {
     pipeline_->CommitBindings();
 }
 
+StaticMeshComponent::StaticMeshComponent(std::string_view meshName) : StaticMeshComponent() {
+	SetMesh(meshName);
+}
+
 void StaticMeshComponent::Render(const pipeline::wgpu::RenderBundle& bundle, MatrixStack& stack) {
     if (mesh_ == nullptr) return;
     material.Commit();

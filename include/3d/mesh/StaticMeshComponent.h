@@ -11,6 +11,7 @@ namespace glengine::world::mesh {
     class GLENGINE_EXPORT StaticMeshComponent : public ActorSceneComponent {
     public:
         StaticMeshComponent();
+		StaticMeshComponent(std::string_view meshName);
         void Render(const pipeline::wgpu::RenderBundle&, MatrixStack&) override;
 
         void SetMesh(std::shared_ptr<StaticMesh>);
