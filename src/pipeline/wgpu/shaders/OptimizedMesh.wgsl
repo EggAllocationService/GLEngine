@@ -59,6 +59,7 @@ const TASK_MESHLET_GROUP_SIZE: u32 = 96;
 const TASK_PAYLOAD_MESHLET_ARR: u32 = TASK_MESHLET_GROUP_SIZE / 4;
 
 struct TaskPayload {
+    mvp: mat4x4<f32>,
     instance: u32,
     meshletOffset: u32,
     meshletCount: u32,
@@ -75,7 +76,7 @@ var<workgroup> scratch: TaskScratch;
 
 @task
 @payload(payload)
-@workgroup_size(TASK_MESHLET_GROUP_SIZE, 1, 1)
+@workgroup_size(32, 1, 1)
 fn task(
     @builtin(local_invocation_id) localIdx: vec3<u32>,
     @builtin(global_invocation_id) globalIdx: vec3<u32>,
@@ -83,15 +84,16 @@ fn task(
 ) -> @builtin(mesh_task_size) vec3<u32> {
     let instance = globalIdx.y;
     let baseMeshlet = workgroupIdx.x * TASK_MESHLET_GROUP_SIZE;
-    let meshlet = localIdx.x;
     if (localIdx.x == 0) {
         atomicStore(&scratch.meshletCount, 0);
     }
     workgroupBarrier();
+    let transform = instances[instance].transform;
+    let totalMeshlets = arrayLength(&meshlets);
+    let toProcess = min(TASK_MESHLET_GROUP_SIZE, totalMeshlets - baseMeshlet);
 
-    if (globalIdx.x < arrayLength(&meshlets)) {
-        let transform = instances[instance].transform;
-        let ml = meshlets[baseMeshlet + meshlet];
+    for (var offset = localIdx.x; offset < toProcess; offset += 32) {
+        let ml = meshlets[baseMeshlet + offset];
         let cameraForward = camera.cameraMatrix[2].xyz;
         let cameraOrigin = camera.cameraMatrix[3].xyz;
         let meshletOrigin = (transform * vec4f(ml.origin.xyz, 1.0)).xyz;
@@ -104,7 +106,7 @@ fn task(
 
         if (!frustrumCulled && !normalConeCulled) {
             let idx = atomicAdd(&scratch.meshletCount, 1);
-            scratch.meshlets[idx] = meshlet;
+            scratch.meshlets[idx] = offset;
         }
     }
     workgroupBarrier();
@@ -120,6 +122,7 @@ fn task(
         payload.instance = instance;
         payload.meshletOffset = baseMeshlet;
         payload.meshletCount = atomicLoad(&scratch.meshletCount);
+        payload.mvp = camera.projectionViewMatrix *transform;
     }
 
     return vec3u(payload.meshletCount, 1, 1);
@@ -139,16 +142,18 @@ var<workgroup> mesh_output: MeshOutput;
 @payload(payload)
 @workgroup_size(32, 1, 1)
 fn mesh(@builtin(workgroup_id) globalIdx: vec3u, @builtin(local_invocation_id) localIdx: vec3u) {
-    let transform = instances[payload.instance].transform;
-    let mvp = camera.projectionViewMatrix * transform;
-
     // fetch meshlet id from packed ids in payload
     let payloadIdx = globalIdx.x / 4;
     let payloadOffset = globalIdx.x % 4;
     let meshlet = payload.meshletOffset + unpack4xU8(payload.meshlets[payloadIdx])[payloadOffset];
-    let meshletData = meshlets[meshlet];
 
-    for (var idx = localIdx.x; idx < meshletData.verticesCount; idx += 32) {
+    let transform = instances[payload.instance].transform;
+    let mvp = payload.mvp;
+
+    let meshletData = meshlets[meshlet];
+    let v = meshletData.verticesCount;
+
+    for (var idx = localIdx.x; idx < v; idx += 32) {
         let v = vertices[meshletData.verticesOffset + idx];
         mesh_output.vertices[idx].position = mvp * vec4f(v.position, 1.0);
         mesh_output.vertices[idx].normal = (transform * vec4f(v.normal, 0.0)).xyz;
