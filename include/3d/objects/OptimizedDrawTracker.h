@@ -15,13 +15,13 @@ namespace glengine::world::objects {
         std::shared_ptr<pipeline::wgpu::MeshPipeline> pipeline;
     };
 
-    class GLENGINE_EXPORT OptimizedDrawTracker : public pipeline::RenderObject {
+    class OptimizedDrawTracker : public pipeline::RenderObject {
     public:
-        OptimizedDrawTracker();
-        void UpdateEnd(double deltaTime) override;
-        void RenderStart(pipeline::wgpu::RenderBundle &bundle) override;
+        GLENGINE_EXPORT OptimizedDrawTracker();
+        GLENGINE_EXPORT void UpdateEnd(double deltaTime) override;
+        GLENGINE_EXPORT void RenderStart(pipeline::wgpu::RenderBundle &bundle) override;
 
-        void Draw(const std::shared_ptr<mesh::OptimizedMesh>& mesh, OptimizedMeshInstance& instance);
+        GLENGINE_EXPORT void Draw(const std::shared_ptr<mesh::OptimizedMesh>& mesh, OptimizedMeshInstance& instance);
     private:
         std::unordered_map<int, OptimizedInstanceTracker> trackers;
         std::shared_ptr<pipeline::wgpu::MeshPipeline> pipeline;
