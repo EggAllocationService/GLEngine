@@ -52,8 +52,7 @@ struct Vertex {
     @location(0) normal: vec3<f32>
 }
 struct Primitive {
-    @builtin(triangle_indices) indices: vec3<u32>,
-    @per_primitive @location(1) meshlet_normal: vec3<f32>
+    @builtin(triangle_indices) indices: vec3<u32>
 }
 
 const TASK_MESHLET_GROUP_SIZE: u32 = 96;
@@ -138,7 +137,7 @@ var<workgroup> mesh_output: MeshOutput;
 
 @mesh(mesh_output)
 @payload(payload)
-@workgroup_size(64, 1, 1)
+@workgroup_size(32, 1, 1)
 fn mesh(@builtin(workgroup_id) globalIdx: vec3u, @builtin(local_invocation_id) localIdx: vec3u) {
     let transform = instances[payload.instance].transform;
     let mvp = camera.projectionViewMatrix * transform;
@@ -149,21 +148,20 @@ fn mesh(@builtin(workgroup_id) globalIdx: vec3u, @builtin(local_invocation_id) l
     let meshlet = payload.meshletOffset + unpack4xU8(payload.meshlets[payloadIdx])[payloadOffset];
     let meshletData = meshlets[meshlet];
 
-    if (localIdx.x < meshletData.verticesCount) {
-        let v = vertices[meshletData.verticesOffset + localIdx.x];
-        mesh_output.vertices[localIdx.x].position = mvp * vec4f(v.position, 1.0);
-        mesh_output.vertices[localIdx.x].normal = (transform * vec4f(v.normal, 0.0)).xyz;
-        // TODO: normal/uv
+    for (var idx = localIdx.x; idx < meshletData.verticesCount; idx += 32) {
+        let v = vertices[meshletData.verticesOffset + idx];
+        mesh_output.vertices[idx].position = mvp * vec4f(v.position, 1.0);
+        mesh_output.vertices[idx].normal = (transform * vec4f(v.normal, 0.0)).xyz;
     }
 
-    if (localIdx.x < meshletData.indicesCount / 3) {
-        let base = localIdx.x * 3;
-        mesh_output.primitives[localIdx.x].indices = vec3u(
+    let numTriangles = meshletData.indicesCount / 3;
+    for (var tri = localIdx.x; tri < numTriangles; tri += 32) {
+        let base = tri * 3;
+        mesh_output.primitives[tri].indices = vec3u(
             u32(indices[meshletData.indicesOffset + base + 0]),
             u32(indices[meshletData.indicesOffset + base + 1]),
             u32(indices[meshletData.indicesOffset + base + 2])
         );
-        mesh_output.primitives[localIdx.x].meshlet_normal = (transform * vec4f(meshletData.coneAxis.xyz, 0)).xyz;
     }
 
     if (localIdx.x == 0) {
