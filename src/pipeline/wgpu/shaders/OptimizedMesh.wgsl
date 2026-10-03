@@ -76,7 +76,7 @@ var<workgroup> scratch: TaskScratch;
 
 @task
 @payload(payload)
-@workgroup_size(32, 1, 1)
+@workgroup_size(TASK_MESHLET_GROUP_SIZE, 1, 1)
 fn task(
     @builtin(local_invocation_id) localIdx: vec3<u32>,
     @builtin(global_invocation_id) globalIdx: vec3<u32>,
@@ -84,16 +84,16 @@ fn task(
 ) -> @builtin(mesh_task_size) vec3<u32> {
     let instance = globalIdx.y;
     let baseMeshlet = workgroupIdx.x * TASK_MESHLET_GROUP_SIZE;
+    let meshlet = localIdx.x;
+    let transform = instances[instance].transform;
+
     if (localIdx.x == 0) {
         atomicStore(&scratch.meshletCount, 0);
     }
     workgroupBarrier();
-    let transform = instances[instance].transform;
-    let totalMeshlets = arrayLength(&meshlets);
-    let toProcess = min(TASK_MESHLET_GROUP_SIZE, totalMeshlets - baseMeshlet);
 
-    for (var offset = localIdx.x; offset < toProcess; offset += 32) {
-        let ml = meshlets[baseMeshlet + offset];
+    if (globalIdx.x < arrayLength(&meshlets)) {
+        let ml = meshlets[baseMeshlet + meshlet];
         let cameraForward = camera.cameraMatrix[2].xyz;
         let cameraOrigin = camera.cameraMatrix[3].xyz;
         let meshletOrigin = (transform * vec4f(ml.origin.xyz, 1.0)).xyz;
@@ -106,7 +106,7 @@ fn task(
 
         if (!frustrumCulled && !normalConeCulled) {
             let idx = atomicAdd(&scratch.meshletCount, 1);
-            scratch.meshlets[idx] = offset;
+            scratch.meshlets[idx] = meshlet;
         }
     }
     workgroupBarrier();
@@ -122,7 +122,7 @@ fn task(
         payload.instance = instance;
         payload.meshletOffset = baseMeshlet;
         payload.meshletCount = atomicLoad(&scratch.meshletCount);
-        payload.mvp = camera.projectionViewMatrix *transform;
+        payload.mvp = camera.projectionViewMatrix * transform;
     }
 
     return vec3u(payload.meshletCount, 1, 1);
