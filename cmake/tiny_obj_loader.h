@@ -3093,7 +3093,7 @@ loop_parse_if_eight_digits(UC const *&p, UC const *const pend, uint64_t &i) {
   }
 }
 
-fastfloat_really_inline FASTFLOAT_CONSTEXPR20 void
+fastfloat_really_inline void
 loop_parse_if_eight_digits(char const *&p, char const *const pend,
                            uint64_t &i) {
   // optimizes better than parse_if_eight_digits_unrolled() for UC = char.

@@ -24,7 +24,7 @@ namespace glengine::world::objects {
             group1[i].visibility = WGPUShaderStage_Task | WGPUShaderStage_Mesh;
         }
 
-        auto group2 = WGPU_BIND_GROUP_LAYOUT_ENTRY_INIT;
+        WGPUBindGroupLayoutEntry group2 = WGPU_BIND_GROUP_LAYOUT_ENTRY_INIT;
         group2.buffer = {
             .nextInChain = nullptr,
             .type = WGPUBufferBindingType_ReadOnlyStorage,

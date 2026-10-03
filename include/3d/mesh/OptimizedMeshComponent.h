@@ -11,14 +11,14 @@
 namespace glengine::world::mesh {
     class OptimizedMeshComponent : public ActorPrimitiveComponent {
     public:
-        OptimizedMeshComponent();
-        OptimizedMeshComponent(std::string_view name);
+        GLENGINE_EXPORT OptimizedMeshComponent();
+        GLENGINE_EXPORT OptimizedMeshComponent(std::string_view name);
 
-        void SetMesh(std::shared_ptr<OptimizedMesh>& mesh) {
+        GLENGINE_EXPORT void SetMesh(std::shared_ptr<OptimizedMesh>& mesh) {
             mesh_ = mesh;
         }
 
-        void Update(double deltaTime) override;
+        GLENGINE_EXPORT void Update(double deltaTime) override;
 
     private:
         std::shared_ptr<OptimizedMesh> mesh_;
