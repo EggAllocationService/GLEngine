@@ -17,12 +17,12 @@
 ///     int data[3]; // the actual storage
 ///
 ///     // Setup parameters:
-///     // `vec2<int>` indicates this swizzled representation can be converted to a vec2<int>
+///     // `vec3<int>` indicates this swizzled representation can be converted to a vec3<int>
 ///     // `int` indicates the primitive type stored is an int, allowing for broadcast assignments (foo.xy = 3)
 ///     // `3` sets the source vector width to 3 (so it fits in the union correctly)
-///     // `1, 0` indicates there are two elements in the swizzled vector, from source lane 1 and 0 respectively.
-///     // Therefore, `yx` will be a reversed view of the first two lanes of the vector.
-///     vec_swizzle<vec2<int>, int, 3, 0, 1> yx;
+///     // `1, 0, 2` indicates there are three elements in the swizzled vector, from source lanes 1, 0, and 2 respectively.
+///     // Therefore, `yxz` will be a reversed view of the first two lanes of the vector, with the third lane unaffected.
+///     vec_swizzle<vec3<int>, int, 3, 1, 0, 2> yxz;
 ///
 ///     // We can also use `vec_swizzle` to easily allow narrowing a vector.
 ///     // Since `indices` is in ascending order here, `xy` will simply be the first two lanes of the source vector.
@@ -177,6 +177,11 @@ struct vec2 {
         data[1] = y;
     }
 
+    vec2(T xy) {
+        data[0] = xy;
+        data[1] = xy;
+    }
+
     template<typename O>
     vec2(vec2<O> other) {
         data[0] = other[0];
@@ -303,6 +308,12 @@ struct vec3 {
         data[0] = T(other.x);
         data[1] = T(other.y);
         data[2] = T(other.z);
+    }
+
+    vec3(T xyz) {
+        data[0] = xyz;
+        data[1] = xyz;
+        data[2] = xyz;
     }
 
     union {
@@ -432,6 +443,13 @@ struct vec4 {
         data[1] = xyz.y;
         data[2] = xyz.z;
         data[3] = w;
+    }
+
+    vec4(T xyzw) {
+        data[0] = xyzw;
+        data[1] = xyzw;
+        data[2] = xyzw;
+        data[3] = xyzw;
     }
 
     union {
