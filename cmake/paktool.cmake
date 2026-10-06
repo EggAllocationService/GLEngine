@@ -18,7 +18,7 @@ target_link_libraries(optimizer PRIVATE meshoptimizer libzstd_static)
 add_executable(paktool "cmake/paktool.cpp")
 target_link_libraries(paktool optimizer)
 
-add_executable(meshtool "cmake/opttool.cpp")
+add_executable(meshtool "cmake/meshtool.cpp")
 target_link_libraries(meshtool optimizer)
 
 function(build_pak)
