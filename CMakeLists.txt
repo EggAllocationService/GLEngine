@@ -8,7 +8,7 @@ list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 include(FetchContent)
 FetchContent_Declare(zstd
         GIT_REPOSITORY https://github.com/facebook/zstd.git
-        GIT_TAG 01b7154
+	    GIT_TAG dev
         GIT_SHALLOW TRUE
 )
 set(ZSTD_BUILD_STATIC ON CACHE INTERNAL "")
