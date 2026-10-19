@@ -4,7 +4,7 @@
 
 #include "Enterprise.h"
 
-#include "3d/components/CameraComponent.h"
+#include "3d/components/OrthographicCamera.h"
 #include "Engine.h"
 #include "ResourceManager.h"
 #include "GLMath.h"
@@ -20,9 +20,8 @@ using namespace glengine::world::mesh;
 Enterprise::Enterprise()
 {
 	// put the camera slightly above and behind the middle
-	auto rearCamera = CreateComponent<components::CameraComponent>();
+	auto rearCamera = CreateComponent<components::OrthographicCamera>();
 	rearCamera->GetTransform()->SetPosition(float3(0, 0.5, -1.5));
-	rearCamera->FoV = 80;
 	SetActiveCamera(rearCamera);
 
 	// create a root for the mesh, as we need to rotate it 180 degrees but

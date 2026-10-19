@@ -155,6 +155,24 @@ mat4 glengine::math::perspectiveMatrix(float fov, float aspect, float near, floa
     };
 }
 
+mat4 glengine::math::orthographicMatrix(float left, float right, float bottom, float top, float near, float far) {
+    float A = 2.0f / (right - left);
+    float B = 2.0f / (top - bottom);
+    float C = 1.0f / (far - near);
+    float D = -(right + left) / (right - left);
+    float E = -(top + bottom) / (top - bottom);
+    float F = -near / (far - near);
+
+    return {
+            {
+                A, 0, 0, 0,
+                0, B, 0, 0,
+                0, 0, C, 0,
+                D, E, F, 1
+            }
+    };
+}
+
 
 float glengine::math::frand(float min, float max) {
     float factor = rand() / (float) RAND_MAX;

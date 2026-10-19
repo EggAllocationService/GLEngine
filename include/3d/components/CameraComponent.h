@@ -2,17 +2,17 @@
 // Created by Kyle Smith on 2025-10-18.
 //
 #pragma once
+#include "CameraLike.h"
 #include "glengine_export.h"
-#include "3d/ActorPrimitiveComponent.h"
 
 namespace glengine::world::components {
     /// Represents a viewpoint into the world
-    class GLENGINE_EXPORT CameraComponent : public ActorPrimitiveComponent {
+    class GLENGINE_EXPORT CameraComponent : public CameraLike {
     public:
         void Update(double) override;
 
         // Sets the GL_PROJECTION matrix
-        mat4 GetProjectionMatrix();
+        mat4 GetProjectionMatrix() override;
 
         // Field of View in degrees
         float FoV = 90.0f;

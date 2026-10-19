@@ -102,6 +102,9 @@ add_library(glengine SHARED
         include/3d/mesh/OptimizedMesh.h
         src/3d/mesh/OptimizedMeshComponent.cpp
         include/3d/mesh/OptimizedMeshComponent.h
+        include/3d/components/CameraLike.h
+        src/3d/components/OrthographicCamera.cpp
+        include/3d/components/OrthographicCamera.h
 )
 
 create_resource_library(NAME Shaders SOURCES 

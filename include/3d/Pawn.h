@@ -1,6 +1,6 @@
 #pragma once
 
-#include "components/CameraComponent.h"
+#include "components/CameraLike.h"
 #include "InputManager.h"
 #include "Actor.h"
 #include "glengine_export.h"
@@ -22,16 +22,16 @@ namespace glengine::world {
         /// </summary>
         virtual void OnUnpossess() {};
 
-        components::CameraComponent* GetActiveCamera() {
+        components::CameraLike* GetActiveCamera() const {
             return activeCamera.get();
         }
     protected:
-        void SetActiveCamera(std::shared_ptr<components::CameraComponent> camera) {
+        void SetActiveCamera(std::shared_ptr<components::CameraLike> camera) {
             activeCamera = std::move(camera);
         }
 
     private:
-        std::shared_ptr<components::CameraComponent> activeCamera;
+        std::shared_ptr<components::CameraLike> activeCamera;
     };
 
 }

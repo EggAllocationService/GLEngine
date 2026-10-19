@@ -53,6 +53,10 @@ namespace glengine::math {
     /// coordinate system (+z is into screen, +x is right, +y is up)
     mat4 GLENGINE_EXPORT perspectiveMatrix(float fov, float aspect, float near, float far);
 
+    /// Creates an orthographic projection matrix for a left-handed
+    /// coordinate system
+    mat4 GLENGINE_EXPORT orthographicMatrix(float left, float right, float bottom, float top, float near, float far);
+
     /// Random floating-point number in range
     float GLENGINE_EXPORT frand(float min, float max);
 
