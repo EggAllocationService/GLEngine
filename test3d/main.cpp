@@ -55,6 +55,7 @@ int main(int argc, char** argv) {
 
     auto ship = engine->SpawnActor<Enterprise>();
     engine->SetFakePawn(ship);
+    engine->Possess(ship);
 
     engine->SpawnActor<Environment>();
 
