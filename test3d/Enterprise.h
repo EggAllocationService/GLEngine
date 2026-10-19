@@ -23,8 +23,12 @@ public:
 
 private:
     std::shared_ptr<glengine::world::mesh::StaticMeshComponent> mesh;
+    std::shared_ptr<glengine::world::components::CameraLike> perspectiveCamera;
+    std::shared_ptr<glengine::world::components::CameraLike> orthographicCamera;
 
     // tilt.x = +right -left
     // tilt.y = +up -down
     float2 tilt;
+
+    bool ortho;
 };

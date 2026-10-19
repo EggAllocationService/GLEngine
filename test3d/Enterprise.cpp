@@ -4,11 +4,12 @@
 
 #include "Enterprise.h"
 
-#include "3d/components/OrthographicCamera.h"
+#include "3d/components/OrthographicCameraComponent.h"
 #include "Engine.h"
 #include "ResourceManager.h"
 #include "GLMath.h"
 #include "3d/components/AxesComponent.h"
+#include "3d/components/CameraComponent.h"
 #include "3d/mesh/GizmoComponent.h"
 #include "3d/mesh/InstancedStaticMeshComponent.h"
 #include "3d/text/SlugTextComponent.h"
@@ -20,9 +21,14 @@ using namespace glengine::world::mesh;
 Enterprise::Enterprise()
 {
 	// put the camera slightly above and behind the middle
-	auto rearCamera = CreateComponent<components::OrthographicCamera>();
-	rearCamera->GetTransform()->SetPosition(float3(0, 0.5, -1.5));
-	SetActiveCamera(rearCamera);
+	perspectiveCamera = CreateComponent<components::CameraComponent>();
+	perspectiveCamera->GetTransform()->SetPosition(float3(0, 0.5, -1.5));
+
+	orthographicCamera = CreateComponent<components::OrthographicCameraComponent>();
+	orthographicCamera->GetTransform()->SetPosition(float3(0, 0.5, -1.5));
+
+	ortho = false;
+	SetActiveCamera(perspectiveCamera);
 
 	// create a root for the mesh, as we need to rotate it 180 degrees but
 	// also want to tilt it with movement.
@@ -124,5 +130,10 @@ void Enterprise::OnPossess(glengine::input::InputManager* input)
 		auto rotation = this->GetTransform()->GetRotation();
 		rotation.xy += float2(0, amount);
 		this->GetTransform()->SetRotation(rotation);
+	});
+
+	input->AddAction('o', [this]() {
+		ortho = !ortho;
+		SetActiveCamera(ortho ? orthographicCamera : perspectiveCamera);
 	});
 }
