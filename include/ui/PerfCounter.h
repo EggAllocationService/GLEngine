@@ -14,11 +14,10 @@ namespace glengine::ui {
     public:
         PerfCounter();
 
+        void OnAddedToEngine() override;
         void Update(double deltaTime) override;
 
     private:
-        void EnsureLabel();
-
         std::shared_ptr<TextBlock> label_;
         float smoothedDelta_ = 0.0f;
     };

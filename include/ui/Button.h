@@ -21,7 +21,6 @@ namespace glengine::ui {
         using ClickHandler = std::function<void()>;
         void AddClickHandler(ClickHandler handler) { clickHandlers_.push_back(std::move(handler)); }
 
-        void Update(double deltaTime) override;
         void OnMouseEnter() override;
         void OnMouseLeave() override;
         void OnMouseDown(int button, float2 localPos) override;
@@ -32,7 +31,6 @@ namespace glengine::ui {
 
     private:
         void UpdateAppearance();
-        void EnsureLabel();
 
         std::string label_;
         std::shared_ptr<world::font::Font> font_;

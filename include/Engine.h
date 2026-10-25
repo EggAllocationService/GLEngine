@@ -22,6 +22,10 @@
 #endif
 
 namespace glengine {
+    namespace ui {
+        class Console;
+    }
+
     struct PostProcessEntry {
         std::shared_ptr<pipeline::wgpu::post::PostProcessEffect> effect;
         void* data;
@@ -55,6 +59,19 @@ namespace glengine {
 
         /// Sets the current mouse mode to `mode`
         void SetMouseMode(input::MouseMode mode);
+
+#ifdef GLENGINE_TEXT_RENDERING
+        /// Opens the console and gives it keyboard focus.
+        void ShowConsole();
+        /// Closes the console and releases keyboard focus.
+        void HideConsole();
+        /// Writes a message to the console's log buffer (visible when the console is open).
+        void LogConsole(std::string_view message);
+
+        [[nodiscard]] std::shared_ptr<ui::Console> GetConsole() const {
+            return console;
+        }
+#endif
 
         template <typename T, typename... Args>
         std::shared_ptr<T> SpawnActor(Args&&... args) {
@@ -195,6 +212,7 @@ namespace glengine {
         pipeline::wgpu::WGPURenderer* renderer;
 #ifdef GLENGINE_TEXT_RENDERING
         ui::UIManager* uiManager;
+        std::shared_ptr<ui::Console> console;
 #endif
 
         std::vector<std::shared_ptr<world::Actor>> actors;

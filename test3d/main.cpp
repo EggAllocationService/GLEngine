@@ -17,11 +17,13 @@
 #include "windows.h"
 #endif
 
+
 #include "DemoShaders.h"
 #include "ui/UIManager.h"
 #include "ui/FlexView.h"
 #include "ui/Button.h"
 #include "ui/PerfCounter.h"
+#include "ui/Console.h"
 
 using namespace glengine;
 
@@ -103,6 +105,15 @@ int main(int argc, char** argv) {
         engine->SetPostEffectEnabled(invertIndex, inverted = !inverted);
     });
 
+    engine->LogConsole("Welcome to GLEngine");
+    engine->GetConsole()->AddConsoleCommand("invert", [engine, invertIndex](std::string_view) {
+        engine->SetPostEffectEnabled(invertIndex, inverted = !inverted);
+        if (inverted) {
+            engine->LogConsole("Inverted = true");
+        } else {
+            engine->LogConsole("Inverted = false");
+        }
+    });
 
     engine->MainLoop();
 }

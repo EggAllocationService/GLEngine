@@ -46,13 +46,10 @@ namespace glengine::ui {
     float4 TextBlock::Arrange(float4 available) {
         RebuildMesh();
 
-        float pixelScale = 1.0f;
-        if (textSize_.y > 0.0f) {
-            pixelScale = fontSize_ / textSize_.y;
-        }
-
-        const float2 pixelSize = textSize_ * pixelScale;
-        scale_ = pixelScale;
+        // fontSize_ is pixels per em; glyph size stays constant regardless of
+        // the string's content, only the layout rect grows/shrinks
+        const float2 pixelSize = textSize_ * fontSize_;
+        scale_ = fontSize_;
 
         finalRect_ = {
             available.x + position.x,

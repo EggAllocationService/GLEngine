@@ -139,8 +139,16 @@ namespace glengine::ui {
         /// Focused elements consume keyboard input before it reaches the pawn.
         bool focusable = false;
 
-        std::shared_ptr<View> GetParent() const { return parent_.lock(); }
+        View* GetParent() const { return parent_; }
         Engine* GetEngine() const { return engine_; }
+
+        /// Sets the engine for this element and, for views, the whole subtree.
+        /// Fires OnAddedToEngine the first time a non-null engine is assigned,
+        /// which is the place to fetch engine resources (fonts, etc).
+        virtual void SetEngine(Engine* engine);
+
+        /// Called once when the element becomes part of an engine's UI tree.
+        virtual void OnAddedToEngine() {}
 
         /// Final pixel-space rectangle after Arrange(), in bottom-left origin.
         float4 GetFinalRect() const { return finalRect_; }
@@ -156,7 +164,7 @@ namespace glengine::ui {
 
     protected:
         Engine* engine_ = nullptr;
-        std::weak_ptr<View> parent_;
+        View* parent_ = nullptr;
         float4 finalRect_ = float4(0, 0, 0, 0);
         bool destroyed_ = false;
         bool visible_ = true;
@@ -171,12 +179,12 @@ namespace glengine::ui {
         View();
         ~View() override = default;
 
-        /// Creates and adds a child element of type T.
+        /// Creates and adds a child element of type T. Safe to call from a
+        /// view's constructor, like Actor::CreateComponent.
         template <typename T, typename... Args>
         std::shared_ptr<T> AddElement(Args&&... args) {
             static_assert(std::is_base_of_v<Element, T>, "T must derive from Element");
             auto child = std::make_shared<T>(std::forward<Args>(args)...);
-            child->engine_ = engine_;
             AddChild(child);
             return child;
         }
@@ -189,6 +197,7 @@ namespace glengine::ui {
         float4 Arrange(float4 available) override;
         void CollectRenderCommands(std::vector<UIRenderCommand>& commands, const mat3& parentTransform) override;
         std::shared_ptr<Element> HitTest(float2 point) override;
+        void SetEngine(Engine* engine) override;
 
     protected:
         std::vector<std::shared_ptr<Element>> children_;

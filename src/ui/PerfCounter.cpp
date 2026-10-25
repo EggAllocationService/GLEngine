@@ -17,20 +17,16 @@ namespace glengine::ui {
         backgroundColor = float4(0, 0, 0, 0.55f);
         // purely informational; never blocks clicks to what's underneath
         mouseInteraction = MouseInteraction::Ignore;
-    }
 
-    void PerfCounter::EnsureLabel() {
-        if (label_) {
-            return;
-        }
         label_ = AddElement<TextBlock>();
         label_->SetFontSize(16.0f);
+    }
+
+    void PerfCounter::OnAddedToEngine() {
         label_->SetFont(engine_->GetResourceManager()->GetResource<world::font::Font>("/builtin/fonts/quattrocento.ttf"));
     }
 
     void PerfCounter::Update(double deltaTime) {
-        EnsureLabel();
-
         // smooth the frame time so the readout is stable
         const float dt = static_cast<float>(deltaTime);
         smoothedDelta_ = smoothedDelta_ <= 0.0f ? dt : smoothedDelta_ * 0.95f + dt * 0.05f;

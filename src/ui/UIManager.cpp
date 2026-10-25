@@ -36,7 +36,7 @@ namespace glengine::ui {
 
     UIManager::UIManager(Engine* engine) : engine_(engine) {
         rootView_ = std::make_shared<View>();
-        rootView_->engine_ = engine_;
+        rootView_->SetEngine(engine_);
 
         // create the standard system cursors up front
         cursors_[Cursor::Pointer] = glfwCreateStandardCursor(GLFW_POINTING_HAND_CURSOR);

@@ -10,40 +10,22 @@
 namespace glengine::ui {
     Button::Button() {
         cursor = Cursor::Pointer;
+        labelBlock_ = AddElement<TextBlock>();
+        labelBlock_->SetFontSize(20.0f);
     }
 
     Button::Button(std::string label) : Button() {
-        label_ = std::move(label);
+        SetLabel(std::move(label));
     }
 
     void Button::SetLabel(std::string label) {
         label_ = std::move(label);
-        if (labelBlock_) {
-            labelBlock_->SetText(label_);
-        }
+        labelBlock_->SetText(label_);
     }
 
     void Button::SetFont(std::shared_ptr<world::font::Font> font) {
         font_ = std::move(font);
-        EnsureLabel();
-    }
-
-    void Button::EnsureLabel() {
-        if (!font_ || label_.empty()) {
-            labelBlock_.reset();
-            return;
-        }
-        if (!labelBlock_) {
-            labelBlock_ = AddElement<TextBlock>(label_);
-            labelBlock_->SetFont(font_);
-            labelBlock_->SetFontSize(20.0f);
-            labelBlock_->foregroundColor = foregroundColor;
-        }
-    }
-
-    void Button::Update(double deltaTime) {
-        View::Update(deltaTime);
-        EnsureLabel();
+        labelBlock_->SetFont(font_);
     }
 
     float4 Button::Arrange(float4 available) {
@@ -78,9 +60,7 @@ namespace glengine::ui {
         } else {
             backgroundColor = normalColor_;
         }
-        if (labelBlock_) {
-            labelBlock_->foregroundColor = foregroundColor;
-        }
+        labelBlock_->foregroundColor = foregroundColor;
     }
 
     void Button::OnMouseEnter() {

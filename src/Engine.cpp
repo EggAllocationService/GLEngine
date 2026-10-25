@@ -19,6 +19,9 @@
 #include "BuiltinAssets.h"
 #include "3d/objects/LightTracker.h"
 #include "3d/objects/OptimizedDrawTracker.h"
+#ifdef GLENGINE_TEXT_RENDERING
+#include "ui/Console.h"
+#endif
 
 namespace glengine {
     static Engine* CURRENT_ENGINE = nullptr;
@@ -95,6 +98,26 @@ namespace glengine {
 #ifdef GLENGINE_TEXT_RENDERING
         // if text rendering is enabled, add default fonts
         resourceManager->MountPak("/builtin/fonts", embed_fonts_pak, embed_fonts_pak_length);
+#endif
+
+#ifdef GLENGINE_TEXT_RENDERING
+        // create the console after paks are mounted so it can load its font
+        console = uiManager->GetRootView()->AddElement<ui::Console>();
+
+        console->AddConsoleCommand("quit", [this](std::string_view) {
+            Quit();
+        });
+        console->AddConsoleCommand("detach", [this](std::string_view) {
+            const auto newPawn = SpawnActor<world::DefaultPawn>();
+            const auto currentPawn = GetPossessedPawn();
+            if (currentPawn != nullptr) {
+                newPawn->GetTransform()->SetPosition(currentPawn->GetTransform()->GetPosition());
+            }
+            Possess(newPawn);
+        });
+        inputManager->AddAction('`', [this] {
+            ShowConsole();
+        });
 #endif
         start = std::chrono::high_resolution_clock::now();
     }
@@ -187,9 +210,31 @@ namespace glengine {
     }
 
     void Engine::SetMouseMode(const input::MouseMode mode) {
-
+#ifdef GLENGINE_TEXT_RENDERING
+        if (mode == input::CAPTIVE) {
+            HideConsole();
+        }
+#endif
         mouseManager->SetMouseMode(mode);
     }
+
+#ifdef GLENGINE_TEXT_RENDERING
+    void Engine::ShowConsole() {
+        console->SetOpen(true);
+        uiManager->SetFocus(console);
+    }
+
+    void Engine::HideConsole() {
+        if (uiManager->GetFocusedElement() == console) {
+            uiManager->ClearFocus();
+        }
+        console->SetOpen(false);
+    }
+
+    void Engine::LogConsole(std::string_view message) {
+        console->Log(message);
+    }
+#endif
 
     void Engine::Possess(const std::shared_ptr<world::Pawn>& target) {
         CURRENT_ENGINE = this;

@@ -147,6 +147,7 @@ if (${TEXT_RENDERING})
             src/ui/TextBlock.cpp
             src/ui/UIManager.cpp
             src/ui/PerfCounter.cpp
+            src/ui/Console.cpp
     )
 
     build_pak(

@@ -53,6 +53,14 @@ namespace glengine::ui {
         destroyed_ = true;
     }
 
+    void Element::SetEngine(Engine* engine) {
+        const bool wasNull = engine_ == nullptr;
+        engine_ = engine;
+        if (wasNull && engine != nullptr) {
+            OnAddedToEngine();
+        }
+    }
+
     float2 Element::ToLocal(float2 point) const {
         return point - float2(finalRect_.x, finalRect_.y);
     }
@@ -66,15 +74,22 @@ namespace glengine::ui {
 
     void View::AddChild(const std::shared_ptr<Element>& child) {
         if (!child) return;
-        child->parent_ = std::static_pointer_cast<View>(shared_from_this());
-        child->engine_ = engine_;
+        child->parent_ = this;
+        child->SetEngine(engine_);
         children_.push_back(child);
     }
 
     void View::RemoveChild(const std::shared_ptr<Element>& child) {
         std::erase(children_, child);
         if (child) {
-            child->parent_.reset();
+            child->parent_ = nullptr;
+        }
+    }
+
+    void View::SetEngine(Engine* engine) {
+        Element::SetEngine(engine);
+        for (const auto& child : children_) {
+            child->SetEngine(engine);
         }
     }
 
@@ -110,8 +125,14 @@ namespace glengine::ui {
 
         Element::CollectRenderCommands(commands, parentTransform);
 
+        // children stack relative to their parent, so a view's zIndex lifts
+        // its whole subtree (e.g. the console above all other UI)
+        const size_t beforeChildren = commands.size();
         for (const auto& child : children_) {
             child->CollectRenderCommands(commands, parentTransform);
+        }
+        for (size_t i = beforeChildren; i < commands.size(); i++) {
+            commands[i].zIndex += zIndex;
         }
     }
 
