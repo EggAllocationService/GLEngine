@@ -39,7 +39,7 @@ namespace glengine::ui {
             return;
         }
 
-        mesh_ = font_->PrepareText(text_.c_str(), &textSize_, expandEm);
+        mesh_ = font_->PrepareText(text_.c_str(), &textSize_, expandEm, mesh_);
         builtExpandEm_ = expandEm;
     }
 

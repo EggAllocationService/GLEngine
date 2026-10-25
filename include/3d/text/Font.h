@@ -44,7 +44,10 @@ namespace glengine::world::font {
         /// Generates a text mesh. `expandEm` expands each glyph's quad by that
         /// many mesh-space units on every side, giving the fragment shader room
         /// to antialias past the outline (roughly one pixel at the target scale).
-        std::shared_ptr<pipeline::wgpu::GPUMesh> PrepareText(const char* text, float2* outSize = nullptr, float expandEm = 0.0f);
+        /// If `reuse` is given and large enough, its buffers are rewritten in
+        /// place instead of allocating new ones (use for frequently changing text).
+        std::shared_ptr<pipeline::wgpu::GPUMesh> PrepareText(const char* text, float2* outSize = nullptr, float expandEm = 0.0f,
+            const std::shared_ptr<pipeline::wgpu::GPUMesh>& reuse = nullptr);
 
         [[nodiscard]] std::shared_ptr<pipeline::wgpu::RenderPipeline> GetPipeline() const {
             return pipeline;

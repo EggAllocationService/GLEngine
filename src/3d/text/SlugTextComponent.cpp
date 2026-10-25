@@ -23,14 +23,14 @@ namespace glengine::world {
     void font::SlugTextComponent::SetFont(std::shared_ptr<Font> newFont) {
         this->font = newFont;
         if (!this->text.empty()) {
-            this->mesh = this->font->PrepareText(text.c_str());
+            this->mesh = this->font->PrepareText(text.c_str(), nullptr, 0.0f, this->mesh);
         }
     }
 
     void font::SlugTextComponent::SetText(std::string_view newText) {
         this->text = newText;
         if (this->font != nullptr) {
-            this->mesh = this->font->PrepareText(this->text.c_str());
+            this->mesh = this->font->PrepareText(this->text.c_str(), nullptr, 0.0f, this->mesh);
         }
     }
 }

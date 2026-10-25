@@ -116,6 +116,36 @@ namespace glengine::pipeline::wgpu {
             return std::make_shared<GPUMesh>(vertciesBuf, indicesBuf, vertices.size(), sizeof(T), indices.size(), meshIdTracker++);
         }
 
+        /// Rewrites `reuse`'s buffers in place if they can hold the new data,
+        /// avoiding per-frame buffer allocation for frequently changing meshes
+        /// (e.g. text). Falls back to allocating a new mesh when it doesn't fit.
+        template<typename T>
+        std::shared_ptr<GPUMesh> UpdateIndexedMesh(const std::shared_ptr<GPUMesh>& reuse,
+            const std::vector<T>& vertices, const std::vector<unsigned int>& indices) {
+
+            if (reuse && reuse->GetVertexStride() == sizeof(T) &&
+                reuse->GetVertexCapacity() >= (int)vertices.size() &&
+                reuse->GetIndexCapacity() >= (int)indices.size()) {
+                // rewrite in place through the transfer pool; avoids allocating
+                // new buffers (and new staging buffers) every frame
+                const auto vbytes = vertices.size() * sizeof(T);
+                const auto ibytes = indices.size() * sizeof(unsigned int);
+                auto session = transferManager->CreateSession("mesh update", vbytes + ibytes);
+                session->Transfer(reuse->GetVertices(), 0, vertices.data(), vbytes);
+                if (!indices.empty()) {
+                    session->Transfer(reuse->GetIndices(), 0, indices.data(), ibytes);
+                }
+                session->Commit();
+                reuse->SetDrawCounts(vertices.size(), indices.size());
+                return reuse;
+            }
+
+            auto mesh = UploadIndexedMesh(vertices, indices);
+            // track capacity so future rewrites of this mesh can stay in place
+            mesh->SetBufferCapacities(vertices.size(), indices.size());
+            return mesh;
+        }
+
         std::shared_ptr<RenderPipeline> GetRenderPipelineByName(const std::string& name);
         std::shared_ptr<RenderPipeline> BuildRenderPipeline(
             std::string name,

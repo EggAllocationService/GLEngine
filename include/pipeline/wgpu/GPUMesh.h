@@ -31,6 +31,20 @@ namespace glengine::pipeline::wgpu {
             return indexCount;
         }
 
+        /// Buffer capacities in elements, used to decide if the mesh can be
+        /// rewritten in place instead of allocating new buffers.
+        [[nodiscard]] int GetVertexCapacity() const {
+            return vertexCapacity;
+        }
+        [[nodiscard]] int GetIndexCapacity() const {
+            return indexCapacity;
+        }
+
+        /// Grows the buffer capacities (or leaves them unchanged if smaller).
+        void SetBufferCapacities(int vertices, int indices);
+        /// Updates the element counts after an in-place rewrite.
+        void SetDrawCounts(int vertices, int indices);
+
         [[nodiscard]] int GetId() const {
             return id;
         }
@@ -43,6 +57,8 @@ namespace glengine::pipeline::wgpu {
         WGPUBuffer indices;
         int vertexCount;
         int indexCount;
+        int vertexCapacity = 0;
+        int indexCapacity = 0;
         int id;
         int vertexStride;
     };

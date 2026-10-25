@@ -73,7 +73,8 @@ Font::Font(std::istream& data, pipeline::wgpu::WGPURenderer* renderer) {
     if (uiPipeline) uiPipeline->CommitBindings();
 }
 
-std::shared_ptr<glengine::pipeline::wgpu::GPUMesh> Font::PrepareText(const char *text, float2* outSize, float expandEm) {
+std::shared_ptr<glengine::pipeline::wgpu::GPUMesh> Font::PrepareText(const char *text, float2* outSize, float expandEm,
+    const std::shared_ptr<glengine::pipeline::wgpu::GPUMesh>& reuse) {
 
     auto buf = hb_buffer_create();
     hb_buffer_add_utf8(buf, text, strlen(text), 0, -1);
@@ -199,7 +200,7 @@ std::shared_ptr<glengine::pipeline::wgpu::GPUMesh> Font::PrepareText(const char 
 
     hb_buffer_destroy(buf);
 
-    return renderer->UploadIndexedMesh(vertices, indices);
+    return renderer->UpdateIndexedMesh(reuse, vertices, indices);
 }
 
 int moveTo(void* ptr, int x, int y) {
