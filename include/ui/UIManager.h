@@ -4,9 +4,12 @@
 #pragma once
 
 #include <memory>
+#include <unordered_map>
 #include <vector>
 
 #include "ui/UIElement.h"
+
+struct GLFWcursor;
 #include "Vectors.h"
 #include "glengine_export.h"
 #include "webgpu/wgpu.h"
@@ -62,6 +65,7 @@ namespace glengine::ui {
         void BuildPipeline();
         void RenderCommand(const UIRenderCommand& command, pipeline::wgpu::RenderBundle& bundle,
                            const mat4& projection);
+        void ApplyCursor(Cursor cursor);
 
         Engine* engine_;
         std::shared_ptr<View> rootView_;
@@ -76,6 +80,9 @@ namespace glengine::ui {
         /// are never touched by the UI pass.
         std::unique_ptr<pipeline::wgpu::WrappedBuffer> uiTextUniforms_;
         WGPUBindGroup uiTextBindGroup_ = nullptr;
+
+        std::unordered_map<Cursor, GLFWcursor*> cursors_;
+        Cursor activeCursor_ = Cursor::Default;
 
         int2 lastWindowSize_ = int2(0, 0);
     };

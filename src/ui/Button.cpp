@@ -8,9 +8,13 @@
 #include "GLMath.h"
 
 namespace glengine::ui {
-    Button::Button() = default;
+    Button::Button() {
+        cursor = Cursor::Pointer;
+    }
 
-    Button::Button(std::string label) : label_(std::move(label)) {}
+    Button::Button(std::string label) : Button() {
+        label_ = std::move(label);
+    }
 
     void Button::SetLabel(std::string label) {
         label_ = std::move(label);

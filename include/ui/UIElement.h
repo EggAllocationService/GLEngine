@@ -40,6 +40,20 @@ namespace glengine::ui {
         Ignore
     };
 
+    /// System cursor shown while hovering an element.
+    enum class GLENGINE_EXPORT Cursor {
+        Default,
+        Pointer,
+        Text,
+        Crosshair,
+        ResizeHorizontal,
+        ResizeVertical,
+        ResizeDiagonalRight,
+        ResizeDiagonalLeft,
+        ResizeAll,
+        NotAllowed
+    };
+
     /// A single UI render command produced by the UI tree.
     /// The UIManager collects these, sorts them, and issues draw calls.
     struct GLENGINE_EXPORT UIRenderCommand {
@@ -117,6 +131,9 @@ namespace glengine::ui {
         int zIndex = 0;
 
         MouseInteraction mouseInteraction = MouseInteraction::Block;
+
+        /// System cursor displayed while the mouse hovers this element.
+        Cursor cursor = Cursor::Default;
 
         /// Whether this element can receive keyboard focus (e.g. by being clicked).
         /// Focused elements consume keyboard input before it reaches the pawn.

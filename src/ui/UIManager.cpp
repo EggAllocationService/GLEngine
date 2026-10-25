@@ -37,6 +37,18 @@ namespace glengine::ui {
     UIManager::UIManager(Engine* engine) : engine_(engine) {
         rootView_ = std::make_shared<View>();
         rootView_->engine_ = engine_;
+
+        // create the standard system cursors up front
+        cursors_[Cursor::Pointer] = glfwCreateStandardCursor(GLFW_POINTING_HAND_CURSOR);
+        cursors_[Cursor::Text] = glfwCreateStandardCursor(GLFW_IBEAM_CURSOR);
+        cursors_[Cursor::Crosshair] = glfwCreateStandardCursor(GLFW_CROSSHAIR_CURSOR);
+        cursors_[Cursor::ResizeHorizontal] = glfwCreateStandardCursor(GLFW_RESIZE_EW_CURSOR);
+        cursors_[Cursor::ResizeVertical] = glfwCreateStandardCursor(GLFW_RESIZE_NS_CURSOR);
+        cursors_[Cursor::ResizeDiagonalRight] = glfwCreateStandardCursor(GLFW_RESIZE_NWSE_CURSOR);
+        cursors_[Cursor::ResizeDiagonalLeft] = glfwCreateStandardCursor(GLFW_RESIZE_NESW_CURSOR);
+        cursors_[Cursor::ResizeAll] = glfwCreateStandardCursor(GLFW_RESIZE_ALL_CURSOR);
+        cursors_[Cursor::NotAllowed] = glfwCreateStandardCursor(GLFW_NOT_ALLOWED_CURSOR);
+
         BuildPipeline();
     }
 
@@ -44,6 +56,27 @@ namespace glengine::ui {
         if (uiTextBindGroup_ != nullptr) {
             wgpuBindGroupRelease(uiTextBindGroup_);
         }
+        for (const auto& [cursor, glfwCursor] : cursors_) {
+            if (glfwCursor != nullptr) {
+                glfwDestroyCursor(glfwCursor);
+            }
+        }
+    }
+
+    void UIManager::ApplyCursor(Cursor cursor) {
+        if (cursor == activeCursor_) {
+            return;
+        }
+        activeCursor_ = cursor;
+
+        GLFWcursor* glfwCursor = nullptr;
+        if (cursor != Cursor::Default) {
+            const auto found = cursors_.find(cursor);
+            if (found != cursors_.end()) {
+                glfwCursor = found->second;
+            }
+        }
+        glfwSetCursor(engine_->GetWindow(), glfwCursor);
     }
 
     void UIManager::BuildPipeline() {
@@ -260,6 +293,8 @@ namespace glengine::ui {
             }
             hoveredElement_ = hit;
         }
+
+        ApplyCursor(hit ? hit->cursor : Cursor::Default);
     }
 
     void UIManager::HandleMouseClick(int button, bool down, float2 point) {
