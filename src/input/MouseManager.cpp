@@ -13,6 +13,8 @@ namespace glengine::input {
     void MouseManager::HandleMotion(float2 position) {
         if (mouseMode == FREE) {
             mousePosition = position;
+            // convert to bottom-left origin for the UI
+            engine->GetUIManager()->HandleMouseMove(float2(position.x, engine->GetWindowSize().y + position.y));
         } else {
             auto delta = position - mousePosition;
             mousePosition = position;
@@ -22,9 +24,12 @@ namespace glengine::input {
     }
 
     void MouseManager::Click(int button, int action, float2 pos) {
-        // need to update this even if we're not clicking any widget, so we don't send drag/mouseup events to a widget
-        // before a mousedown event
-        clicking = action == GLUT_DOWN;
+        clicking = action == GLFW_PRESS;
+        if (mouseMode == FREE) {
+            // convert to bottom-left origin for the UI
+            engine->GetUIManager()->HandleMouseClick(button, action == GLFW_PRESS,
+                float2(pos.x, engine->GetWindowSize().y + pos.y));
+        }
     }
 
 

@@ -68,6 +68,8 @@ namespace glengine::pipeline::wgpu {
         WGPUCompareFunction depthMode;
         WGPUCullMode cullMode;
         WGPUPrimitiveTopology primitiveTopology = WGPUPrimitiveTopology_TriangleList;
+        bool depthDisabled = false;
+        bool depthWrite = true;
     };
 
     class GLENGINE_EXPORT WGPURenderer {
@@ -192,6 +194,27 @@ namespace glengine::pipeline::wgpu {
 
         [[nodiscard]] TransferManager* GetTransferManager() const {
             return transferManager;
+        }
+
+        [[nodiscard]] WGPUBuffer GetRenderUniformsBuffer() const {
+            return renderUniformsBuffer;
+        }
+
+        [[nodiscard]] WGPUBindGroup GetUniversalBindGroup() const {
+            return universalBindGroup;
+        }
+
+        [[nodiscard]] WGPUBindGroupLayout GetUniversalBindGroupLayout() const {
+            return universalBindGroupLayout;
+        }
+
+        /// Returns the entry for a slot in the universal bind group, or an empty
+        /// entry (buffer == nullptr) if the slot has not been populated yet.
+        [[nodiscard]] WGPUBindGroupEntry GetUniversalEntry(int binding) const {
+            if (binding < 0 || binding >= (int)universalEntries.size()) {
+                return WGPUBindGroupEntry{};
+            }
+            return universalEntries[binding];
         }
 
         void BuildBuiltinPipelines();

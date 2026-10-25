@@ -50,23 +50,30 @@ Font::Font(std::istream& data, pipeline::wgpu::WGPURenderer* renderer) {
 
     ttInitFont(&fontData, fontFile, fontFileLength);
     this->pipeline = renderer->GetRenderPipelineByName("BuiltinSlug")->CreateInstance();
+    if (auto slugUI = renderer->GetRenderPipelineByName("BuiltinSlugUI")) {
+        this->uiPipeline = slugUI->CreateInstance();
+    }
 
     WGPUBindGroupEntry entry = WGPU_BIND_GROUP_ENTRY_INIT;
     entry.buffer = *curves;
     pipeline->SetBinding(1, entry);
+    if (uiPipeline) uiPipeline->SetBinding(1, entry);
 
     entry.buffer = *curveIndices;
     entry.binding = 1;
     pipeline->SetBinding(1, entry);
+    if (uiPipeline) uiPipeline->SetBinding(1, entry);
 
     entry.buffer = *glyphInfos;
     entry.binding = 2;
     pipeline->SetBinding(1, entry);
+    if (uiPipeline) uiPipeline->SetBinding(1, entry);
 
     pipeline->CommitBindings();
+    if (uiPipeline) uiPipeline->CommitBindings();
 }
 
-std::shared_ptr<glengine::pipeline::wgpu::GPUMesh> Font::PrepareText(const char *text) {
+std::shared_ptr<glengine::pipeline::wgpu::GPUMesh> Font::PrepareText(const char *text, float2* outSize) {
 
     auto buf = hb_buffer_create();
     hb_buffer_add_utf8(buf, text, strlen(text), 0, -1);
@@ -75,6 +82,14 @@ std::shared_ptr<glengine::pipeline::wgpu::GPUMesh> Font::PrepareText(const char 
 
     unsigned int glyphCount = 0;
     auto glyphInfos = hb_buffer_get_glyph_infos(buf, &glyphCount);
+
+    if (glyphCount == 0) {
+        hb_buffer_destroy(buf);
+        if (outSize) {
+            *outSize = float2(0, 0);
+        }
+        return nullptr;
+    }
 
     for (int i = 0; i < glyphCount; i++) {
         addGlyphToAtlas(glyphInfos[i].codepoint);
@@ -87,6 +102,7 @@ std::shared_ptr<glengine::pipeline::wgpu::GPUMesh> Font::PrepareText(const char 
         WGPUBindGroupEntry entry = WGPU_BIND_GROUP_ENTRY_INIT;
         entry.buffer = newBuf;
         pipeline->SetBinding(1, entry);
+        if (uiPipeline) uiPipeline->SetBinding(1, entry);
     });
 
     this->curveIndices->Commit(session, [this](WGPUBuffer newBuf) {
@@ -94,6 +110,7 @@ std::shared_ptr<glengine::pipeline::wgpu::GPUMesh> Font::PrepareText(const char 
         entry.buffer = newBuf;
         entry.binding = 1;
         pipeline->SetBinding(1, entry);
+        if (uiPipeline) uiPipeline->SetBinding(1, entry);
     });
 
     this->glyphInfos->Commit(session, [this](WGPUBuffer newBuf) {
@@ -101,10 +118,12 @@ std::shared_ptr<glengine::pipeline::wgpu::GPUMesh> Font::PrepareText(const char 
         entry.buffer = newBuf;
         entry.binding = 2;
         pipeline->SetBinding(1, entry);
+        if (uiPipeline) uiPipeline->SetBinding(1, entry);
     });
 
     session->Commit();
     pipeline->CommitBindings();
+    if (uiPipeline) uiPipeline->CommitBindings();
 
     std::vector<SlugVertex> vertices;
     vertices.reserve(glyphCount * 4);
@@ -156,6 +175,16 @@ std::shared_ptr<glengine::pipeline::wgpu::GPUMesh> Font::PrepareText(const char 
 
         offset.x += positions[i].x_advance * scale.x;
     }
+    if (outSize) {
+        float2 minBounds = vertices[0].pos.xy;
+        float2 maxBounds = vertices[0].pos.xy;
+        for (const auto& vertex : vertices) {
+            minBounds = min(minBounds, vertex.pos.xy);
+            maxBounds = max(maxBounds, vertex.pos.xy);
+        }
+        *outSize = maxBounds - minBounds;
+    }
+
     // we want to center the text on 0,0
     auto placementOffset = (vertices[vertices.size() - 2].pos.xy - vertices[0].pos.xy) / 2.0;
     for (auto& vertex : vertices) {

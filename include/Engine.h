@@ -17,6 +17,7 @@
 #include "pipeline/RenderObjects.h"
 #include "GLFW/glfw3.h"
 #include "pipeline/wgpu/WGPURenderer.h"
+#include "ui/UIManager.h"
 
 namespace glengine {
     struct PostProcessEntry {
@@ -121,6 +122,10 @@ namespace glengine {
             return renderer;
         }
 
+        [[nodiscard]] ui::UIManager* GetUIManager() const {
+            return uiManager;
+        }
+
         [[nodiscard]] world::Pawn* GetPossessedPawn() const {
             if (possessedPawn.expired()) {
                 return nullptr;
@@ -175,6 +180,7 @@ namespace glengine {
 
         rendering::RenderObjects* renderObjectManager;
         pipeline::wgpu::WGPURenderer* renderer;
+        ui::UIManager* uiManager;
 
         std::vector<std::shared_ptr<world::Actor>> actors;
 

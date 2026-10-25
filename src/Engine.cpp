@@ -48,6 +48,11 @@ namespace glengine {
         }
     }
 
+    static void mouseClickExec(GLFWwindow* window, int button, int action, int mods) {
+        auto engine = (Engine*)glfwGetWindowUserPointer(window);
+        engine->GetMouseManager()->Click(button, action, engine->GetMouseManager()->GetMousePosition());
+    }
+
 #pragma endregion
 
     Engine::Engine(const std::string &windowName, int2 size) {
@@ -62,13 +67,14 @@ namespace glengine {
         renderer = new pipeline::wgpu::WGPURenderer(window, this);
         resourceManager = new ResourceManager(renderer);
         renderer->BuildBuiltinPipelines();
+        uiManager = new ui::UIManager(this);
 
         glfwSetWindowUserPointer(window, this);
 
         //glutIdleFunc(updateExec);
         //glutDisplayFunc(renderExec);
         glfwSetFramebufferSizeCallback(window, reshapeExec);
-        //glutMouseFunc(clickExec);
+        glfwSetMouseButtonCallback(window, mouseClickExec);
 
         glfwSetCursorPosCallback(window, mouseMoveExec);
         //glutPassiveMotionFunc(mouseMoveExec);
@@ -98,6 +104,7 @@ namespace glengine {
         delete pawnInputManager;
         delete resourceManager;
         delete renderObjectManager;
+        delete uiManager;
         delete renderer;
     }
 
@@ -131,6 +138,8 @@ namespace glengine {
         inputManager->Update(delta);
         pawnInputManager->Update(delta);
 
+        uiManager->Update(delta);
+
         updateActors(delta);
 
         // update render objects post-actors
@@ -146,6 +155,11 @@ namespace glengine {
     }
 
     void Engine::KeyPressed(int keyCode) {
+
+        // first priority: send input to a focused UI element
+        if (uiManager->HandleKeyPressed(keyCode)) {
+            return;
+        }
 
         // second priority: send input to possessed pawn if mouse is captured or we're allowing non-captured input
         if (mouseManager->GetMouseMode() == input::CAPTIVE || flags.allowNonFocusedPawnInput) {
@@ -237,6 +251,8 @@ namespace glengine {
         renderWorld(frame);
 
         applyPostEffects(frame);
+
+        uiManager->Render(frame);
 
         // present
         renderer->PresentFrame(frame);

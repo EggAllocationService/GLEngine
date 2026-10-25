@@ -41,10 +41,14 @@ namespace glengine::world::font {
     class GLENGINE_EXPORT Font : public Resource {
     public:
         Font(std::istream &, pipeline::wgpu::WGPURenderer *renderer);
-        std::shared_ptr<pipeline::wgpu::GPUMesh> PrepareText(const char* text);
+        std::shared_ptr<pipeline::wgpu::GPUMesh> PrepareText(const char* text, float2* outSize = nullptr);
 
         [[nodiscard]] std::shared_ptr<pipeline::wgpu::RenderPipeline> GetPipeline() const {
             return pipeline;
+        }
+
+        [[nodiscard]] std::shared_ptr<pipeline::wgpu::RenderPipeline> GetUIPipeline() const {
+            return uiPipeline ? uiPipeline : pipeline;
         }
 
     private:
@@ -57,6 +61,7 @@ namespace glengine::world::font {
         hb_font_t *font;
         pipeline::wgpu::WGPURenderer* renderer;
         std::shared_ptr<pipeline::wgpu::RenderPipeline> pipeline;
+        std::shared_ptr<pipeline::wgpu::RenderPipeline> uiPipeline;
         char* fontFile;
         size_t fontFileLength;
 

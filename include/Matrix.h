@@ -21,10 +21,14 @@ struct GLENGINE_EXPORT Matrix {
         return (vecn<T, Y> *) &data[column * Y];
     }
 
+    const vecn<T, Y> *operator[](int column) const {
+        return (const vecn<T, Y> *) &data[column * Y];
+    }
+
     /// Matrix-matrix multiply
     /// Since this is templated, the compiler can generate the optimal machine code for any shape
     template<int X2, int Y2>
-    Matrix<T, Y, X2> operator *(Matrix<T, X2, Y2> other) {
+    Matrix<T, Y, X2> operator *(Matrix<T, X2, Y2> other) const {
         // verify that matrix multiplication is actually possible for the two matrices
         static_assert(X == Y2, "Matrix multiplication not defined for this shape!");
         Matrix<T, Y, X2> result;
@@ -59,7 +63,7 @@ struct GLENGINE_EXPORT Matrix {
 
     /// Matrix-vector multiplication
     template<int VL>
-    vecn<T, Y> operator *(vecn<T, VL> other) {
+    vecn<T, Y> operator *(vecn<T, VL> other) const {
         static_assert(VL == X, "Incompatible shapes for matrix-vector multiply");
 
         // setup output accumulator

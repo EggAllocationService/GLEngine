@@ -21,7 +21,9 @@ namespace glengine::pipeline::wgpu {
 
     WrappedBuffer::WrappedBuffer(const WrappedBuffer &other) {
         buffer = other.buffer;
-        wgpuBufferRelease(buffer);
+        if (buffer != nullptr) {
+            wgpuBufferAddRef(buffer);
+        }
     }
 
     WrappedBuffer & WrappedBuffer::operator=(const WrappedBuffer &other) {

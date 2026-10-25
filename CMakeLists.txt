@@ -105,6 +105,12 @@ add_library(glengine SHARED
         include/3d/components/CameraLike.h
         src/3d/components/OrthographicCameraComponent.cpp
         include/3d/components/OrthographicCameraComponent.h
+        src/ui/UIElement.cpp
+        src/ui/FlexView.cpp
+        src/ui/CanvasView.cpp
+        src/ui/Button.cpp
+        src/ui/TextBlock.cpp
+        src/ui/UIManager.cpp
 )
 
 create_resource_library(NAME Shaders SOURCES 
@@ -115,6 +121,7 @@ create_resource_library(NAME Shaders SOURCES
     src/pipeline/wgpu/shaders/Postvtx.wgsl
     src/pipeline/wgpu/shaders/Postpre.wgsl
     src/pipeline/wgpu/shaders/OptimizedMesh.wgsl
+    src/pipeline/wgpu/shaders/UI.wgsl
 )
 
 build_pak(

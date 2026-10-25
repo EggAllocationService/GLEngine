@@ -293,7 +293,7 @@ std::shared_ptr<glengine::pipeline::wgpu::RenderPipeline> glengine::pipeline::wg
     auto depthStencilState = WGPUDepthStencilState {
         .nextInChain = nullptr,
         .format = WGPUTextureFormat_Depth24Plus,
-        .depthWriteEnabled = WGPUOptionalBool_True,
+        .depthWriteEnabled = extras != nullptr && !extras->depthWrite ? WGPUOptionalBool_False : WGPUOptionalBool_True,
         .depthCompare = extras != nullptr ? extras->depthMode : WGPUCompareFunction_LessEqual,
         .stencilFront = {},
         .stencilBack = {},
@@ -339,7 +339,7 @@ std::shared_ptr<glengine::pipeline::wgpu::RenderPipeline> glengine::pipeline::wg
             .cullMode = extras != nullptr ? extras->cullMode : WGPUCullMode_Back,
             .unclippedDepth = false
         },
-        .depthStencil = &depthStencilState,
+        .depthStencil = extras != nullptr && extras->depthDisabled ? nullptr : &depthStencilState,
         .multisample = {
             .nextInChain = nullptr,
             .count = 1,
@@ -414,7 +414,7 @@ std::shared_ptr<glengine::pipeline::wgpu::MeshPipeline> glengine::pipeline::wgpu
     auto depthStencilState = WGPUDepthStencilState {
         .nextInChain = nullptr,
         .format = WGPUTextureFormat_Depth24Plus,
-        .depthWriteEnabled = WGPUOptionalBool_True,
+        .depthWriteEnabled = extras != nullptr && !extras->depthWrite ? WGPUOptionalBool_False : WGPUOptionalBool_True,
         .depthCompare = extras != nullptr ? extras->depthMode : WGPUCompareFunction_LessEqual,
         .stencilFront = {},
         .stencilBack = {},
@@ -972,6 +972,15 @@ void glengine::pipeline::wgpu::WGPURenderer::BuildBuiltinPipelines() {
     };
 
     BuildRenderPipeline("BuiltinSlug", slugShaders, &slugLayout, std::span(&slugBindGroup, 1), sizeof(mat4), &slugExtras);
+
+    // depth-less variant for rendering text in the UI overlay pass
+    auto slugUIExtras = RenderPipelineExtras {
+        .polygonMode = WGPUPolygonMode_Fill,
+        .depthMode = WGPUCompareFunction_Always,
+        .cullMode = WGPUCullMode_None,
+        .depthDisabled = true
+    };
+    BuildRenderPipeline("BuiltinSlugUI", slugShaders, &slugLayout, std::span(&slugBindGroup, 1), sizeof(mat4), &slugUIExtras);
 
     delete[] slugVtxLayouts;
     delete[] slugEntries;
