@@ -21,6 +21,7 @@
 #include "ui/UIManager.h"
 #include "ui/FlexView.h"
 #include "ui/Button.h"
+#include "ui/PerfCounter.h"
 
 using namespace glengine;
 
@@ -86,13 +87,15 @@ int main(int argc, char** argv) {
         engine->SetPostEffectEnabled(invertIndex, inverted = !inverted);
     });
 
-    // simple UI demo: a button in the corner that toggles the invert post-effect
+
     auto uiRoot = engine->GetUIManager()->GetRootView();
     auto flex = uiRoot->AddElement<ui::FlexView>(ui::Alignment::Start, ui::Alignment::Start);
+    flex->SetDirection(ui::FlexView::Direction::Vertical);
     flex->padding = float4(10, 10, 10, 10);
+    flex->AddElement<ui::PerfCounter>();
 
 #ifdef GLENGINE_TEXT_RENDERING
-    auto uiFont = engine->GetResourceManager()->GetResource<world::font::Font>("/builtin/fonts/quattrocento.ttf");
+    auto uiFont = engine->GetResourceManager()->GetResource<world::font::Font>("/builtin/fonts/trim.ttf");
 #endif
 
     auto button = flex->AddElement<ui::Button>("Toggle Invert");
@@ -103,6 +106,7 @@ int main(int argc, char** argv) {
     button->AddClickHandler([engine, invertIndex]() {
         engine->SetPostEffectEnabled(invertIndex, inverted = !inverted);
     });
+
 
     engine->MainLoop();
 }

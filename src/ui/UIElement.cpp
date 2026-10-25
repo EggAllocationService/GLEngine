@@ -13,11 +13,14 @@ namespace glengine::ui {
     Element::Element() = default;
 
     float4 Element::Arrange(float4 available) {
+        // note: `position` is not applied here; it is only honored by
+        // containers that do absolute placement (CanvasView, or elements that
+        // read it explicitly like TextBlock under a Button)
         finalRect_ = {
-            available.x + margin.x + position.x,
-            available.y + margin.y + position.y,
-            size.x > 0 ? size.x : std::max(0.0f, available.z - margin.x - margin.z - position.x),
-            size.y > 0 ? size.y : std::max(0.0f, available.w - margin.y - margin.w - position.y)
+            available.x + margin.x,
+            available.y + margin.y,
+            size.x > 0 ? size.x : std::max(0.0f, available.z - margin.x - margin.z),
+            size.y > 0 ? size.y : std::max(0.0f, available.w - margin.y - margin.w)
         };
         return finalRect_;
     }

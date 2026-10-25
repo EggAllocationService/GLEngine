@@ -65,6 +65,13 @@ namespace glengine {
             return actor;
         }
 
+        /// Adds a UI element to the root view. Reusable UI components are just
+        /// Element/View subclasses (see ui::PerfCounter for an example).
+        template <typename T, typename... Args>
+        std::shared_ptr<T> AddUIElement(Args&&... args) {
+            return uiManager->GetRootView()->AddElement<T>(std::forward<Args>(args)...);
+        }
+
         void Possess(const std::shared_ptr<world::Pawn>& target);
 
         /// Pawn whose camera matrix will be used for culling, for debugging purposes

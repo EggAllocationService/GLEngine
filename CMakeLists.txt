@@ -111,6 +111,7 @@ add_library(glengine SHARED
         src/ui/Button.cpp
         src/ui/TextBlock.cpp
         src/ui/UIManager.cpp
+        src/ui/PerfCounter.cpp
 )
 
 create_resource_library(NAME Shaders SOURCES 
