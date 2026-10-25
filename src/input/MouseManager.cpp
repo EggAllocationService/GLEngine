@@ -13,8 +13,10 @@ namespace glengine::input {
     void MouseManager::HandleMotion(float2 position) {
         if (mouseMode == FREE) {
             mousePosition = position;
+#ifdef GLENGINE_TEXT_RENDERING
             // convert to bottom-left origin for the UI
             engine->GetUIManager()->HandleMouseMove(float2(position.x, engine->GetWindowSize().y + position.y));
+#endif
         } else {
             auto delta = position - mousePosition;
             mousePosition = position;
@@ -25,11 +27,13 @@ namespace glengine::input {
 
     void MouseManager::Click(int button, int action, float2 pos) {
         clicking = action == GLFW_PRESS;
+#ifdef GLENGINE_TEXT_RENDERING
         if (mouseMode == FREE) {
             // convert to bottom-left origin for the UI
             engine->GetUIManager()->HandleMouseClick(button, action == GLFW_PRESS,
                 float2(pos.x, engine->GetWindowSize().y + pos.y));
         }
+#endif
     }
 
 

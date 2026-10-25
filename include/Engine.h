@@ -17,7 +17,9 @@
 #include "pipeline/RenderObjects.h"
 #include "GLFW/glfw3.h"
 #include "pipeline/wgpu/WGPURenderer.h"
+#ifdef GLENGINE_TEXT_RENDERING
 #include "ui/UIManager.h"
+#endif
 
 namespace glengine {
     struct PostProcessEntry {
@@ -65,12 +67,14 @@ namespace glengine {
             return actor;
         }
 
+#ifdef GLENGINE_TEXT_RENDERING
         /// Adds a UI element to the root view. Reusable UI components are just
         /// Element/View subclasses (see ui::PerfCounter for an example).
         template <typename T, typename... Args>
         std::shared_ptr<T> AddUIElement(Args&&... args) {
             return uiManager->GetRootView()->AddElement<T>(std::forward<Args>(args)...);
         }
+#endif
 
         void Possess(const std::shared_ptr<world::Pawn>& target);
 
@@ -129,9 +133,11 @@ namespace glengine {
             return renderer;
         }
 
+#ifdef GLENGINE_TEXT_RENDERING
         [[nodiscard]] ui::UIManager* GetUIManager() const {
             return uiManager;
         }
+#endif
 
         [[nodiscard]] world::Pawn* GetPossessedPawn() const {
             if (possessedPawn.expired()) {
@@ -187,7 +193,9 @@ namespace glengine {
 
         rendering::RenderObjects* renderObjectManager;
         pipeline::wgpu::WGPURenderer* renderer;
+#ifdef GLENGINE_TEXT_RENDERING
         ui::UIManager* uiManager;
+#endif
 
         std::vector<std::shared_ptr<world::Actor>> actors;
 

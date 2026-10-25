@@ -67,7 +67,9 @@ namespace glengine {
         renderer = new pipeline::wgpu::WGPURenderer(window, this);
         resourceManager = new ResourceManager(renderer);
         renderer->BuildBuiltinPipelines();
+#ifdef GLENGINE_TEXT_RENDERING
         uiManager = new ui::UIManager(this);
+#endif
 
         glfwSetWindowUserPointer(window, this);
 
@@ -104,7 +106,9 @@ namespace glengine {
         delete pawnInputManager;
         delete resourceManager;
         delete renderObjectManager;
+#ifdef GLENGINE_TEXT_RENDERING
         delete uiManager;
+#endif
         delete renderer;
     }
 
@@ -138,7 +142,9 @@ namespace glengine {
         inputManager->Update(delta);
         pawnInputManager->Update(delta);
 
+#ifdef GLENGINE_TEXT_RENDERING
         uiManager->Update(delta);
+#endif
 
         updateActors(delta);
 
@@ -156,10 +162,12 @@ namespace glengine {
 
     void Engine::KeyPressed(int keyCode) {
 
+#ifdef GLENGINE_TEXT_RENDERING
         // first priority: send input to a focused UI element
         if (uiManager->HandleKeyPressed(keyCode)) {
             return;
         }
+#endif
 
         // second priority: send input to possessed pawn if mouse is captured or we're allowing non-captured input
         if (mouseManager->GetMouseMode() == input::CAPTIVE || flags.allowNonFocusedPawnInput) {
@@ -252,7 +260,9 @@ namespace glengine {
 
         applyPostEffects(frame);
 
+#ifdef GLENGINE_TEXT_RENDERING
         uiManager->Render(frame);
+#endif
 
         // present
         renderer->PresentFrame(frame);

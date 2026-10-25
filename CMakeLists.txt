@@ -105,13 +105,6 @@ add_library(glengine SHARED
         include/3d/components/CameraLike.h
         src/3d/components/OrthographicCameraComponent.cpp
         include/3d/components/OrthographicCameraComponent.h
-        src/ui/UIElement.cpp
-        src/ui/FlexView.cpp
-        src/ui/CanvasView.cpp
-        src/ui/Button.cpp
-        src/ui/TextBlock.cpp
-        src/ui/UIManager.cpp
-        src/ui/PerfCounter.cpp
 )
 
 create_resource_library(NAME Shaders SOURCES 
@@ -147,6 +140,13 @@ if (${TEXT_RENDERING})
             src/3d/text/Font.cpp
             src/3d/text/truetype.c
             src/3d/text/SlugTextComponent.cpp
+            src/ui/UIElement.cpp
+            src/ui/FlexView.cpp
+            src/ui/CanvasView.cpp
+            src/ui/Button.cpp
+            src/ui/TextBlock.cpp
+            src/ui/UIManager.cpp
+            src/ui/PerfCounter.cpp
     )
 
     build_pak(

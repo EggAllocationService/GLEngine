@@ -7,10 +7,7 @@
 #include <cstdio>
 
 #include "Engine.h"
-
-#ifdef GLENGINE_TEXT_RENDERING
 #include "3d/text/Font.h"
-#endif
 
 namespace glengine::ui {
     PerfCounter::PerfCounter() {
@@ -28,9 +25,7 @@ namespace glengine::ui {
         }
         label_ = AddElement<TextBlock>();
         label_->SetFontSize(16.0f);
-#ifdef GLENGINE_TEXT_RENDERING
         label_->SetFont(engine_->GetResourceManager()->GetResource<world::font::Font>("/builtin/fonts/quattrocento.ttf"));
-#endif
     }
 
     void PerfCounter::Update(double deltaTime) {

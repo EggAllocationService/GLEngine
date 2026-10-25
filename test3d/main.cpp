@@ -94,15 +94,11 @@ int main(int argc, char** argv) {
     flex->padding = float4(10, 10, 10, 10);
     flex->AddElement<ui::PerfCounter>();
 
-#ifdef GLENGINE_TEXT_RENDERING
     auto uiFont = engine->GetResourceManager()->GetResource<world::font::Font>("/builtin/fonts/trim.ttf");
-#endif
 
     auto button = flex->AddElement<ui::Button>("Toggle Invert");
     button->size = float2(160, 40);
-#ifdef GLENGINE_TEXT_RENDERING
     button->SetFont(uiFont);
-#endif
     button->AddClickHandler([engine, invertIndex]() {
         engine->SetPostEffectEnabled(invertIndex, inverted = !inverted);
     });
