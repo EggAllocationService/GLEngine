@@ -26,10 +26,21 @@ namespace glengine::ui {
         if (!font_ || text_.empty()) {
             mesh_.reset();
             textSize_ = float2(0, 0);
+            builtExpandEm_ = -1.0f;
             return;
         }
 
-        mesh_ = font_->PrepareText(text_.c_str(), &textSize_);
+        // expand glyph quads by one pixel (converted to mesh units) so the
+        // Slug coverage math can antialias past the outline. The expansion
+        // depends on the render scale, so rebuild when it changes materially.
+        const float expandEm = builtExpandEm_ < 0.0f ? 0.0f : 1.0f / scale_;
+        if (mesh_ && builtExpandEm_ > 0.0f &&
+            fabsf(expandEm - builtExpandEm_) < builtExpandEm_ * 0.5f) {
+            return;
+        }
+
+        mesh_ = font_->PrepareText(text_.c_str(), &textSize_, expandEm);
+        builtExpandEm_ = expandEm;
     }
 
     float4 TextBlock::Arrange(float4 available) {

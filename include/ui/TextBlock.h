@@ -31,5 +31,6 @@ namespace glengine::ui {
         float2 textSize_ = float2(0, 0);
         float fontSize_ = 24.0f;
         float scale_ = 1.0f;
+        float builtExpandEm_ = -1.0f;
     };
 }

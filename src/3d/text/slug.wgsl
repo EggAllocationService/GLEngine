@@ -55,10 +55,12 @@ fn vs(attrib: VertexInput) -> VertexStruct {
     let MVP = (params.projectionViewMatrix * m.m);
     vertex.positions = MVP * attrib.pos;
 
-    // Glyph texture coordinates
+    // Glyph texture coordinates. The packed coordinates are signed 16-bit
+    // values (glyph outlines may extend below the baseline or left of the
+    // origin), so sign-extend them when unpacking.
     let data0 = bitcast<i32>(attrib.glyph.x);
-    let glyph_u = extractBits(data0, 16u, 16u);
-    let glyph_v = extractBits(data0, 0u, 16u);
+    let glyph_u = data0 >> 16;
+    let glyph_v = (data0 << 16) >> 16;
 
     vertex.color = attrib.color;
     vertex.positions_em = vec2(f32(glyph_u), f32(glyph_v));

@@ -41,7 +41,10 @@ namespace glengine::world::font {
     class GLENGINE_EXPORT Font : public Resource {
     public:
         Font(std::istream &, pipeline::wgpu::WGPURenderer *renderer);
-        std::shared_ptr<pipeline::wgpu::GPUMesh> PrepareText(const char* text, float2* outSize = nullptr);
+        /// Generates a text mesh. `expandEm` expands each glyph's quad by that
+        /// many mesh-space units on every side, giving the fragment shader room
+        /// to antialias past the outline (roughly one pixel at the target scale).
+        std::shared_ptr<pipeline::wgpu::GPUMesh> PrepareText(const char* text, float2* outSize = nullptr, float expandEm = 0.0f);
 
         [[nodiscard]] std::shared_ptr<pipeline::wgpu::RenderPipeline> GetPipeline() const {
             return pipeline;

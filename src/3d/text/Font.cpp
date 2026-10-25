@@ -73,7 +73,7 @@ Font::Font(std::istream& data, pipeline::wgpu::WGPURenderer* renderer) {
     if (uiPipeline) uiPipeline->CommitBindings();
 }
 
-std::shared_ptr<glengine::pipeline::wgpu::GPUMesh> Font::PrepareText(const char *text, float2* outSize) {
+std::shared_ptr<glengine::pipeline::wgpu::GPUMesh> Font::PrepareText(const char *text, float2* outSize, float expandEm) {
 
     auto buf = hb_buffer_create();
     hb_buffer_add_utf8(buf, text, strlen(text), 0, -1);
@@ -140,12 +140,17 @@ std::shared_ptr<glengine::pipeline::wgpu::GPUMesh> Font::PrepareText(const char 
     for (int i = 0; i < glyphPositionCount; i++) {
         auto glyphIndex = glyphIndexMap[glyphInfos[i].codepoint];
         auto bounds = this->glyphInfos->operator[](glyphIndex).bounds;
-        float2 min = bounds.xy;
-        float2 max = bounds.zw;
+        // expand the quad so fragments just past the outline still get shaded,
+        // which the Slug coverage math needs for antialiasing at small sizes
+        const float2 expansion = float2(expandEm) / scale;
+        // note: swizzle arithmetic is only valid on the xy lanes, so convert
+        // to concrete vectors before doing math
+        float2 min = float2(bounds.x, bounds.y) - expansion;
+        float2 max = float2(bounds.z, bounds.w) + expansion;
         float2 minS = min * scale;
         float2 maxS = max * scale;
-        int2 minI(min);
-        int2 maxI(max);
+        int2 minI((int)floorf(min.x), (int)floorf(min.y));
+        int2 maxI((int)ceilf(max.x), (int)ceilf(max.y));
 
         uint32_t vertexOffset = vertices.size();
         vertices.emplace_back(
@@ -175,13 +180,14 @@ std::shared_ptr<glengine::pipeline::wgpu::GPUMesh> Font::PrepareText(const char 
 
         offset.x += positions[i].x_advance * scale.x;
     }
+    float2 minBounds = vertices[0].pos.xy;
+    float2 maxBounds = vertices[0].pos.xy;
+    for (const auto& vertex : vertices) {
+        minBounds = min(minBounds, vertex.pos.xy);
+        maxBounds = max(maxBounds, vertex.pos.xy);
+    }
+
     if (outSize) {
-        float2 minBounds = vertices[0].pos.xy;
-        float2 maxBounds = vertices[0].pos.xy;
-        for (const auto& vertex : vertices) {
-            minBounds = min(minBounds, vertex.pos.xy);
-            maxBounds = max(maxBounds, vertex.pos.xy);
-        }
         *outSize = maxBounds - minBounds;
     }
 

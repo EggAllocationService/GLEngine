@@ -53,7 +53,7 @@ struct vec_swizzle {
 #define SWIZVARITHMATICOP(op) vector operator op (vector rhs) const { \
         vector result; \
         int i = 0; \
-        ((result.data[indices] = data[indices] op rhs[i++]), ...); \
+        ((result.data[i] = data[indices] op rhs[i], ++i), ...); \
         return result; \
     }
 
