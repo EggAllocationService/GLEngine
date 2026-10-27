@@ -22,7 +22,7 @@ namespace glengine::ui {
         constexpr int LOG_CAP = 100;
 
         const float4 BAR_COLOR = float4(0.0f, 0.0f, 0.0f, 1.0f);
-        const float4 LOG_COLOR = float4(0.0f, 0.0f, 0.0f, 1.0f);
+        const float4 LOG_COLOR = float4(0.0f, 0.0f, 0.0f, 0.5f);
         const float4 TEXT_COLOR = float4(1.0f, 1.0f, 1.0f, 1.0f);
     }
 
@@ -186,6 +186,9 @@ namespace glengine::ui {
                 : std::string_view(inputBuffer_.data() + firstSpace + 1, inputBuffer_.size() - (firstSpace + 1));
             cmd->second(args);
             engine_->HideConsole();
+        } else {
+            auto err = std::format("Unknown command '{}'", commandName);
+            engine_->LogConsole(err);
         }
     }
 
