@@ -88,11 +88,11 @@ glengine::pipeline::wgpu::WGPURenderer::WGPURenderer(GLFWwindow *window, Engine*
 
     requiredLimits.maxImmediateSize = 128;
 
-    auto features = new WGPUNativeFeature[4] { WGPUNativeFeature_Immediates, WGPUNativeFeature_PolygonModeLine, WGPUNativeFeature_MeshShader, WGPUNativeFeature_ShaderI16 };
+    auto features = new uint32_t[5] { WGPUNativeFeature_Immediates, WGPUNativeFeature_PolygonModeLine, WGPUNativeFeature_MeshShader, WGPUNativeFeature_ShaderI16, WGPUNativeFeature_Subgroup};
     WGPUDeviceDescriptor deviceDescriptor = WGPU_DEVICE_DESCRIPTOR_INIT;
     deviceDescriptor.requiredLimits = &requiredLimits;
-    deviceDescriptor.requiredFeatures = reinterpret_cast<WGPUFeatureName*>(&features[0]);
-    deviceDescriptor.requiredFeatureCount = 4;
+    deviceDescriptor.requiredFeatures = reinterpret_cast<WGPUFeatureName*>(features);
+    deviceDescriptor.requiredFeatureCount = 5;
 
     device = nullptr;
 
