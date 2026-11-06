@@ -16,5 +16,7 @@ namespace glengine::world {
         void OnPossess(input::InputManager* manager) override;
 
         void OnUnpossess() override;
+    private:
+        float speed = 1.0;
     };
 }

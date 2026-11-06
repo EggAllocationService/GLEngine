@@ -20,7 +20,7 @@ void glengine::world::DefaultPawn::OnPossess(input::InputManager* manager)
 
 		// remove the vertical component of the forward vector, so we don't move up/down if we're looking up/down
 		auto forward = this->GetTransform()->GetForwardVector();
-		position = position + float3(forward.x, 0.0, forward.z).norm() * amount;
+		position = position + float3(forward.x, 0.0, forward.z).norm() * amount * speed;
 
 		this->GetTransform()->SetPosition(position);
 	});
@@ -28,14 +28,14 @@ void glengine::world::DefaultPawn::OnPossess(input::InputManager* manager)
 	// d to go right, a to go left
 	manager->AddAxis('d', 'a', [this](float amount) {
 		auto position = this->GetTransform()->GetPosition();
-		position = position + this->GetTransform()->GetRightVector() * amount;
+		position = position + this->GetTransform()->GetRightVector() * amount * speed;
 		this->GetTransform()->SetPosition(position);
 	});
 
 	// space to go up, c to go down
 	manager->AddAxis(' ', 'c', [this](float amount) {
 		auto position = this->GetTransform()->GetPosition();
-		position = position + float3(0, 1, 0) * amount;
+		position = position + float3(0, 1, 0) * amount * speed;
 		this->GetTransform()->SetPosition(position);
 	});
 
@@ -51,6 +51,14 @@ void glengine::world::DefaultPawn::OnPossess(input::InputManager* manager)
 		auto rotation = this->GetTransform()->GetRotation();
 		rotation.xy += float2(-amount, 0);
 		this->GetTransform()->SetRotation(rotation);
+	});
+
+	manager->AddAction('q', [this] {
+		speed -= speed * 0.5f;
+	});
+
+	manager->AddAction('e', [this] {
+		speed += speed * 2.0f;
 	});
 }
 
